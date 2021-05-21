@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.ResponsiveStories" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="fontFamily">@font/arab_type</item>
+
+        <!-- Secondary brand color. -->
+        <!-- Status bar color. -->
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="HomePageStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="fontFamily">@font/arapey</item>
+
+    </style>
+
+    <style name="Theme.ResponsiveStories.NoActionBar">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="fontFamily">@font/arab_type</item>
+    </style>
+
+    <style name="Wallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="fontFamily">@font/arab_type</item>
+    </style>
+
+    <style name="Theme.ResponsiveStories.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.ResponsiveStories.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>

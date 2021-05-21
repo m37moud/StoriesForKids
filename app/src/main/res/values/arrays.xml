@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="animalAr">
+        <item> "عصفور" </item>
+        <item> "جمل" </item>
+        <item> "قطة" </item>
+        <item> "دجاجة" </item>
+        <item> "بقرة" </item>
+        <item> "تمساح" </item>
+        <item> "كلب" </item>
+        <item> "دولفين" </item>
+        <item> "بطه" </item>
+        <item> "سمكة" </item>
+    </string-array>
+
+    <string-array name="categoryImg">
+        <item> "animals" </item>
+        <item> "colors" </item>
+        <item> "shapes" </item>
+        <item> "numbers" </item>
+        <item> "alphabet" </item>
+
+    </string-array>
+</resources>
