@@ -287,6 +287,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     private fun setImage(imgList: ArrayList<String>) {
+        Log.d("TAG", "setImage: " + imgList.toString())
 
         list = imgList
 
@@ -307,7 +308,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         img_sound.setImageDrawable(drawable)
 //        val imgName = txt_name.text.toString()
 
-        val imgName = initName(list[counter],true)
+        val imgName = initName(list[counter],false)
         Log.d("soundmd", "play: " + imgName)
         if (!TextUtils.isEmpty(imgName)) {
             playImgSound(imgName)
@@ -321,14 +322,14 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         var path: String? = null
         try {
-            Log.d("colors", "play:   " + category)
+            Log.d("playImgSound", "play:   " + category)
             if (category == "colors") {
                 val newName = removeLastChar(name)
                 path = "sound/$newName.mp3"
                 Log.d("colors", "play: true  " + path)
             } else {
-                path = "sound/$name.mp3"
-                Log.d("colors", "play: false " + path)
+                path = "sound/$category"+"NameAr/$name.mp3"
+                Log.d("playImgSound", "play: false " + path)
             }
 
             val mediaPlayer = MediaPlayer()

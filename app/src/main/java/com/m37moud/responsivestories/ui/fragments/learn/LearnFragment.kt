@@ -16,6 +16,7 @@ import coil.load
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.LearnAdapter
 import com.m37moud.responsivestories.models.LearnModel
+import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.fragment_learn.*
@@ -29,7 +30,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
     private var textImgCategory: ImageView? = null
 
     private var shouldPlay = false
-
+    private var categoryPosition = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +53,10 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 
         view.img_click.setOnClickListener {
             val intent = Intent(requireContext(), EnteredLearenActivity::class.java)
-            val url = cat_txt_title.text
+
+//            val url = cat_txt_title.text
+            //get image name from Constans list
+            val url = Constants.img[categoryPosition]
             intent.putExtra("selectedCategory", url!!)
             shouldPlay = true
             startActivity(intent)
@@ -75,7 +79,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         mAdapter.displayTitles()
         Log.d("LearnFragment", "clicked: $category")
         if (category == null) {
-            category = LearnModel("animals", "animals", "")
+            category = LearnModel("animals", "الحيوانات", "")
             initToNextPage(this.category!!)
         }
         initToNextPage(this.category!!)
@@ -97,9 +101,10 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
+        categoryPosition = position
         val category = mAdapter.getCategoryName(position)
         initToNextPage(category!!)
-        val categoryName = category.title
+        val categoryName = category.img
         if (categoryName != null) playImgSound(categoryName)
 
         Log.d("LearnFragment", "clicked: $position")

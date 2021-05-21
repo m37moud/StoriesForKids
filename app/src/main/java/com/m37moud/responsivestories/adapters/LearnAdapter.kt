@@ -10,6 +10,7 @@ import coil.load
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import kotlinx.android.synthetic.main.category_learn_items.view.*
 import java.util.*
 
@@ -50,7 +51,7 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
 
         val learnCategory = learnTitle[position]
         val uri =
-            Uri.parse("android.resource://com.m37moud.responsivestories/drawable/" + learnCategory.img)
+            Uri.parse(RESOURCE + learnCategory.img)
         holder.itemView.img_title.load(uri) {
             crossfade(600)
             error(R.drawable.ic_error_placeholder)
@@ -59,22 +60,20 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
     }
 
     //    val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabet")
-    
-    
 
     fun displayTitles() {
         val list: MutableList<LearnModel> = ArrayList()
-//
-//        val img = ArrayList<String>()
-//        img.add(context.getString(R.string.animals))
-//        img.add(context.getString(R.string.colors))
-//        img.add(context.getString(R.string.shapes))
-//        img.add(context.getString(R.string.numbers))
-//        img.add(context.getString(R.string.alphabet))
-//
-        for (i in 0 until Constants.img.size) {
 
-            val item: LearnModel = LearnModel(Constants.img[i], Constants.img[i], "")
+        val img = ArrayList<String>()
+        img.add(context.getString(R.string.animals))
+        img.add(context.getString(R.string.colors))
+        img.add(context.getString(R.string.shapes))
+        img.add(context.getString(R.string.numbers))
+        img.add(context.getString(R.string.alphabet))
+//
+        for (i in 0 until img.size) {
+
+            val item: LearnModel = LearnModel(Constants.img[i], img[i], "")
             list.add(item)
             learnTitle = list
             notifyDataSetChanged()
