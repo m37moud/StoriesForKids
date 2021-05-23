@@ -88,7 +88,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             Log.d("if", "showEng: " + showEng.toString())
 
-            val name = initName(list[counter] , showEng)
+            val name = initName(list[counter], showEng)
 //            val name = txt_name.text.toString()
             //set text
             txt_name.text = name
@@ -229,14 +229,22 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
+//new work from home 23/5
     private fun getAssetsFolder() {
         val intent = intent
         category = intent.getStringExtra("selectedCategory")
-        Log.d("asset", "getAssetsFolder: " + category.toString())
+        Log.d("asset", "getAssetsFolder: " + category!!.toString())
 
         val images = assets.list(category!!)
+        if (ifFolder(category!!)){
+
+        }else{
+
+        }
+//        val pa = assets.openFd(category!!).extras
+//        Log.d("asset", "getAssetsFolder: " + images!!.size.toString())
         val imgList: ArrayList<String> = ArrayList(images!!.toList())
-        Log.d("asset", "getAssetsFolder: " + imgList.toString())
+        Log.d("asset", "getAssetsFolder: " + imgList.size.toString())
         initBtn()
         setImage(imgList)
 
@@ -247,21 +255,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         left_img_btn.visibility = View.GONE
     }
 
-    private fun initTxt(name: String): String {
 
-//        txt_name.startAnimation(AnimationUtils.loadAnimation(this , R.anim.zoom_in))
-
-        val n = name.split(".")
-
-        var nameOnly: String? = null
-
-        nameOnly = n[0]
-        val eng = nameOnly.split("-")
-        val engName = eng[1]
-        return nameOnly
-    }
-
-    private fun initName(name: String , showEng:Boolean): String {
+    private fun initName(name: String, showEng: Boolean): String {
 
 //        txt_name.startAnimation(AnimationUtils.loadAnimation(this , R.anim.zoom_in))
 
@@ -285,6 +280,26 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
+    private fun ifFolder(path: String): Boolean {
+
+        val images = assets.list(path)
+        //If list returns any entries, than the path is a directory
+        return if (!images.isNullOrEmpty()) {
+            true
+        } else {
+            try {
+                //If we can open a stream then the path leads to a file
+                assets.open(path)
+                false
+            } catch (ex: Exception) {
+                //.open() throws exception if it's a directory that you're passing as a parameter
+                true;
+            }
+        }
+
+
+    }
+
 
     private fun setImage(imgList: ArrayList<String>) {
         Log.d("TAG", "setImage: " + imgList.toString())
@@ -293,22 +308,22 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         var name: String? = null
 
-        name = if (this.category == "colors" || this.category == "الالوان" ) {
+        name = if (this.category == "colors" || this.category == "الالوان") {
 //                ""+ removeLastChar(initTxt(list[counter]))
 //            Log.d("soundmd", "play: " + list.toString())
-            "" + initTxt(list[counter])
+            "" + initName(list[counter], false)
         } else {
-            "" + initTxt(list[counter])
+            "" + initName(list[counter], false)
         }
 
-        txt_name.text = initName(list[counter],false)
+        txt_name.text = initName(list[counter], false)
 
         val input = assets.open(category!! + File.separator + name.plus(".png"))
         val drawable = Drawable.createFromStream(input, null)
         img_sound.setImageDrawable(drawable)
 //        val imgName = txt_name.text.toString()
 
-        val imgName = initName(list[counter],false)
+        val imgName = initName(list[counter], false)
         Log.d("soundmd", "play: " + imgName)
         if (!TextUtils.isEmpty(imgName)) {
             playImgSound(imgName)
@@ -328,7 +343,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                 path = "sound/$newName.mp3"
                 Log.d("colors", "play: true  " + path)
             } else {
-                path = "sound/$category"+"NameAr/$name.mp3"
+                path = "sound/$category" + "NameAr/$name.mp3"
                 Log.d("playImgSound", "play: false " + path)
             }
 

@@ -150,6 +150,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         return str
     }
 
+
     override fun onDestroy() {
         stopService()
         super.onDestroy()
