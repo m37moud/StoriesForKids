@@ -229,7 +229,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
-//new work from home 23/5
+//new work from work 24/5
     private fun getAssetsFolder() {
         val intent = intent
         category = intent.getStringExtra("selectedCategory")
@@ -237,16 +237,15 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         val images = assets.list(category!!)
         if (ifFolder(category!!)){
-
+            Log.d("asset", "getAssetsFolder: if statement True " + category!!.toString())
         }else{
-
-        }
-//        val pa = assets.openFd(category!!).extras
+//            val pa = assets.openFd(category!!).extras
 //        Log.d("asset", "getAssetsFolder: " + images!!.size.toString())
-        val imgList: ArrayList<String> = ArrayList(images!!.toList())
-        Log.d("asset", "getAssetsFolder: " + imgList.size.toString())
-        initBtn()
-        setImage(imgList)
+            val imgList: ArrayList<String> = ArrayList(images!!.toList())
+            Log.d("asset", "getAssetsFolder:  if state false" + imgList.size.toString())
+            initBtn()
+            setImage(imgList)
+        }
 
     }
 
@@ -284,20 +283,18 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         val images = assets.list(path)
         //If list returns any entries, than the path is a directory
-        return if (!images.isNullOrEmpty()) {
-            true
-        } else {
-            try {
-                //If we can open a stream then the path leads to a file
-                assets.open(path)
-                false
-            } catch (ex: Exception) {
-                //.open() throws exception if it's a directory that you're passing as a parameter
-                true;
-            }
+         if (!images.isNullOrEmpty()) {
+             return try {
+                 //If we can open a stream then the path leads to a file
+                 assets.open(path)
+                 false
+             } catch (ex: Exception) {
+                 //.open() throws exception if it's a directory that you're passing as a parameter
+                 true
+             }
         }
 
-
+        return false
     }
 
 
@@ -313,7 +310,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 //            Log.d("soundmd", "play: " + list.toString())
             "" + initName(list[counter], false)
         } else {
-            "" + initName(list[counter], false)
+            "" + initName(list[counter], true)
         }
 
         txt_name.text = initName(list[counter], false)

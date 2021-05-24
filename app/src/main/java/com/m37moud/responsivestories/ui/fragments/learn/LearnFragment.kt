@@ -57,7 +57,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 //            val url = cat_txt_title.text
             //get image name from Constans list
             val url = Constants.img[categoryPosition]
-            intent.putExtra("selectedCategory", url!!)
+            intent.putExtra("selectedCategory", url)
             shouldPlay = true
             startActivity(intent)
             finish

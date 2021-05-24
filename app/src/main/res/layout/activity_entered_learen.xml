@@ -1,86 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:background="@drawable/background"
-    android:orientation="vertical"
     tools:context=".ui.fragments.learn.EnteredLearenActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/right_img_btn"
-            android:layout_width="30dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:layoutDirection="rtl"
-            app:srcCompat="@drawable/ic_next"
-            app:tint="@color/blue" />
 
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cardContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
 
             <ImageView
                 android:id="@+id/img_sound"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-
-                android:layout_gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_margin="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/txt_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.49"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/bird" />
 
             <TextView
                 android:id="@+id/txt_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/courgette"
+                android:layout_marginTop="169dp"
+                android:fontFamily="sans-serif-condensed"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:shadowColor="@color/yellow"
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="2"
-                android:text="animal"
-                android:textColor="@color/blue"
+                android:text=""
+                android:textColor="@color/black"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/img_sound"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="@+id/img_sound"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.627" />
 
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <ImageView
-            android:id="@+id/left_img_btn"
+
+
+    <ImageView
+        android:id="@+id/right_img_btn"
+        android:layout_width="30dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="30dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layoutDirection="rtl"
+        app:srcCompat="@drawable/ic_next"
+        app:tint="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
+        app:layout_constraintEnd_toStartOf="@+id/cardContainer"
+        app:layout_constraintTop_toTopOf="@+id/cardContainer"
+        />
+
+    <ImageView
+        android:id="@+id/left_img_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="30dp"
+        android:elevation="1dp"
+        android:focusable="true"
+        android:layoutDirection="rtl"
+        android:rotation="180"
+        app:srcCompat="@drawable/ic_next"
+        app:tint="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
+        app:layout_constraintStart_toEndOf="@+id/cardContainer"
+        app:layout_constraintTop_toTopOf="@+id/cardContainer"
+         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/bottom_background"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="30dp"
-            android:elevation="1dp"
-            android:focusable="true"
-            android:layoutDirection="rtl"
-            android:rotation="180"
-            app:srcCompat="@drawable/ic_next"
-            app:tint="@color/blue" />
-
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/background" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/bottom_background1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/background2" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/bottom_background3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/bacj" />
 
     </LinearLayout>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
