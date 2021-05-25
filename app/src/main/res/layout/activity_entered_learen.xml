@@ -7,97 +7,190 @@
     android:background="@drawable/background"
     tools:context=".ui.fragments.learn.EnteredLearenActivity">
 
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cardContainer"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:id="@+id/folderContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/img_sound"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_margin="20dp"
-                app:layout_constraintBottom_toTopOf="@+id/txt_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.49"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/bird" />
-
-            <TextView
-                android:id="@+id/txt_name"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="169dp"
-                android:fontFamily="sans-serif-condensed"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:shadowColor="@color/yellow"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="25sp"
-                android:textStyle="bold"
-
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/img_sound"
-                app:layout_constraintHorizontal_bias="0.501"
-                app:layout_constraintStart_toStartOf="@+id/img_sound"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.627" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/arabic_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_error_placeholder" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="@string/arabic"
+                        android:textAlignment="center"
+
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/english_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_error_placeholder" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="@string/english"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/containerCardContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardContainer"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/img_sound"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="20dp"
+                    app:layout_constraintBottom_toTopOf="@+id/txt_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.49"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/bird" />
+
+                <TextView
+                    android:id="@+id/txt_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="169dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:shadowColor="@color/yellow"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/img_sound"
+                    app:layout_constraintHorizontal_bias="0.501"
+                    app:layout_constraintStart_toStartOf="@+id/img_sound"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.627" />
 
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/right_img_btn"
-        android:layout_width="30dp"
-        android:layout_height="33dp"
-        android:layout_gravity="center"
-        android:layout_marginEnd="30dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:layoutDirection="rtl"
-        app:srcCompat="@drawable/ic_next"
-        app:tint="@color/blue"
-        app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
-        app:layout_constraintEnd_toStartOf="@+id/cardContainer"
-        app:layout_constraintTop_toTopOf="@+id/cardContainer"
-        />
 
-    <ImageView
-        android:id="@+id/left_img_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="30dp"
-        android:elevation="1dp"
-        android:focusable="true"
-        android:layoutDirection="rtl"
-        android:rotation="180"
-        app:srcCompat="@drawable/ic_next"
-        app:tint="@color/blue"
-        app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
-        app:layout_constraintStart_toEndOf="@+id/cardContainer"
-        app:layout_constraintTop_toTopOf="@+id/cardContainer"
-         />
+            <ImageView
+                android:id="@+id/right_img_btn"
+                android:layout_width="30dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="30dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layoutDirection="rtl"
+                app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
+                app:layout_constraintEnd_toStartOf="@+id/cardContainer"
+                app:layout_constraintTop_toTopOf="@+id/cardContainer"
+                app:srcCompat="@drawable/ic_next"
+                app:tint="@color/blue" />
+
+            <ImageView
+                android:id="@+id/left_img_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="30dp"
+                android:elevation="1dp"
+                android:focusable="true"
+                android:layoutDirection="rtl"
+                android:rotation="180"
+                app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
+                app:layout_constraintStart_toEndOf="@+id/cardContainer"
+                app:layout_constraintTop_toTopOf="@+id/cardContainer"
+                app:srcCompat="@drawable/ic_next"
+                app:tint="@color/blue" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,20 +203,6 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/background" />
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/bottom_background1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/background2" />
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/bottom_background3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/bacj" />
 
     </LinearLayout>
 
