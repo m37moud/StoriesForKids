@@ -269,7 +269,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                         try {
                             val files = assets.list(category!!+ File.separator+"EN")
                             val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                            val name = initImageTxt(nFiles[counter])
+                            val name = initName(nFiles[counter], true)
                             val input =
                                 assets.open(category + "/" + it + File.separator + name.plus(".png"))
                             val drawable = Drawable.createFromStream(input, null)
@@ -322,16 +322,11 @@ class EnteredLearenActivity : AppCompatActivity() {
                     imgList.forEach {
                         if (imgList.contains("AR")) {
                             try {
-                                val name = initImageTxt(list[counter])
-                                val input = assets.open(it + File.separator + name.plus(".png"))
-                                val drawable = Drawable.createFromStream(input, null)
-                                img_sound.setImageDrawable(drawable)
-
-                                val imgName = initName(list[counter], false)
-                                Log.d("arabic_container", "play: " + imgName)
-                                if (!TextUtils.isEmpty(imgName)) {
-                                    playImgSound(imgName)
-                                }
+                                val files = assets.list(category!!+ File.separator+"AR")
+                                val nFiles: ArrayList<String> = ArrayList(files!!.toList())
+                                Log.d("arabic_container", "nFiles: ${nFiles.toString()}")
+                                initBtn()
+                                setImage(nFiles)
 
                             } catch (e: IOException) {
                                 Toast.makeText(this@EnteredLearenActivity, " $e", Toast.LENGTH_SHORT)
@@ -355,17 +350,21 @@ class EnteredLearenActivity : AppCompatActivity() {
                             try {
                                 val files = assets.list(category!!+ File.separator+"EN")
                                 val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                val name = initImageTxt(nFiles[counter])
-                                val input =
-                                    assets.open(category + "/" + it + File.separator + name.plus(".png"))
-                                val drawable = Drawable.createFromStream(input, null)
-                                img_sound.setImageDrawable(drawable)
+                                Log.d("english_container", "nFiles: ${nFiles.toString()}")
+                                initBtn()
+                                setImage(nFiles)
 
-                                val imgName = initName(list[counter], false)
-                                Log.d("soundmd", "play: " + imgName)
-                                if (!TextUtils.isEmpty(imgName)) {
-                                    playImgSound(imgName)
-                                }
+//                                val name = initImageTxt(nFiles[counter])
+//                                val input =
+//                                    assets.open(category + "/" + it + File.separator + name.plus(".png"))
+//                                val drawable = Drawable.createFromStream(input, null)
+//                                img_sound.setImageDrawable(drawable)
+//
+//                                val imgName = initName(list[counter], false)
+//                                Log.d("soundmd", "play: " + imgName)
+//                                if (!TextUtils.isEmpty(imgName)) {
+//                                    playImgSound(imgName)
+//                                }
 
                             } catch (e: IOException) {
                                 Toast.makeText(this@EnteredLearenActivity, " $e", Toast.LENGTH_SHORT)
@@ -383,8 +382,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
         } else {
-            containerCardContainer.visibility = View.VISIBLE
-            folderContainer.visibility = View.GONE
+//            containerCardContainer.visibility = View.VISIBLE
+//            folderContainer.visibility = View.GONE
 //            val pa = assets.openFd(category!!).extras
 //        Log.d("asset", "getAssetsFolder: " + images!!.size.toString())
 
@@ -490,6 +489,10 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     private fun setImage(imgList: ArrayList<String>) {
+
+        containerCardContainer.visibility = View.VISIBLE
+        folderContainer.visibility = View.GONE
+
         Log.d("TAG", "setImage: " + imgList.toString())
 
         list = imgList
