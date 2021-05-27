@@ -24,6 +24,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 
 
 class EnteredLearenActivity : AppCompatActivity() {
@@ -33,7 +36,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     private lateinit var list: ArrayList<String>
     private lateinit var listModel: ArrayList<AnimalsModel>
 
-    private var showEng = false
+    private var showEng by Delegates.notNull<Boolean>()
     private var clicked = false
     private var folder = ""
 
@@ -89,18 +92,26 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
 
         txt_name.setOnClickListener {
+            clicked = false
+            if (!isFolder(category!!) && !clicked) {
+                Log.d("txt_name", "showEng: " + clicked.toString())
+                changeLang()
+                showEng = !showEng
+            }
+
+
+
             Log.d("txt_name", "showEng: " + showEng.toString())
-
-            showEng = !showEng
-
             Log.d("if", "showEng: " + showEng.toString())
 
             val name = initName(list[counter], showEng)
+//            val name = initName(list[counter])
 //            val name = txt_name.text.toString()
             //set text
             txt_name.text = name
-            //play sound in english
-            playImgSound(name)
+            //play sound
+            val path = category.plus("Name") + folder + File.separator + name
+            playImgSound(path)
 
 
         }
@@ -111,10 +122,20 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
 
-
         right_img_btn.setOnClickListener {
+            var localLang: Boolean
 
-            showEng = false
+//            if (folder == "EN") {
+//                showEng = true
+//            } else {
+//                showEng = false
+//            }
+            if (!isFolder(category!!) && !clicked) {
+                detectLanguage()
+            }
+
+
+//            showEng = false
 //            txt_name.animation = AnimationUtils.loadAnimation(this , R.anim.zoom_out)
 //            txt_name.startAnimation(AnimationUtils.loadAnimation(this , R.anim.zoom_out))
 //           initViews(500)
@@ -180,7 +201,17 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
 
         left_img_btn.setOnClickListener {
-            showEng = false
+//            showEng = false
+
+
+//            if (folder == "EN") {
+//                showEng = true
+//            } else {
+//                showEng = false
+//            }
+            if (!isFolder(category!!) && !clicked) {
+                detectLanguage()
+            }
 
             if (counter > 0) {
                 counter--
@@ -246,8 +277,9 @@ class EnteredLearenActivity : AppCompatActivity() {
     //new work from work 25/5
 
 
-    private  fun getAssetsFolder() {
+    private fun getAssetsFolder() {
         initBtn()
+
 
         val intent = intent
         category = intent.getStringExtra("selectedCategory")
@@ -257,6 +289,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         val imgList: ArrayList<String> = ArrayList(images!!.toList())
         Log.d("asset", "getAssetsFolder: " + imgList.toString())
         // show which folder to view content
+
         if (isFolder(category!!)) {
             //set images to arabic button in  dialog
             initChooseDialog()
@@ -268,21 +301,19 @@ class EnteredLearenActivity : AppCompatActivity() {
 //            val imgFolder: ArrayList<String> = ArrayList(folderImage!!.toList())
 
 
-
-
-
             //new work from work 25/5
             arabic_container.setOnClickListener {
                 val images = assets.list(category!!)
                 val imgList: ArrayList<String> = ArrayList(images!!.toList())
                 if (imgList.isNotEmpty()) {
                     imgList.forEach { folders ->
-                        if (folders == "AR") {
+                        if (folders == "Ar") {
                             try {
                                 val files = assets.list(category!! + File.separator + folders)
                                 val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d("arabic_container", "nFiles: ${nFiles.toString()}")
+                                Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
                                 folder = folders
+                                showEng = false
 //                                initBtn()
                                 setImage(nFiles)
 
@@ -293,7 +324,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                Log.d("arabic_container", "setImage: $e")
+                                Log.d("getAssetsFolder", "setImage: $e")
                             }
                         }
                     }
@@ -310,8 +341,9 @@ class EnteredLearenActivity : AppCompatActivity() {
                             try {
                                 val files = assets.list(category!! + File.separator + it)
                                 val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d("english_container", "nFiles: ${nFiles.toString()}")
+                                Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
                                 folder = it
+                                showEng = true
 //                                initBtn()
                                 setImage(nFiles)
 
@@ -322,7 +354,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                Log.d("TAG", "setImage: $e")
+                                Log.d("getAssetsFolder", "setImage: $e")
                             }
                         }
                     }
@@ -336,7 +368,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         } else {
             Log.d("asset", "getAssetsFolder:  if state false" + category!!.toString())
-
+            detectLanguage()
             setImage(imgList)
         }
 
@@ -372,7 +404,12 @@ class EnteredLearenActivity : AppCompatActivity() {
         var nameOnly: String? = null
 
         nameOnly = n[0]
-
+//
+//        if (folder == "EN") {
+//            showEng = true
+//        } else {
+//            showEng = true
+//        }
 
         if (!isFolder(category!!)) {
             if (nameOnly.contains("-")) {
@@ -400,6 +437,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         Log.d("ifFolder", "list is: " + new.toString())
 //
         if (!new[0].contains(".")) {
+            clicked = true
             Log.d("ifFolder", "path cant open it is folder back true ")
             return true
         } else if (new[0].contains(".")) {
@@ -439,12 +477,18 @@ class EnteredLearenActivity : AppCompatActivity() {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
 
-
         Log.d("TAG", "setImage: " + imgList.toString())
+//        var localLang: Boolean
+//        if (folder == "EN") {
+//            showEng = true
+//        } else {
+//            showEng = false
+//        }
 
+        Log.d("TAG", "setImage:  localLang " + showEng + imgList.toString())
         list = imgList
 
-        var name: String? = null
+        var name: String?
 
         name = if (this.category == "colors" || this.category == "الالوان") {
 //                ""+ removeLastChar(initTxt(list[counter]))
@@ -454,9 +498,11 @@ class EnteredLearenActivity : AppCompatActivity() {
             "" + initImageTxt(list[counter])
         }
 
-        txt_name.text = initName(list[counter], false)
+
+        txt_name.text = initName(list[counter], showEng)
         try {
             val input: InputStream = if (isFolder(category!!) && !TextUtils.isEmpty(folder)) {
+
                 assets.open(category!! + File.separator + "$folder/" + name.plus(".png"))
             } else {
                 assets.open(category!! + File.separator + name.plus(".png"))
@@ -466,10 +512,12 @@ class EnteredLearenActivity : AppCompatActivity() {
             val drawable = Drawable.createFromStream(input, null)
             img_sound.setImageDrawable(drawable)
 
-            val imgName = initName(list[counter], false)
+            val imgName = initName(list[counter], showEng)
             Log.d("soundmd", "play: " + imgName)
+
             if (!TextUtils.isEmpty(imgName)) {
-                playImgSound(imgName)
+                val path = category.plus("Name") + folder + File.separator + imgName
+                playImgSound(path)
             }
 
         } catch (e: IOException) {
@@ -484,15 +532,17 @@ class EnteredLearenActivity : AppCompatActivity() {
     private fun playImgSound(name: String) {
 
 
-        var path: String? = null
+        var path: String?
         try {
             Log.d("playImgSound", "play:   " + category)
-            if (category == "colors") {
+            if (category == "animals") {
                 val newName = removeLastChar(name)
                 path = "sound/$newName.mp3"
                 Log.d("colors", "play: true  " + path)
             } else {
-                path = "sound/$category" + "Name$folder/$name.mp3"
+
+//                path = "sound/" + category.plus("Name") + folder + File.separator + "$name.mp3"
+                path = "sound/$name.mp3"
                 Log.d("playImgSound", "play: false " + path)
             }
 
@@ -510,6 +560,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             mediaPlayer.start()
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("playImgSound", "play: false " + e)
         }
 
     }
@@ -521,7 +572,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
         return str
     }
-
 
 
     private fun setFullScreen() {
@@ -543,32 +593,55 @@ class EnteredLearenActivity : AppCompatActivity() {
 //        left_img_btn.visibility = View.GONE
     }
 
+    private fun detectLanguage() {
+        val lang = Locale.getDefault().displayLanguage
 
-//space work date 27/5
+        if (lang == "العربية") {
+            folder = "Ar"
+            showEng = false
+        } else {
+            folder = "EN"
+            showEng = true
+        }
+        Log.d("lang", "language: " + folder + lang.toString())
+    }
+
+    private fun changeLang() {
+
+        if (folder == "Ar")
+            folder = "EN"
+        else if (folder == "EN") {
+            folder = "Ar"
+        }
+
+    }
+
+    //space work date 27/5
     private fun initChooseDialog() {
+        val requestOptions = RequestOptions()
+            .placeholder(R.drawable.ic_error_placeholder)
         try {
             val srcAr = assets.open("categoryImg" + File.separator + category.plus("AR.jpg"))
             val drawableAr = Drawable.createFromStream(srcAr, null)
 
-            val requestOptions = RequestOptions()
-                .placeholder(R.drawable.ic_error_placeholder)
+
             Glide.with(this@EnteredLearenActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableAr).into(arabic_img)
 //            arabic_img.setImageDrawable(drawableAr)
 
-//        } catch (e: IOException) {
-//            Toast.makeText(
-//                this@EnteredLearenActivity,
-//                " $e",
-//                Toast.LENGTH_SHORT
-//            )
-//                .show()
-//            Log.d("arabic_img", "setImage: $e")
-//        }
-//        //set images to english button in  dialog
-//        try {
+        } catch (e: IOException) {
+            Toast.makeText(
+                this@EnteredLearenActivity,
+                " $e",
+                Toast.LENGTH_SHORT
+            )
+                .show()
+            Log.d("arabic_img", "setImage: $e")
+        }
+        //set images to english button in  dialog
+        try {
 
             val srcEn = assets.open("categoryImg" + File.separator + category.plus("EN.jpg"))
             val drawableEn = Drawable.createFromStream(srcEn, null)
@@ -577,7 +650,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             Glide.with(this@EnteredLearenActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
-                .load(drawableAr).into(english_img)
+                .load(drawableEn).into(english_img)
 //
 //
 //            english_img.setImageDrawable(drawableEn)

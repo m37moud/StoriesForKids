@@ -79,7 +79,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         mAdapter.displayTitles()
         Log.d("LearnFragment", "clicked: $category")
         if (category == null) {
-            category = LearnModel("animals", "الحيوانات", "")
+            category = LearnModel("animals", getString(R.string.animals), "")
             initToNextPage(this.category!!)
         }
         initToNextPage(this.category!!)
