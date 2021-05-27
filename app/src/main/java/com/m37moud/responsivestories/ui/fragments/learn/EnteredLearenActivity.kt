@@ -123,13 +123,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
         right_img_btn.setOnClickListener {
-            var localLang: Boolean
 
-//            if (folder == "EN") {
-//                showEng = true
-//            } else {
-//                showEng = false
-//            }
             if (!isFolder(category!!) && !clicked) {
                 detectLanguage()
             }
@@ -303,11 +297,11 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             //new work from work 25/5
             arabic_container.setOnClickListener {
-                val images = assets.list(category!!)
-                val imgList: ArrayList<String> = ArrayList(images!!.toList())
+                val arabicFiles = assets.list(category!!)
+                val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
                 if (imgList.isNotEmpty()) {
                     imgList.forEach { folders ->
-                        if (folders == "Ar") {
+                        if (folders == "AR") {
                             try {
                                 val files = assets.list(category!! + File.separator + folders)
                                 val nFiles: ArrayList<String> = ArrayList(files!!.toList())
@@ -315,6 +309,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                                 folder = folders
                                 showEng = false
 //                                initBtn()
+
                                 setImage(nFiles)
 
                             } catch (e: IOException) {
@@ -324,7 +319,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                Log.d("getAssetsFolder", "setImage: $e")
+                                Log.d("getAssetsFolder", "setImage: ${e.message}")
                             }
                         }
                     }
@@ -404,12 +399,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         var nameOnly: String? = null
 
         nameOnly = n[0]
-//
-//        if (folder == "EN") {
-//            showEng = true
-//        } else {
-//            showEng = true
-//        }
 
         if (!isFolder(category!!)) {
             if (nameOnly.contains("-")) {
@@ -433,8 +422,11 @@ class EnteredLearenActivity : AppCompatActivity() {
     private fun isFolder(path: String): Boolean {
 
         val images = assets.list(path)
+        val images1 = assets.list("sound")
+
         val new = images!!.toList()
-        Log.d("ifFolder", "list is: " + new.toString())
+        val new2 = images1!!.toList()
+        Log.d("ifFolder", "list is: " + new2.toString())
 //
         if (!new[0].contains(".")) {
             clicked = true
@@ -478,12 +470,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         containerCardContainer.visibility = View.VISIBLE
 
         Log.d("TAG", "setImage: " + imgList.toString())
-//        var localLang: Boolean
-//        if (folder == "EN") {
-//            showEng = true
-//        } else {
-//            showEng = false
-//        }
 
         Log.d("TAG", "setImage:  localLang " + showEng + imgList.toString())
         list = imgList
@@ -503,7 +489,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         try {
             val input: InputStream = if (isFolder(category!!) && !TextUtils.isEmpty(folder)) {
 
-                assets.open(category!! + File.separator + "$folder/" + name.plus(".png"))
+                assets.open(category!! + File.separator + "$folder" + File.separator + name.plus(".png"))
             } else {
                 assets.open(category!! + File.separator + name.plus(".png"))
             }
@@ -517,12 +503,13 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             if (!TextUtils.isEmpty(imgName)) {
                 val path = category.plus("Name") + folder + File.separator + imgName
+                Log.d("soundmd", "play: " + path)
                 playImgSound(path)
             }
 
         } catch (e: IOException) {
             Toast.makeText(this@EnteredLearenActivity, " $e", Toast.LENGTH_SHORT).show()
-            Log.d("TAG", "setImage: $e")
+            Log.d("TAG", "setImage: ${e.message}")
         }
 
 
@@ -538,16 +525,17 @@ class EnteredLearenActivity : AppCompatActivity() {
             if (category == "animals") {
                 val newName = removeLastChar(name)
                 path = "sound/$newName.mp3"
-                Log.d("colors", "play: true  " + path)
+                Log.d("colors", "path: true  " + path)
             } else {
 
 //                path = "sound/" + category.plus("Name") + folder + File.separator + "$name.mp3"
                 path = "sound/$name.mp3"
-                Log.d("playImgSound", "play: false " + path)
+                Log.d("playImgSound", "path: false " + path.trim())
             }
 
             val mediaPlayer = MediaPlayer()
             val descriptor = assets.openFd(path)
+//            val descriptor = assets.openFd("sound/alphabetNameAr/أ.mp3")
             mediaPlayer.setDataSource(
                 descriptor.fileDescriptor,
                 descriptor.startOffset,
@@ -597,7 +585,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         val lang = Locale.getDefault().displayLanguage
 
         if (lang == "العربية") {
-            folder = "Ar"
+            folder = "AR"
             showEng = false
         } else {
             folder = "EN"
@@ -608,10 +596,10 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     private fun changeLang() {
 
-        if (folder == "Ar")
+        if (folder == "AR")
             folder = "EN"
         else if (folder == "EN") {
-            folder = "Ar"
+            folder = "AR"
         }
 
     }
