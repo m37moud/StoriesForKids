@@ -45,7 +45,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         //start service and play music
 
         startService()
-        //start service and play music
+
         display()
 
         setupRecyclerView(view)
