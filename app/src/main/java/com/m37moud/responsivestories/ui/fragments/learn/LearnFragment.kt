@@ -111,7 +111,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
     }
 
     private fun playImgSound(name: String) {
-        var path: String? = null
+        var path: String?
 
         try {
             val newName = removeLastChar(name)
@@ -136,6 +136,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
             mediaPlayer.isLooping = false
             mediaPlayer.start()
         } catch (e: Exception) {
+            Log.d("soundmd", "play: " + e)
             e.printStackTrace()
         }
 
