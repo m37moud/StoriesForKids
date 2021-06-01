@@ -36,6 +36,9 @@ class EnteredLearenActivity : AppCompatActivity() {
     private lateinit var list: ArrayList<String>
     private lateinit var listModel: ArrayList<AnimalsModel>
 
+    val requestOptions = RequestOptions()
+        .placeholder(R.drawable.ic_error_placeholder)
+
     private var showEng by Delegates.notNull<Boolean>()
     private var clicked = false
     private var folder = ""
@@ -284,6 +287,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         Log.d("asset", "getAssetsFolder: " + imgList.toString())
         // show which folder to view content
 
+        //check if it path of actegory containe folders or not
         if (isFolder(category!!)) {
             //set images to arabic button in  dialog
             initChooseDialog()
@@ -291,11 +295,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             folderContainer.visibility = View.VISIBLE
             containerCardContainer.visibility = View.GONE
 
-//            val folderImage = assets.list("categoryImg")
-//            val imgFolder: ArrayList<String> = ArrayList(folderImage!!.toList())
-
-
-            //new work from work 25/5
+            //init on click listener to arabic container
             arabic_container.setOnClickListener {
                 val arabicFiles = assets.list(category!!)
                 val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
@@ -327,7 +327,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                 }
 
             }
-//new work from work 25/5
+            //init on click listener to enlish container
             english_container.setOnClickListener {
 
                 if (imgList.isNotEmpty()) {
@@ -442,28 +442,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         return false
     }
 
-    @Throws(IOException::class)
-    fun isDirectory(path: String): Boolean {
-        //If list returns any entries, than the path is a directory
-        val files = assets.list(path)!!.toList()
-        Log.d("ifFolder", "list is: " + files.toString())
-        return if (files.isNotEmpty()) {
-            Log.d("ifFolder", "list is: null")
-            true
-        } else {
-            try {
-                //If we can open a stream then the path leads to a file
-                assets.open(path)
-                Log.d("ifFolder", "path open it is file back false ")
-                false
-            } catch (ex: java.lang.Exception) {
-                //.open() throws exception if it's a directory that you're passing as a parameter
-                Log.d("ifFolder", "path cant open it is folder back true ")
-                true
-            }
-        }
-    }
-
 
     private fun setImage(imgList: ArrayList<String>) {
         folderContainer.visibility = View.GONE
@@ -496,7 +474,14 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
             val drawable = Drawable.createFromStream(input, null)
-            img_sound.setImageDrawable(drawable)
+
+            Glide.with(this@EnteredLearenActivity)
+                .applyDefaultRequestOptions(requestOptions)
+                .asDrawable()
+                .load(drawable)
+                .into(img_sound)
+
+//            img_sound.setImageDrawable(drawable)
 
             val imgName = initName(list[counter], showEng)
             Log.d("soundmd", "play: " + imgName)
@@ -581,6 +566,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 //        left_img_btn.visibility = View.GONE
     }
 
+    //detect mobile language to select what the name will start
     private fun detectLanguage() {
         val lang = Locale.getDefault().displayLanguage
 
@@ -604,10 +590,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
-    //space work date 27/5
     private fun initChooseDialog() {
-        val requestOptions = RequestOptions()
-            .placeholder(R.drawable.ic_error_placeholder)
+
         try {
             val srcAr = assets.open("categoryImg" + File.separator + category.plus("AR.jpg"))
             val drawableAr = Drawable.createFromStream(srcAr, null)

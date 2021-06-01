@@ -1,131 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="2dp"
-    android:orientation="vertical"
+    android:layout_margin="8dp"
+    android:background="@color/colorPrimary"
     tools:context=".ui.fragments.learn.LearnFragment">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/parent_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
-        android:background="@color/lightGray">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@id/constraintLayout"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.38"
-            app:layout_constraintVertical_weight="1" />
+            app:strokeColor="@color/strokeColor"
+            app:strokeWidth="1dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_title">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/strokeColor"
-                app:strokeWidth="1dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardView_container"
+                />
+
+
+            <FrameLayout
+                android:id="@+id/cardView_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp">
+
+
+                <ImageView
+                    android:id="@+id/category_img"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
 
-                    android:layout_margin="20dp">
-
-                    <ImageView
-                        android:id="@+id/category_img"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-
-                        android:layout_marginBottom="8dp"
-                        android:src="@drawable/ic_error_placeholder"
-                        app:layout_constraintBottom_toTopOf="@+id/img_click"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.494"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/cat_txt_title"
-                        app:layout_constraintVertical_bias="0.4" />
-
-                    <TextView
-                        android:id="@+id/cat_txt_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="28dp"
-                        android:background="@drawable/rounded"
-                        android:layoutDirection="rtl"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/img_click"
-                        android:layout_width="81dp"
-                        android:layout_height="67dp"
-                        android:layout_marginBottom="28dp"
-
-                        android:backgroundTint="@color/white"
-                        android:layoutDirection="rtl"
-
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:srcCompat="@drawable/ic_next"
-                        app:tint="@color/black" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:src="@drawable/ic_error_placeholder" />
 
 
-            </com.google.android.material.card.MaterialCardView>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_click"
+                    android:layout_width="81dp"
+                    android:layout_height="67dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_margin="20dp"
+                    android:layout_marginBottom="28dp"
+                    android:background="@drawable/button_rounded"
+                    android:layoutDirection="rtl"
+                    android:src="@drawable/ic_next"
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    />
 
+            </FrameLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/cat_txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/rounded"
+        android:layoutDirection="rtl"
+        android:padding="10dp"
+        android:text="animal"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+
+
+</FrameLayout>

@@ -10,35 +10,48 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:background="@color/colorPrimary"
         tools:context=".ui.fragments.story.StoryFragment">
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rc_story"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="10dp"
+            app:strokeColor="@color/strokeColor"
+            app:strokeWidth="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/row_video" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rc_story"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+
+                tools:listitem="@layout/row_video" />
+
+
+        </com.google.android.material.card.MaterialCardView>
+
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/cow_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
             android:tint="@color/yellow"
-            app:lottie_rawRes="@raw/coweatinggrass"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/coweatinggrass" />
 
 
         <ImageView
@@ -55,19 +68,7 @@
             app:tint="@color/darkGray" />
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_video_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_add"
-            app:backgroundTint="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white" />
+
 
         <TextView
             android:id="@+id/noNetConnection_txt"
@@ -81,6 +82,22 @@
             app:layout_constraintEnd_toEndOf="@+id/noNetConnection_img"
             app:layout_constraintStart_toStartOf="@+id/noNetConnection_img"
             app:layout_constraintTop_toBottomOf="@+id/noNetConnection_img" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_video_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foregroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/colorPrimary"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
