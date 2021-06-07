@@ -36,7 +36,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     private lateinit var list: ArrayList<String>
     private lateinit var listModel: ArrayList<AnimalsModel>
 
-    val requestOptions = RequestOptions()
+    private val requestOptions = RequestOptions()
         .placeholder(R.drawable.ic_error_placeholder)
 
     private var showEng by Delegates.notNull<Boolean>()

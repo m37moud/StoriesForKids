@@ -617,7 +617,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         super.onDestroy()
         downloadTracker.removeListener(this)
         //whe app end download status = false
-
         _binding = null
     }
 

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.LearnAdapter
+import com.m37moud.responsivestories.databinding.FragmentLearnBinding
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
@@ -24,10 +25,12 @@ import kotlinx.android.synthetic.main.fragment_learn.view.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 
 class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
+
+    private var _binding:FragmentLearnBinding? = null
+    private val binding get() = _binding!!
     private val mAdapter: LearnAdapter by lazy { LearnAdapter(requireContext(), this) }
     private var category: LearnModel? = null
-    private var textCategory: TextView? = null
-    private var textImgCategory: ImageView? = null
+
 
     private var shouldPlay = false
     private var categoryPosition = 0
@@ -38,9 +41,8 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
     ): View? {
 
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_learn, container, false)
-        textCategory = view.findViewById(R.id.cat_txt_title)
-        textImgCategory = view.findViewById(R.id.category_img)
+//        val view = inflater.inflate(R.layout.fragment_learn, container, false)
+        _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
         //start service and play music
 
@@ -48,13 +50,12 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 
         display()
 
-        setupRecyclerView(view)
+        setupRecyclerView()
 
 
-        view.img_click.setOnClickListener {
+        binding.imgClick.setOnClickListener {
             val intent = Intent(requireContext(), EnteredLearenActivity::class.java)
 
-//            val url = cat_txt_title.text
             //get image name from Constans list
             val url = Constants.img[categoryPosition]
             intent.putExtra("selectedCategory", url)
@@ -64,14 +65,14 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         }
 
 
-        return view
+        return binding.root
     }
 
 
-    private fun setupRecyclerView(view: View) {
-        view.rv_title.adapter = mAdapter
-        view.rv_title.setHasFixedSize(true)
-        view.rv_title.layoutManager =
+    private fun setupRecyclerView() {
+        binding.rvTitle.adapter = mAdapter
+        binding.rvTitle.setHasFixedSize(true)
+        binding.rvTitle.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
@@ -92,10 +93,10 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 
         val uri =
             Uri.parse(RESOURCE + cat.img)
-        textImgCategory?.load(uri) {
+        binding.categoryImg.load(uri) {
             crossfade(300)
         }
-        textCategory?.text = cat.title
+        binding.catTxtTitle.text = cat.title
 
 
     }
@@ -178,6 +179,8 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         super.onResume()
     }
 
+
+
     private fun startService() {
         val intent = Intent(context, MediaService::class.java)
         if (context != null) {
@@ -191,5 +194,10 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         if (context != null) {
             context?.stopService(intent)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -52,7 +52,11 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
         val learnCategory = learnTitle[position]
         val uri =
             Uri.parse(RESOURCE + learnCategory.img)
-        holder.itemView.img_title.load(uri) {
+
+
+
+
+        holder.itemView.img_title.load(uri.toString()) {
             crossfade(600)
             error(R.drawable.ic_error_placeholder)
         }
