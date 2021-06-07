@@ -57,7 +57,7 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
 
 
         holder.itemView.img_title.load(uri.toString()) {
-            crossfade(600)
+//            crossfade(600)
             error(R.drawable.ic_error_placeholder)
         }
         holder.itemView.txt_title.text = learnCategory.title

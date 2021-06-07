@@ -36,6 +36,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     private lateinit var list: ArrayList<String>
     private lateinit var listModel: ArrayList<AnimalsModel>
 
+
     private val requestOptions = RequestOptions()
         .placeholder(R.drawable.ic_error_placeholder)
 
@@ -504,23 +505,23 @@ class EnteredLearenActivity : AppCompatActivity() {
     private fun playImgSound(name: String) {
 
 
-        var path: String?
+        val path: String?
         try {
             Log.d("playImgSound", "play:   " + category)
             if (category == "animals") {
                 val newName = removeLastChar(name)
-                path = "sound/$newName.mp3"
+                path = "sound"+File.separator+"$newName.mp3"
                 Log.d("colors", "path: true  " + path)
             } else {
 
 //                path = "sound/" + category.plus("Name") + folder + File.separator + "$name.mp3"
-                path = "sound/$name.mp3"
+                path = "sound"+File.separator+"$name.mp3".trim()
                 Log.d("playImgSound", "path: false " + path.trim())
             }
 
             val mediaPlayer = MediaPlayer()
-            val descriptor = assets.openFd(path)
-//            val descriptor = assets.openFd("sound/alphabetNameAr/أ.mp3")
+//            val descriptor = assets.openFd(path)
+            val descriptor = assets.openFd("sound/alphabetNameAr/أ.mp3")
             mediaPlayer.setDataSource(
                 descriptor.fileDescriptor,
                 descriptor.startOffset,
@@ -533,15 +534,15 @@ class EnteredLearenActivity : AppCompatActivity() {
             mediaPlayer.start()
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("playImgSound", "play: false " + e)
+            Log.d("playImgSound", "play : false " + e)
         }
 
     }
 
     private fun removeLastChar(str: String?): String? {
-        var str = str
-        if (str != null && str.length > 0 && (str[str.length - 1] == '1' || str[str.length - 1] == '2')) {
-            str = str.substring(0, str.length - 1)
+        var strName = str
+        if (strName != null && strName.isNotEmpty() && (strName[strName.length - 1] == '1' || strName[strName.length - 1] == '2')) {
+            strName = strName.substring(0, strName.length - 1)
         }
         return str
     }

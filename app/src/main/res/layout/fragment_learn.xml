@@ -35,23 +35,19 @@
                 app:strokeColor="@color/strokeColor"
                 app:strokeWidth="1dp">
 
-                <RelativeLayout
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_title"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="45dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
 
+                    />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="45dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-
-                        />
-
-                    <FrameLayout
+                <FrameLayout
                         android:id="@+id/framelayout_container"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -61,19 +57,19 @@
                         android:layout_alignParentBottom="true">
 
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/category_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:src="@drawable/ic_error_placeholder" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/category_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="479dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/ic_error_placeholder" />
 
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/img_click"
                             android:layout_width="81dp"
                             android:layout_height="67dp"
@@ -88,7 +84,7 @@
 
                     </FrameLayout>
 
-                </RelativeLayout>
+
 
 
             </com.google.android.material.card.MaterialCardView>

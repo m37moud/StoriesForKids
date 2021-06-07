@@ -63,6 +63,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         )
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
@@ -613,8 +614,10 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
         downloadTracker.removeListener(this)
         //whe app end download status = false
         _binding = null
