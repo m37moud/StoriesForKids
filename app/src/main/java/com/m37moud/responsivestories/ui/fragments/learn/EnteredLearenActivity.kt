@@ -453,14 +453,16 @@ class EnteredLearenActivity : AppCompatActivity() {
         Log.d("TAG", "setImage:  localLang " + showEng + imgList.toString())
         list = imgList
 
-        var name: String?
+        val name: String?
 
-        name = if (this.category == "colors" || this.category == "الالوان") {
+        if (this.category == "colors" || this.category == "الالوان") {
 //                ""+ removeLastChar(initTxt(list[counter]))
 //            Log.d("soundmd", "play: " + list.toString())
-            "" + initImageTxt(list[counter])
+            name = "" + initImageTxt(list[counter])
+        } else if (this.category == "numbers") {
+            name = initNumberTo(list[counter] , false)
         } else {
-            "" + initImageTxt(list[counter])
+            name = "" + initImageTxt(list[counter])
         }
 
 
@@ -504,24 +506,26 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     private fun playImgSound(name: String) {
 
-
         val path: String?
         try {
             Log.d("playImgSound", "play:   " + category)
             if (category == "animals") {
                 val newName = removeLastChar(name)
-                path = "sound"+File.separator+"$newName.mp3"
+                path = "sound" + File.separator + "$newName.mp3"
                 Log.d("colors", "path: true  " + path)
+            } else if (category == "numbers") {
+                val newName = initNumberTo(name, true)
+                path = "sound" + File.separator + "$newName.mp3"
             } else {
 
 //                path = "sound/" + category.plus("Name") + folder + File.separator + "$name.mp3"
-                path = "sound"+File.separator+"$name.mp3".trim()
+                path = "sound" + File.separator + "$name.mp3".trim()
                 Log.d("playImgSound", "path: false " + path.trim())
             }
 
             val mediaPlayer = MediaPlayer()
-//            val descriptor = assets.openFd(path)
-            val descriptor = assets.openFd("sound/alphabetNameAr/أ.mp3")
+            val descriptor = assets.openFd(path)
+//            val descriptor = assets.openFd("sound/alphabetNameAr/أ.mp3")
             mediaPlayer.setDataSource(
                 descriptor.fileDescriptor,
                 descriptor.startOffset,
@@ -544,7 +548,19 @@ class EnteredLearenActivity : AppCompatActivity() {
         if (strName != null && strName.isNotEmpty() && (strName[strName.length - 1] == '1' || strName[strName.length - 1] == '2')) {
             strName = strName.substring(0, strName.length - 1)
         }
-        return str
+        return strName
+    }
+
+    private fun initNumberTo(str: String?, shouldPlay: Boolean): String? {
+        var strName = ""
+        if (shouldPlay) {
+            strName = str?.get(0).toString()
+            Log.d("initNumberTo", "initNumberTo : true " + strName)
+        } else {
+            strName = strName.substring(1, strName.length - 1)
+            Log.d("initNumberTo", "initNumberTo : false " + strName)
+        }
+        return strName
     }
 
 
