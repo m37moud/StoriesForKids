@@ -415,6 +415,10 @@ class EnteredLearenActivity : AppCompatActivity() {
                     engName = eng[0]
                     engName
                 }
+            }else{
+                if (this.category == "numbers") {
+                    initNumberTo(nameOnly,false)
+                }
             }
         }
         return nameOnly
@@ -443,7 +447,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         return false
     }
 
-
+//new work frome my jop 10/6
     private fun setImage(imgList: ArrayList<String>) {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
@@ -455,16 +459,16 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         val name: String?
 
-        if (this.category == "colors" || this.category == "الالوان") {
-//                ""+ removeLastChar(initTxt(list[counter]))
-//            Log.d("soundmd", "play: " + list.toString())
-            name = "" + initImageTxt(list[counter])
-        } else if (this.category == "numbers") {
-            name = initNumberTo(list[counter] , false)
-        } else {
-            name = "" + initImageTxt(list[counter])
-        }
-
+//        if (this.category == "colors" || this.category == "الالوان") {
+////                ""+ removeLastChar(initTxt(list[counter]))
+////            Log.d("soundmd", "play: " + list.toString())
+//            name = "" + initImageTxt(list[counter])
+//        } else if (this.category == "numbers") {
+//            name = initNumberTo(list[counter] , false)
+//        } else {
+//            name = "" + initImageTxt(list[counter])
+//        }
+        name = "" + initImageTxt(list[counter])
 
         txt_name.text = initName(list[counter], showEng)
         try {
@@ -554,9 +558,11 @@ class EnteredLearenActivity : AppCompatActivity() {
     private fun initNumberTo(str: String?, shouldPlay: Boolean): String? {
         var strName = ""
         if (shouldPlay) {
+            //get the number digit from the name
             strName = str?.get(0).toString()
             Log.d("initNumberTo", "initNumberTo : true " + strName)
         } else {
+            //get the name without the number digit from the name
             strName = strName.substring(1, strName.length - 1)
             Log.d("initNumberTo", "initNumberTo : false " + strName)
         }
