@@ -54,7 +54,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         img_sound.setOnClickListener {
 
             img_sound.isEnabled = false
-            val name = txt_name.text.toString()
+//            val name = txt_name.text.toString()
+            val name = initName(list[counter], true)
             img_sound.animate().apply {
 
 
@@ -272,12 +273,9 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
-    //new work from work 25/5
-
 
     private fun getAssetsFolder() {
         initBtn()
-
 
         val intent = intent
         category = intent.getStringExtra("selectedCategory")
@@ -287,12 +285,14 @@ class EnteredLearenActivity : AppCompatActivity() {
         val imgList: ArrayList<String> = ArrayList(images!!.toList())
         Log.d("asset", "getAssetsFolder: " + imgList.toString())
         // show which folder to view content
-
         //check if it path of actegory containe folders or not
         if (isFolder(category!!)) {
             //set images to arabic button in  dialog
             initChooseDialog()
-            Log.d("asset", "getAssetsFolder: if statement True " + category!!.toString())
+            Log.d(
+                "asset",
+                "getAssetsFolder: if statement is folder is = True " + category!!.toString()
+            )
             folderContainer.visibility = View.VISIBLE
             containerCardContainer.visibility = View.GONE
 
@@ -300,13 +300,22 @@ class EnteredLearenActivity : AppCompatActivity() {
             arabic_container.setOnClickListener {
                 val arabicFiles = assets.list(category!!)
                 val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
+                Log.d("getAssetsFolder", "arabic_container: " + imgList.toString())
                 if (imgList.isNotEmpty()) {
                     imgList.forEach { folders ->
-                        if (folders == "AR") {
+                        if (folders.toUpperCase(Locale.ROOT) == "AR") {
                             try {
-                                val files = assets.list(category!! + File.separator + folders)
+                                val path = category!! + File.separator + folders
+                                Log.d(
+                                    "getAssetsFolder", "path: " +
+                                            path
+                                )
+                                val files = assets.list(path)
                                 val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
+                                Log.d(
+                                    "getAssetsFolder", "nFiles: " +
+                                            nFiles
+                                )
                                 folder = folders
                                 showEng = false
 //                                initBtn()
@@ -328,7 +337,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                 }
 
             }
-            //init on click listener to enlish container
+            //init on click listener to english container
             english_container.setOnClickListener {
 
                 if (imgList.isNotEmpty()) {
@@ -392,7 +401,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     private fun initName(name: String, showEng: Boolean): String {
-
+        Log.d("initName", "invoke: ")
 //        txt_name.startAnimation(AnimationUtils.loadAnimation(this , R.anim.zoom_in))
 
         val n = name.split(".")
@@ -415,11 +424,13 @@ class EnteredLearenActivity : AppCompatActivity() {
                     engName = eng[0]
                     engName
                 }
-            }else{
-                if (this.category == "numbers") {
-                    initNumberTo(nameOnly,false)
-                }
             }
+
+        } else if (this.category == "numbers") {
+            Log.d("initName", "category: ")
+            val nameToNum = initNumberTo(nameOnly, shouldPlay)
+            Log.d("initName", "category:  = numbers " + nameToNum.toString())
+            return nameToNum!!
         }
         return nameOnly
     }
@@ -447,7 +458,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         return false
     }
 
-//new work frome my jop 10/6
+    //new work from my jop 10/6
     private fun setImage(imgList: ArrayList<String>) {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
@@ -459,22 +470,13 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         val name: String?
 
-//        if (this.category == "colors" || this.category == "الالوان") {
-////                ""+ removeLastChar(initTxt(list[counter]))
-////            Log.d("soundmd", "play: " + list.toString())
-//            name = "" + initImageTxt(list[counter])
-//        } else if (this.category == "numbers") {
-//            name = initNumberTo(list[counter] , false)
-//        } else {
-//            name = "" + initImageTxt(list[counter])
-//        }
         name = "" + initImageTxt(list[counter])
 
         txt_name.text = initName(list[counter], showEng)
         try {
             val input: InputStream = if (isFolder(category!!) && !TextUtils.isEmpty(folder)) {
 
-                assets.open(category!! + File.separator + "$folder" + File.separator + name.plus(".png"))
+                assets.open(category!! + File.separator + folder + File.separator + name.plus(".png"))
             } else {
                 assets.open(category!! + File.separator + name.plus(".png"))
             }
@@ -490,7 +492,12 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 //            img_sound.setImageDrawable(drawable)
 
-            val imgName = initName(list[counter], showEng)
+
+            val imgName = if (this.category == "numbers") {
+                initNumberTo(list[counter], true)
+            } else {
+                initName(list[counter], showEng)
+            }
             Log.d("soundmd", "play: " + imgName)
 
             if (!TextUtils.isEmpty(imgName)) {
@@ -504,28 +511,17 @@ class EnteredLearenActivity : AppCompatActivity() {
             Log.d("TAG", "setImage: ${e.message}")
         }
 
-
     }
 
 
     private fun playImgSound(name: String) {
-
+        Log.d("playImgSound", "name =  " + name)
         val path: String?
         try {
-            Log.d("playImgSound", "play:   " + category)
-            if (category == "animals") {
-                val newName = removeLastChar(name)
-                path = "sound" + File.separator + "$newName.mp3"
-                Log.d("colors", "path: true  " + path)
-            } else if (category == "numbers") {
-                val newName = initNumberTo(name, true)
-                path = "sound" + File.separator + "$newName.mp3"
-            } else {
-
-//                path = "sound/" + category.plus("Name") + folder + File.separator + "$name.mp3"
-                path = "sound" + File.separator + "$name.mp3".trim()
-                Log.d("playImgSound", "path: false " + path.trim())
-            }
+            Log.d("playImgSound", "play:" + category)
+//
+            path = "sound" + File.separator + "$name.mp3".trim()
+            Log.d("playImgSound", "path: false " + path.trim())
 
             val mediaPlayer = MediaPlayer()
             val descriptor = assets.openFd(path)
@@ -542,7 +538,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             mediaPlayer.start()
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("playImgSound", "play : false " + e)
+            Log.d("playImgSound", "play : catch " + e)
         }
 
     }
@@ -556,16 +552,23 @@ class EnteredLearenActivity : AppCompatActivity() {
     }
 
     private fun initNumberTo(str: String?, shouldPlay: Boolean): String? {
+        Log.d("initNumberTo", "initNumberTo = " + str)
         var strName = ""
-        if (shouldPlay) {
-            //get the number digit from the name
-            strName = str?.get(0).toString()
-            Log.d("initNumberTo", "initNumberTo : true " + strName)
-        } else {
-            //get the name without the number digit from the name
-            strName = strName.substring(1, strName.length - 1)
-            Log.d("initNumberTo", "initNumberTo : false " + strName)
+        if (str!!.isNotEmpty()) {
+            if (shouldPlay) {
+                //get the number digit from the name
+                strName = str[0].toString()
+                Log.d("initNumberTo", "initNumberTo : true " + strName)
+            } else {
+                //get the name without the number digit from the name
+                val len = str.length
+
+                strName = str.substring(1, str.length)
+                Log.d("initNumberTo", "initNumberTo : false " + len.toString())
+                Log.d("initNumberTo", "initNumberTo :  " + strName)
+            }
         }
+
         return strName
     }
 
@@ -600,7 +603,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             folder = "EN"
             showEng = true
         }
-        Log.d("lang", "language: " + folder + lang.toString())
+        Log.d("detectLanguage", "language: " + folder + lang.toString())
     }
 
     private fun changeLang() {
@@ -624,7 +627,6 @@ class EnteredLearenActivity : AppCompatActivity() {
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableAr).into(arabic_img)
-//            arabic_img.setImageDrawable(drawableAr)
 
         } catch (e: IOException) {
             Toast.makeText(
@@ -633,7 +635,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            Log.d("arabic_img", "setImage: $e")
+            Log.d("initChooseDialog", "arabic_img: $e")
         }
         //set images to english button in  dialog
         try {
@@ -656,7 +658,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            Log.d("english_img", "setImage: $e")
+            Log.d("initChooseDialog", "english_img: $e")
         }
     }
 

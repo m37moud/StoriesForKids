@@ -40,8 +40,6 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        // Inflate the layout for this fragment
-//        val view = inflater.inflate(R.layout.fragment_learn, container, false)
         _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
         //start service and play music

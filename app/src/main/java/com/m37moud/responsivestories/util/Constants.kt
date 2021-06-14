@@ -3,10 +3,9 @@ package com.m37moud.responsivestories.util
 class Constants {
     companion object {
 
-        val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabet")
+        val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabets")
 
         const val RESOURCE = "android.resource://com.m37moud.responsivestories/drawable/"
-//        const val mediaPlayer: MediaPlayer = TODO()
 
         const val USER_AGENT = "ResponsiveStory"
 
@@ -14,6 +13,7 @@ class Constants {
         const val EXO_VIDEO_ID = "exo_video_status_id"
 
         // ======================== Exo Download Action ===================
+
         const val EXO_DOWNLOAD_ACTION_START = "EXO_DOWNLOAD_START"
         const val EXO_DOWNLOAD_ACTION_PAUSE = "EXO_DOWNLOAD_PAUSE"
         const val EXO_DOWNLOAD_ACTION_CANCEL = "EXO_DOWNLOAD_CANCEL"

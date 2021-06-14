@@ -73,7 +73,7 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
         img.add(context.getString(R.string.colors))
         img.add(context.getString(R.string.shapes))
         img.add(context.getString(R.string.numbers))
-        img.add(context.getString(R.string.alphabet))
+        img.add(context.getString(R.string.alphabets))
 //
         for (i in 0 until img.size) {
 
