@@ -43,7 +43,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     private var showEng by Delegates.notNull<Boolean>()
     private var clicked = false
     private var folder = ""
-
+//most of problem is fixed
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
@@ -305,6 +305,10 @@ class EnteredLearenActivity : AppCompatActivity() {
                     imgList.forEach { folders ->
                         if (folders.toUpperCase(Locale.ROOT) == "AR") {
                             try {
+                                Log.d(
+                                    "getAssetsFolder", "folders : " +
+                                            folders
+                                )
                                 val path = category!! + File.separator + folders
                                 Log.d(
                                     "getAssetsFolder", "path: " +
@@ -463,9 +467,9 @@ class EnteredLearenActivity : AppCompatActivity() {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
 
-        Log.d("TAG", "setImage: " + imgList.toString())
+        Log.d("setImage", "setImage: " + imgList.toString())
 
-        Log.d("TAG", "setImage:  localLang " + showEng + imgList.toString())
+        Log.d("setImage", "setImage:  localLang " + showEng + imgList.toString())
         list = imgList
 
         val name: String?
@@ -490,8 +494,6 @@ class EnteredLearenActivity : AppCompatActivity() {
                 .load(drawable)
                 .into(img_sound)
 
-//            img_sound.setImageDrawable(drawable)
-
 
             val imgName = if (this.category == "numbers") {
                 initNumberTo(list[counter], true)
@@ -501,7 +503,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             Log.d("soundmd", "play: " + imgName)
 
             if (!TextUtils.isEmpty(imgName)) {
-                val path = category.plus("Name") + folder + File.separator + imgName
+                val path = category.plus("Name") + folder.toUpperCase(Locale.getDefault()) + File.separator + imgName
                 Log.d("soundmd", "play: " + path)
                 playImgSound(path)
             }
@@ -521,11 +523,12 @@ class EnteredLearenActivity : AppCompatActivity() {
             Log.d("playImgSound", "play:" + category)
 //
             path = "sound" + File.separator + "$name.mp3".trim()
+
             Log.d("playImgSound", "path: false " + path.trim())
 
             val mediaPlayer = MediaPlayer()
             val descriptor = assets.openFd(path)
-//            val descriptor = assets.openFd("sound/alphabetNameAr/أ.mp3")
+//            val descriptor = assets.openFd("sound/alphabetsNameAR/أ.mp3")
             mediaPlayer.setDataSource(
                 descriptor.fileDescriptor,
                 descriptor.startOffset,
@@ -589,7 +592,6 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         right_img_btn.setColorFilter(ContextCompat.getColor(this, R.color.lightMediumGray))
         left_img_btn.setColorFilter(ContextCompat.getColor(this, R.color.lightMediumGray))
-//        left_img_btn.visibility = View.GONE
     }
 
     //detect mobile language to select what the name will start
@@ -648,9 +650,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableEn).into(english_img)
-//
-//
-//            english_img.setImageDrawable(drawableEn)
+
         } catch (e: IOException) {
             Toast.makeText(
                 this@EnteredLearenActivity,
@@ -670,7 +670,6 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         right_img_btn.setColorFilter(ContextCompat.getColor(this, R.color.blue))
         left_img_btn.setColorFilter(ContextCompat.getColor(this, R.color.blue))
-//        left_img_btn.visibility = View.GONE
     }
 
 
