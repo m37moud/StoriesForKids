@@ -14,7 +14,8 @@
     <!-- Strings used for fragments for navigation -->
 
     <string name="previous">Previous</string>
-
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="fcm_message">FCM Message</string>
     <string name="hello_first_fragment" translatable="false">Hello first fragment</string>
     <string name="hello_second_fragment" translatable="false">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_drawer" translatable="false">DrawerActivity</string>

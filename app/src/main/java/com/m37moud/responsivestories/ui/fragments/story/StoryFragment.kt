@@ -148,6 +148,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         binding.noNetConnectionTxt.text = getString(R.string.NoInternet)
     }
 
+    private fun showLoading() {
+        binding.cowLoading.visibility = View.VISIBLE
+        binding.noNetConnectionTxt.visibility = View.VISIBLE
+        binding.noNetConnectionTxt.text = getString(R.string.loading)
+    }
+
     private fun hideLoading() {
 
         binding.rcStory.visibility = View.VISIBLE
@@ -163,11 +169,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     }
 
-    private fun showLoading() {
-        binding.cowLoading.visibility = View.VISIBLE
-        binding.noNetConnectionTxt.visibility = View.VISIBLE
-        binding.noNetConnectionTxt.text = getString(R.string.loading)
-    }
 
     private fun startService() {
         try {
@@ -266,7 +267,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     )
                     if (vidId!! == id)
                         savedRecipeId = roomEntityList[it].id
-                        deleteVideo(roomList[it])
+                    deleteVideo(roomList[it])
                 }
             }
             STATE_RESTARTING -> {
@@ -378,7 +379,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                 )
 
                 //second list should be the bigger
-                val difference  = backStrangeItem(roomList , newData)
+                val difference = backStrangeItem(roomList, newData)
 
                 val listV = difference as ArrayList<VideoModel>
 
@@ -409,7 +410,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     "  offline list : " + roomList.toString() + roomList.size
                 )
                 //second list should be the bigger
-                val difference  = backStrangeItem(newData , roomList)
+                val difference = backStrangeItem(newData, roomList)
 
                 Log.d(
                     "mah onlineListToCheck",
@@ -418,7 +419,10 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
                 val listV = difference as ArrayList<VideoModel>
 
-                Log.d("mah onlineListToCheck", "  list after delete :- " + listV[0].title.toString() + " :  "+listV.toString() +"  : " + listV.size)
+                Log.d(
+                    "mah onlineListToCheck",
+                    "  list after delete :- " + listV[0].title.toString() + " :  " + listV.toString() + "  : " + listV.size
+                )
                 //last check to download the new list
                 shouldRemoveDownloaded(listV)
 
@@ -612,7 +616,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
         }
     }
-
 
 
     override fun onDestroyView() {

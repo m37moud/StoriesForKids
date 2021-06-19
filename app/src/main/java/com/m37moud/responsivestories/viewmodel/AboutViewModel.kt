@@ -22,6 +22,9 @@ class AboutViewModel() : ViewModel() {
     var version = "1.0"
     //get the app version
     fun appVersion(a: Activity) {
+
+
+
         val pm = a.packageManager
         var pi: PackageInfo? = null
         try {
