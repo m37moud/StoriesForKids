@@ -38,6 +38,7 @@
                     android:id="@+id/rc_story"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -45,6 +46,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:listitem="@layout/row_video" />
+
 
 
                 <com.airbnb.lottie.LottieAnimationView
@@ -89,6 +91,7 @@
                     app:layout_constraintStart_toStartOf="@+id/noNetConnection_img"
                     app:layout_constraintTop_toBottomOf="@+id/noNetConnection_img" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </com.google.android.material.card.MaterialCardView>
 

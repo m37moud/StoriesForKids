@@ -16,6 +16,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
@@ -41,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
 
         navController = findNavController(R.id.homeHostFragment)
 
+        showAds()
 
         appBarConfiguration = AppBarConfiguration(
             navController.graph
@@ -175,5 +177,21 @@ class HomeActivity : AppCompatActivity() {
             Intent.ACTION_SEND,
             Uri.parse("https://www.youtube.com/channel/UC7pejtgsjgdPODeWGgXLFuQ?sub_confirmation=1")
         )
+    }
+    private fun showAds(){
+//        val adView = AdView(requireContext())
+
+//        adView.adSize = AdSize.BANNER
+
+//        adView.adUnitId = "ca-app-pub-9331212887639574/3543334933"
+        //for testing
+//        adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+
+        val adRequest = AdRequest.Builder()
+
+            .build()
+        adView.loadAd(adRequest)
+
+
     }
 }

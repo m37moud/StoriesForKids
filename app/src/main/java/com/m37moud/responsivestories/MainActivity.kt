@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
@@ -28,6 +30,13 @@ class MainActivity : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = Firebase.analytics
 
+        MobileAds.initialize(this)
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf("ABCDEF012345"))
+                .build()
+        )
+
 //
 
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
@@ -47,11 +56,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
 //        when app end download status = false
-        Toast.makeText(
-            this,
-            "saveDownloadStatus = false",
-            Toast.LENGTH_SHORT
-        ).show()
         Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false" )
         videosViewModel.saveDownloadStatus(false)
         super.onDestroy()

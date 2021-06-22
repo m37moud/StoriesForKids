@@ -13,6 +13,7 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,6 +21,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ResponsiveStories"
         android:usesCleartextTraffic="true">
+
+
+        <!-- Sample AdMob App ID: ca-app-pub-9331212887639574~2078263925 -->
+
+        <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+
 
         <activity
             android:name=".ui.fragments.story.OfflinePlayerActivity"

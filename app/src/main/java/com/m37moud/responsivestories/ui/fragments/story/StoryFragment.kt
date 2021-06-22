@@ -22,6 +22,9 @@ import com.m37moud.responsivestories.databinding.FragmentStoryBinding
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.*
 import androidx.lifecycle.Observer
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.m37moud.responsivestories.AddVideoActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.viewmodel.MainViewModel
@@ -106,6 +109,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
         initManagers()
         loadVideos()
+
         //check if is there new videos **
         videosViewModel.readShouldDownload.observe(viewLifecycleOwner, Observer {
             Log.d("mah firstCheck", " called! + it = $it ")
@@ -616,6 +620,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
         }
     }
+
 
 
     override fun onDestroyView() {
