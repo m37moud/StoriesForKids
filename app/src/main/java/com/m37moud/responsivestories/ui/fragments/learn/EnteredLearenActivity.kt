@@ -27,14 +27,31 @@ import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+
+const val GAME_LENGTH_MILLISECONDS = 3000L
+const val AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
 
 
 class EnteredLearenActivity : AppCompatActivity() {
+
     private var shouldPlay = false
     private var category: String? = null
     private var counter: Int = 0
     private lateinit var list: ArrayList<String>
     private lateinit var listModel: ArrayList<AnimalsModel>
+
+
+    //ads
+
+    private var mInterstitialAd: InterstitialAd? = null
+//    private var mCountDownTimer: CountDownTimer? = null
+    private var mGameIsInProgress = false
+    private var mAdIsLoading: Boolean = false
+    private var mTimerMilliseconds = 0L
+    private var TAG = "EnteredLearenActivity"
 
 
     private val requestOptions = RequestOptions()
@@ -50,6 +67,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_entered_learen)
 
 
+    startInterstitialAd()
 
         img_sound.setOnClickListener {
 
@@ -673,6 +691,75 @@ class EnteredLearenActivity : AppCompatActivity() {
     }
 
 
+
+    private fun loadAd() {
+        var adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(
+            this, AD_UNIT_ID, adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d(TAG, adError?.message)
+                    mInterstitialAd = null
+                    mAdIsLoading = false
+                    val error = "domain: ${adError.domain}, code: ${adError.code}, " +
+                            "message: ${adError.message}"
+                    Toast.makeText(
+                        this@EnteredLearenActivity,
+                        "onAdFailedToLoad() with error $error",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d(TAG, "Ad was loaded.")
+                    mInterstitialAd = interstitialAd
+                    mAdIsLoading = false
+
+                }
+            }
+        )
+    }
+    // Show the ad if it's ready. Otherwise toast and restart the game.
+    private fun showInterstitial() {
+//        loadAd()
+        Log.d("showInterstitial", "showInterstitial Ad was dismissed." + mInterstitialAd )
+        if (mInterstitialAd != null) {
+            mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "showInterstitial Ad was dismissed.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    mInterstitialAd = null
+                    loadAd()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                    Log.d(TAG, "showInterstitial Ad failed to show.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    mInterstitialAd = null
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "showInterstitial Ad showed fullscreen content.")
+                    // Called when ad is dismissed.
+                }
+            }
+            mInterstitialAd?.show(this)
+        } else {
+            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+    private fun startInterstitialAd() {
+        if (!mAdIsLoading && mInterstitialAd == null) {
+            mAdIsLoading = true
+            loadAd()
+        }
+    }
+
+
     override fun onResume() {
         super.onResume()
         startService()
@@ -681,6 +768,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        //show ads
+        showInterstitial()
         shouldPlay = true
         startService()
 
