@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:fitsSystemWindows="false"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context=".ui.fragments.story.OnlinePlayerActivity">
 
     <com.google.android.exoplayer2.ui.PlayerView
@@ -14,9 +14,16 @@
 
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+
+    </com.google.android.exoplayer2.ui.PlayerView>
 
     <ProgressBar
         android:id="@+id/loading_exoplayer_offline"
@@ -25,7 +32,36 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/ad_viewOffline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/loading_exoplayer_offline"
+        app:layout_constraintRight_toRightOf="@+id/loading_exoplayer_offline"
+        app:layout_constraintTop_toBottomOf="@+id/loading_exoplayer_offline"
+        app:layout_constraintVertical_bias="0.7">
+
+    </com.google.android.gms.ads.AdView>
+
+
+    <com.google.android.gms.ads.nativead.NativeAdView
+        android:id="@+id/native_ad_layout"
+        android:layout_width="220dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="24dp"
+        app:adSize="350"
+        app:adUnitId="ca-app-pub-3940256099942544/2247696110"
+        app:layout_constraintBottom_toTopOf="@+id/ad_viewOffline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loading_exoplayer_offline">
+
+    </com.google.android.gms.ads.nativead.NativeAdView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

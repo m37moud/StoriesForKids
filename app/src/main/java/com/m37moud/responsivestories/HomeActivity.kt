@@ -178,20 +178,30 @@ class HomeActivity : AppCompatActivity() {
             Uri.parse("https://www.youtube.com/channel/UC7pejtgsjgdPODeWGgXLFuQ?sub_confirmation=1")
         )
     }
+
     private fun showAds(){
-//        val adView = AdView(requireContext())
-
-//        adView.adSize = AdSize.BANNER
-
-//        adView.adUnitId = "ca-app-pub-9331212887639574/3543334933"
-        //for testing
-//        adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
 
         val adRequest = AdRequest.Builder()
 
             .build()
-        adView.loadAd(adRequest)
+        ad_view.loadAd(adRequest)
 
 
+    }
+    public override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    // Called when returning to the activity
+    public override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
+    // Called before the activity is destroyed
+    public override fun onDestroy() {
+        ad_view.destroy()
+        super.onDestroy()
     }
 }

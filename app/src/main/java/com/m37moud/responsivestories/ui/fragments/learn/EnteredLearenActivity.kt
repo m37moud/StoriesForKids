@@ -47,10 +47,8 @@ class EnteredLearenActivity : AppCompatActivity() {
     //ads
 
     private var mInterstitialAd: InterstitialAd? = null
-//    private var mCountDownTimer: CountDownTimer? = null
-    private var mGameIsInProgress = false
+
     private var mAdIsLoading: Boolean = false
-    private var mTimerMilliseconds = 0L
     private var TAG = "EnteredLearenActivity"
 
 
@@ -60,15 +58,16 @@ class EnteredLearenActivity : AppCompatActivity() {
     private var showEng by Delegates.notNull<Boolean>()
     private var clicked = false
     private var folder = ""
-//most of problem is fixed
+
+    //most of problem is fixed
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
         setContentView(R.layout.activity_entered_learen)
 
 
-    startInterstitialAd()
-
+//    startInterstitialAd()
+        loadAd()
         img_sound.setOnClickListener {
 
             img_sound.isEnabled = false
@@ -521,7 +520,8 @@ class EnteredLearenActivity : AppCompatActivity() {
             Log.d("soundmd", "play: " + imgName)
 
             if (!TextUtils.isEmpty(imgName)) {
-                val path = category.plus("Name") + folder.toUpperCase(Locale.getDefault()) + File.separator + imgName
+                val path =
+                    category.plus("Name") + folder.toUpperCase(Locale.getDefault()) + File.separator + imgName
                 Log.d("soundmd", "play: " + path)
                 playImgSound(path)
             }
@@ -691,7 +691,6 @@ class EnteredLearenActivity : AppCompatActivity() {
     }
 
 
-
     private fun loadAd() {
         var adRequest = AdRequest.Builder().build()
 
@@ -715,43 +714,49 @@ class EnteredLearenActivity : AppCompatActivity() {
                     Log.d(TAG, "Ad was loaded.")
                     mInterstitialAd = interstitialAd
                     mAdIsLoading = false
+                    mInterstitialAd?.fullScreenContentCallback =
+                        object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                Log.d(TAG, "showInterstitial Ad was dismissed.")
+                                // Don't forget to set the ad reference to null so you
+                                // don't show the ad a second time.
+                                mInterstitialAd = null
+//                                loadAd()
+                            }
+
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                                Log.d(TAG, "showInterstitial Ad failed to show.")
+                                // Don't forget to set the ad reference to null so you
+                                // don't show the ad a second time.
+                                mInterstitialAd = null
+                            }
+
+                            override fun onAdShowedFullScreenContent() {
+                                Log.d(TAG, "showInterstitial Ad showed fullscreen content.")
+                                // Called when ad is dismissed.
+                                mInterstitialAd = null
+
+                            }
+                        }
 
                 }
             }
         )
     }
+
     // Show the ad if it's ready. Otherwise toast and restart the game.
     private fun showInterstitial() {
 //        loadAd()
-        Log.d("showInterstitial", "showInterstitial Ad was dismissed." + mInterstitialAd )
+        Log.d("showInterstitial", "showInterstitial Ad was dismissed." + mInterstitialAd)
         if (mInterstitialAd != null) {
-            mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "showInterstitial Ad was dismissed.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    mInterstitialAd = null
-                    loadAd()
-                }
 
-                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                    Log.d(TAG, "showInterstitial Ad failed to show.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    mInterstitialAd = null
-                }
-
-                override fun onAdShowedFullScreenContent() {
-                    Log.d(TAG, "showInterstitial Ad showed fullscreen content.")
-                    // Called when ad is dismissed.
-                }
-            }
             mInterstitialAd?.show(this)
         } else {
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
 
         }
     }
+
     private fun startInterstitialAd() {
         if (!mAdIsLoading && mInterstitialAd == null) {
             mAdIsLoading = true
@@ -768,10 +773,23 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        //show ads
-        showInterstitial()
+
         shouldPlay = true
         startService()
+
+    }
+
+    override fun finish() {
+        //show ads
+//        showInterstitial()
+        if (mInterstitialAd != null) {
+            mInterstitialAd?.show(this)
+            super.finish()
+        } else {
+            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
+            super.finish()
+        }
+
 
     }
 
