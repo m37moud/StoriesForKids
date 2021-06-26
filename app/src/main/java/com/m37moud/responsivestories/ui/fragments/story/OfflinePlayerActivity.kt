@@ -21,12 +21,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
-import com.google.android.gms.ads.nativead.NativeAdView
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
+import com.m37moud.responsivestories.nativetemplates.TemplateView
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_offline_player.*
-import kotlinx.android.synthetic.main.activity_player.*
 
 
 class OfflinePlayerActivity : AppCompatActivity() {
@@ -137,11 +136,13 @@ class OfflinePlayerActivity : AppCompatActivity() {
                             if (player.isPlaying) {
                                 ad_viewOffline.visibility = View.VISIBLE
                                 showAds()
+                                my_template.visibility = View.GONE
 
                             } else {
                                 showNativeAds()
-//                                ad_viewOffline.pause()
-//                                ad_viewOffline.visibility = View.GONE
+
+                                ad_viewOffline.pause()
+                                ad_viewOffline.visibility = View.GONE
                             }
                         }
                         ExoPlayer.STATE_ENDED -> {
@@ -217,14 +218,37 @@ class OfflinePlayerActivity : AppCompatActivity() {
          adLoader = AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
             .forNativeAd { ad: NativeAd ->
                 // Show the ad.
-                adLoader.loadAds(AdRequest.Builder().build(), 5)
+
+                if (isDestroyed) {
+                    ad.destroy()
+                    return@forNativeAd
+                }
+
+
+                if (adLoader.isLoading) {
+                    // The AdLoader is still loading ads.
+                    // Expect more adLoaded or onAdFailedToLoad callbacks.
+                    val styles: NativeTemplateStyle =
+                        NativeTemplateStyle.Builder().build()
+                    val template: TemplateView = findViewById(R.id.my_template)
+                    template.setStyles(styles)
+                    template.setNativeAd(ad)
+                    my_template.visibility = View.VISIBLE
+                } else {
+                    Log.d("showNativeAds", "showNativeAds: error if false")
+                    // The AdLoader has finished loading ads.
+                }
+
 
             }
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     // Handle the failure by logging, altering the UI, and so on.
                 }
+
+
             })
+
             .withNativeAdOptions(
                 NativeAdOptions.Builder()
                 // Methods in the NativeAdOptions.Builder class can be
@@ -232,7 +256,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
                 .build())
             .build()
 
-
+        adLoader.loadAds(AdRequest.Builder().build(), 5)
 
     }
 
@@ -253,6 +277,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
     // Called before the activity is destroyed
     public override fun onDestroy() {
         ad_viewOffline.destroy()
+
         super.onDestroy()
     }
 

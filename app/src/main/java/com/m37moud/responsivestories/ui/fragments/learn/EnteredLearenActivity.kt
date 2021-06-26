@@ -744,26 +744,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         )
     }
 
-    // Show the ad if it's ready. Otherwise toast and restart the game.
-    private fun showInterstitial() {
-//        loadAd()
-        Log.d("showInterstitial", "showInterstitial Ad was dismissed." + mInterstitialAd)
-        if (mInterstitialAd != null) {
-
-            mInterstitialAd?.show(this)
-        } else {
-            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
-
-        }
-    }
-
-    private fun startInterstitialAd() {
-        if (!mAdIsLoading && mInterstitialAd == null) {
-            mAdIsLoading = true
-            loadAd()
-        }
-    }
-
 
     override fun onResume() {
         super.onResume()
@@ -781,7 +761,6 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     override fun finish() {
         //show ads
-//        showInterstitial()
         if (mInterstitialAd != null) {
             mInterstitialAd?.show(this)
             super.finish()
@@ -791,6 +770,15 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
 
 
+    }
+
+
+    override fun onDestroy() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd = null
+        }
+
+        super.onDestroy()
     }
 
     override fun onStop() {
