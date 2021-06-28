@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         MobileAds.initialize(this)
         MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("ABCDEF012345"))
+                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
                 .build()
         )
 

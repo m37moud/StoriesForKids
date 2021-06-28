@@ -42,7 +42,7 @@ class HomeActivity : AppCompatActivity() {
 
         navController = findNavController(R.id.homeHostFragment)
 
-        showAds()
+
 
         appBarConfiguration = AppBarConfiguration(
             navController.graph
@@ -111,6 +111,11 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showAds()
     }
 
 

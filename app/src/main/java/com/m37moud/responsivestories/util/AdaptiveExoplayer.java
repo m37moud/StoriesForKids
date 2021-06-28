@@ -54,19 +54,12 @@ public class AdaptiveExoplayer extends Application {
     private static AdaptiveExoplayer mInstance;
     public  List<VideoModel> videoModels = new ArrayList<>();
 
-    private Context context;
+    private final Context context;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-//
-//
-//        videoModels.add(new VideoModel("1","Resignation","https://61vod-adaptive.akamaized.net/exp=1594921486~acl=%2Fc9b367b8-ba98-4724-ab01-e77e552a86e4%2F%2A~hmac=441add996ddd6f79dbe45a00b7a07cf5411f284493dbd49bcacb85efc2fd4345/c9b367b8-ba98-4724-ab01-e77e552a86e4/sep/video/58ab8e52,6ceccd5b,3fffe590,4d929f3c/master.m3u8",15));
-//        videoModels.add(new VideoModel("2","big buck bunny","https://skyfire.vimeocdn.com/1594893718-0xe5a743c36285a10c4dc9f34cc18e8b550550af60/1c646beb-dbcd-4e5b-af6f-be46a4cc8991/sep/video/68365515,c28f88b0,fc44ddfa/master.m3u8",128));
-//        videoModels.add(new VideoModel("3","example","https://skyfire.vimeocdn.com/1594887549-0xba9cec0ffe80b3f72ef5920950eaaa7997aa7467/5d8cb288-9512-4e58-8aad-9d5860ebf148/sep/video/3eb59ea5,54b8e546,f71d0c36,fe87a620/master.m3u8",30));
-//
 
         mInstance = this;
         userAgent = Util.getUserAgent(context, "AdaptiveExoplayer");

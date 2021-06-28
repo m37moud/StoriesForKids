@@ -1,5 +1,7 @@
 package com.m37moud.responsivestories.ui.fragments.story
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,25 +10,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.exoplayer2.offline.*
+import com.google.android.exoplayer2.offline.Download
 import com.google.android.exoplayer2.offline.Download.*
+import com.google.android.exoplayer2.offline.DownloadManager
+import com.google.android.exoplayer2.offline.DownloadRequest
+import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
+import com.m37moud.responsivestories.AddVideoActivity
+import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.databinding.FragmentStoryBinding
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.*
-import androidx.lifecycle.Observer
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
-import com.m37moud.responsivestories.AddVideoActivity
-import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,9 +104,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     videosViewModel.showNetworkStatus()
                     //read database
                     readDatabase()
-//                    firstRequestApiData()
-//                    requestApiData()
-//
                 }
         }
         ///
@@ -118,12 +119,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
 
         })
-
-//        lifecycleScope.launchWhenStarted {
-//
-//        }
-        //   ** //
-
 
         dataSourceFactory = buildDataSourceFactory()!!
 
@@ -578,6 +573,28 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         val videoData = VideoEntity(savedRecipeId, model)
         Log.d("saveVideoData", "videoData!" + videoData.toString())
         mainViewModel.insertVideos(videoData)
+        createNotification(model)
+        getDatabaseList()
+
+    }
+
+    private fun createNotification(model : VideoModel){
+        Log.d("createNotification", "notify called" )
+        val notificationManager =
+            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = AppUtil.createExoDownloadNotificationChannel(requireContext())
+
+        val notificationCompleted =
+            NotificationCompat.Builder(requireContext(), channelId)
+                .setColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                .setContentTitle(model.title)
+                .setContentText("new story is added")
+                .setAutoCancel(false)
+                .setWhen(System.currentTimeMillis())
+                .setOnlyAlertOnce(true)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build()
+        notificationManager.notify(1003, notificationCompleted)
 
     }
 

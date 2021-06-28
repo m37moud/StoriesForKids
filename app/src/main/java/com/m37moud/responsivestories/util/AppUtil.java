@@ -13,11 +13,6 @@ import java.text.DecimalFormat;
  * Created by Mayur Solanki (mayursolanki120@gmail.com) on 21/06/20, 10:49 PM.
  */
 public class AppUtil {
-    //Dash  = https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd
-    //HLS:  = https://bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8
-    // Smooth: = https://test.playready.microsoft.com/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/manifest
-
-
 
     public static VideoModel getVideoDetail(Context context , String videoUri){
         VideoModel videoModel = null;

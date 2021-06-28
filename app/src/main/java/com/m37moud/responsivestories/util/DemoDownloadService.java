@@ -237,7 +237,7 @@ public class DemoDownloadService extends DownloadService implements DownloadTrac
         pIntentStartCancel.setAction(Constants.EXO_DOWNLOAD_ACTION_CANCEL);
         PendingIntent pendingIntentCancel = PendingIntent.getService(this, 100, pIntentStartCancel, 0);
 
-        VideoModel videoModel = AppUtil.getVideoDetail(context,download.request.id);
+//        VideoModel videoModel = AppUtil.getVideoDetail(context,download.request.id);
 
         switch (download.state) {
 
@@ -268,7 +268,7 @@ public class DemoDownloadService extends DownloadService implements DownloadTrac
 
                 break;
             case Download.STATE_COMPLETED:
-
+//
                 Notification notificationCompleted = new NotificationCompat.Builder(context, channelId)
                         .setColor(ContextCompat.getColor(context, R.color.colorAccent))
                         .setContentTitle("videoModel.title")

@@ -1,11 +1,13 @@
 package com.m37moud.responsivestories.ui.fragments.story
 
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.offline.DownloadHelper
@@ -33,6 +35,12 @@ class OfflinePlayerActivity : AppCompatActivity() {
     private lateinit var videoUri: Uri
     private lateinit var dataSourceFactory: DataSource.Factory
     lateinit var adLoader: AdLoader
+
+    private val KEY_POSITION = "position"
+    private val KEY_PLAYER_PLAY_WHEN_READY = "Ready"
+    private var startPosition = 0L
+    private var position = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +127,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
                     when (playbackState) {
                         ExoPlayer.STATE_IDLE -> {
                             OfflinePlayerView.keepScreenOn = false
+                            hideAds()
                             Log.d(
                                 "FragmentActivity.TAG",
                                 "playbackState : " + "STATE_IDLE"
@@ -131,22 +140,24 @@ class OfflinePlayerActivity : AppCompatActivity() {
                         }
 
                         ExoPlayer.STATE_READY -> {
+                            OfflinePlayerView.keepScreenOn = true
                             Log.d("FragmentActivity.TAG", "playbackState : " + "STATE_READY")
                             loading_exoplayer_offline.visibility = View.GONE
                             if (player.isPlaying) {
-                                ad_viewOffline.visibility = View.VISIBLE
-                                showAds()
+
+//                                showAds()
                                 my_template.visibility = View.GONE
 
                             } else {
                                 showNativeAds()
+                                hideAds()
 
-                                ad_viewOffline.pause()
-                                ad_viewOffline.visibility = View.GONE
                             }
                         }
                         ExoPlayer.STATE_ENDED -> {
+                            showNativeAds()
                             OfflinePlayerView.keepScreenOn = false
+                            hideAds()
                             Log.d(
                                 "FragmentActivity.TAG",
                                 "playbackState : " + "STATE_ENDED"
@@ -166,7 +177,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
                     Log.v("FragmentActivity.TAG", "Listener-onPlayerError...")
                     player.stop()
                     player.prepare(mediaSource)
-                    player.setPlayWhenReady(true)
+                    player.playWhenReady = true
                 }
 
                 override fun onPositionDiscontinuity(reason: Int) {}
@@ -208,19 +219,25 @@ class OfflinePlayerActivity : AppCompatActivity() {
         val adRequest = AdRequest.Builder()
 
             .build()
+        ad_viewOffline.visibility = View.VISIBLE
         ad_viewOffline.loadAd(adRequest)
 
 
     }
+    private fun hideAds(){
+        ad_viewOffline.pause()
+        ad_viewOffline.visibility = View.GONE
+    }
 
     private fun showNativeAds() {
 
-         adLoader = AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+        adLoader = AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
             .forNativeAd { ad: NativeAd ->
                 // Show the ad.
 
                 if (isDestroyed) {
                     ad.destroy()
+                    my_template.visibility = View.GONE
                     return@forNativeAd
                 }
 
@@ -251,33 +268,79 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
             .withNativeAdOptions(
                 NativeAdOptions.Builder()
-                // Methods in the NativeAdOptions.Builder class can be
-                // used here to specify individual options settings.
-                .build())
+                    // Methods in the NativeAdOptions.Builder class can be
+                    // used here to specify individual options settings.
+                    .build()
+            )
             .build()
 
-        adLoader.loadAds(AdRequest.Builder().build(), 5)
+        adLoader.loadAd(AdRequest.Builder().build())
+
 
     }
 
+
+
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        position = player.currentPosition
+        outState.putLong(KEY_POSITION, position)
+//        outState.putBoolean(KEY_PLAYER_PLAY_WHEN_READY, player.playWhenReady)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.let {
+            player.seekTo(it.getLong(KEY_POSITION))
+//            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
+        }
+    }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            hideAds()
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            showAds()
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     override fun onPause() {
-        ad_viewOffline.pause()
+        hideAds()
         player.playWhenReady = false
+        player.release()
         super.onPause()
 
+    }
+
+    override fun onStop() {
+        hideAds()
+        player.playWhenReady = false
+
+        player.release()
+        super.onStop()
     }
 //
 
     // Called when returning to the activity
     public override fun onResume() {
         super.onResume()
+//        initializePlayer()
         ad_viewOffline.resume()
     }
+
 
     // Called before the activity is destroyed
     public override fun onDestroy() {
         ad_viewOffline.destroy()
-
+        player.release()
         super.onDestroy()
     }
 
