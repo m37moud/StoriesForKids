@@ -17,15 +17,15 @@ import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
+import com.m37moud.responsivestories.ui.fragments.learn.AD_UNIT_ID
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
 import kotlinx.android.synthetic.main.activity_offline_player.*
 
@@ -41,6 +41,9 @@ class OfflinePlayerActivity : AppCompatActivity() {
     private var startPosition = 0L
     private var position = 0L
 
+    //ads refrence
+    private var mInterstitialAd: InterstitialAd ? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
         dataSourceFactory = buildDataSourceFactory()!!
         hideActionBar()
         initializePlayer()
+        loadAd()
 
     }
 
@@ -127,7 +131,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
                     when (playbackState) {
                         ExoPlayer.STATE_IDLE -> {
                             OfflinePlayerView.keepScreenOn = false
-                            hideAds()
+//                            hideAds()
                             Log.d(
                                 "FragmentActivity.TAG",
                                 "playbackState : " + "STATE_IDLE"
@@ -150,14 +154,14 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
                             } else {
                                 showNativeAds()
-                                hideAds()
+//                                hideAds()
 
                             }
                         }
                         ExoPlayer.STATE_ENDED -> {
                             showNativeAds()
                             OfflinePlayerView.keepScreenOn = false
-                            hideAds()
+//                            hideAds()
                             Log.d(
                                 "FragmentActivity.TAG",
                                 "playbackState : " + "STATE_ENDED"
@@ -214,20 +218,20 @@ class OfflinePlayerActivity : AppCompatActivity() {
         return AdaptiveExoplayer.getInstance(this).buildDataSourceFactory()
     }
 
-    private fun showAds() {
-
-        val adRequest = AdRequest.Builder()
-
-            .build()
-        ad_viewOffline.visibility = View.VISIBLE
-        ad_viewOffline.loadAd(adRequest)
-
-
-    }
-    private fun hideAds(){
-        ad_viewOffline.pause()
-        ad_viewOffline.visibility = View.GONE
-    }
+//    private fun showAds() {
+//
+//        val adRequest = AdRequest.Builder()
+//
+//            .build()
+//        ad_viewOffline.visibility = View.VISIBLE
+//        ad_viewOffline.loadAd(adRequest)
+//
+//
+//    }
+//    private fun hideAds(){
+//        ad_viewOffline.pause()
+//        ad_viewOffline.visibility = View.GONE
+//    }
 
     private fun showNativeAds() {
 
@@ -280,8 +284,72 @@ class OfflinePlayerActivity : AppCompatActivity() {
     }
 
 
+    private fun loadAd() {
+
+        var adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(
+            this, AD_UNIT_ID, adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("loadAd", adError?.message)
+                    mInterstitialAd = null
+//                    mAdIsLoading = false
+                    val error = "domain: ${adError.domain}, code: ${adError.code}, " +
+                            "message: ${adError.message}"
+                    Toast.makeText(
+                        this@OfflinePlayerActivity,
+                        "onAdFailedToLoad() with error $error",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d("loadAd", "Ad was loaded.")
+                    mInterstitialAd = interstitialAd
+//                    mAdIsLoading = false
+                    mInterstitialAd?.fullScreenContentCallback =
+                        object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                Log.d("loadAd", "showInterstitial Ad was dismissed.")
+                                // Don't forget to set the ad reference to null so you
+                                // don't show the ad a second time.
+                                mInterstitialAd = null
+//                                loadAd()
+                            }
+
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                                Log.d("loadAd", "showInterstitial Ad failed to show.")
+                                // Don't forget to set the ad reference to null so you
+                                // don't show the ad a second time.
+                                mInterstitialAd = null
+                            }
+
+                            override fun onAdShowedFullScreenContent() {
+                                Log.d("loadAd", "showInterstitial Ad showed fullscreen content.")
+                                // Called when ad is dismissed.
+                                mInterstitialAd = null
+
+                            }
+                        }
+
+                }
+            }
+        )
+    }
+
+    override fun finish() {
+        //show ads
+        if (mInterstitialAd != null) {
+            mInterstitialAd?.show(this)
+            super.finish()
+        } else {
+            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
+            super.finish()
+        }
 
 
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -303,17 +371,17 @@ class OfflinePlayerActivity : AppCompatActivity() {
         super.onConfigurationChanged(newConfig)
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            hideAds()
+//            hideAds()
             Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            showAds()
+//            showAds()
             Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
         }
     }
 
 
     override fun onPause() {
-        hideAds()
+//        hideAds()
         player.playWhenReady = false
         player.release()
         super.onPause()
@@ -321,7 +389,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        hideAds()
+//        hideAds()
         player.playWhenReady = false
 
         player.release()
@@ -339,6 +407,9 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     // Called before the activity is destroyed
     public override fun onDestroy() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd = null
+        }
         ad_viewOffline.destroy()
         player.release()
         super.onDestroy()

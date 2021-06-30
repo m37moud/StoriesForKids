@@ -16,23 +16,26 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.AnimalsModel
 import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.activity_entered_learen.*
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
-const val GAME_LENGTH_MILLISECONDS = 3000L
-const val AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
+const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/1033173712"
 
 
 class EnteredLearenActivity : AppCompatActivity() {
@@ -41,16 +44,13 @@ class EnteredLearenActivity : AppCompatActivity() {
     private var category: String? = null
     private var counter: Int = 0
     private lateinit var list: ArrayList<String>
-    private lateinit var listModel: ArrayList<AnimalsModel>
 
 
     //ads
 
-    private var mInterstitialAd: InterstitialAd? = null
+    private var mRewardedAd: RewardedAd? = null
 
     private var mAdIsLoading: Boolean = false
-    private var TAG = "EnteredLearenActivity"
-
 
     private val requestOptions = RequestOptions()
         .placeholder(R.drawable.ic_error_placeholder)
@@ -65,9 +65,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         setFullScreen()
         setContentView(R.layout.activity_entered_learen)
 
-
-//    startInterstitialAd()
-        loadAd()
+//InterstitialAd
+//        loadAd()
         img_sound.setOnClickListener {
 
             img_sound.isEnabled = false
@@ -694,12 +693,12 @@ class EnteredLearenActivity : AppCompatActivity() {
     private fun loadAd() {
         var adRequest = AdRequest.Builder().build()
 
-        InterstitialAd.load(
-            this, AD_UNIT_ID, adRequest,
-            object : InterstitialAdLoadCallback() {
+        RewardedAd.load(
+            this, AD_REWARDEDAD_ID, adRequest,
+            object : RewardedAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d(TAG, adError?.message)
-                    mInterstitialAd = null
+                    Log.d("loadAd", adError?.message)
+                    mRewardedAd = null
                     mAdIsLoading = false
                     val error = "domain: ${adError.domain}, code: ${adError.code}, " +
                             "message: ${adError.message}"
@@ -710,25 +709,25 @@ class EnteredLearenActivity : AppCompatActivity() {
                     ).show()
                 }
 
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    Log.d(TAG, "Ad was loaded.")
-                    mInterstitialAd = interstitialAd
+                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                    Log.d("loadAd", "Ad was loaded.")
+                    mRewardedAd = rewardedAd
                     mAdIsLoading = false
-                    mInterstitialAd?.fullScreenContentCallback =
+                    mRewardedAd?.fullScreenContentCallback =
                         object : FullScreenContentCallback() {
                             override fun onAdDismissedFullScreenContent() {
-                                Log.d(TAG, "showInterstitial Ad was dismissed.")
+                                Log.d("loadAd", "showInterstitial Ad was dismissed.")
                                 // Don't forget to set the ad reference to null so you
                                 // don't show the ad a second time.
-                                mInterstitialAd = null
+                                mRewardedAd = null
 //                                loadAd()
                             }
 
                             override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                                Log.d(TAG, "showInterstitial Ad failed to show.")
+                                Log.d("loadAd", "showInterstitial Ad failed to show.")
                                 // Don't forget to set the ad reference to null so you
                                 // don't show the ad a second time.
-                                mInterstitialAd = null
+                                mRewardedAd = null
                             }
 
                             override fun onAdShowedFullScreenContent() {
@@ -761,8 +760,15 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     override fun finish() {
         //show ads
-        if (mInterstitialAd != null) {
-            mInterstitialAd?.show(this)
+        if (mRewardedAd != null) {
+            mRewardedAd?.show(this, OnUserEarnedRewardListener() {
+                fun onUserEarnedReward(rewardItem: RewardItem) {
+                    var rewardAmount = rewardItem.getReward()
+                    var rewardType = rewardItem.getType()
+                    Log.d("finish", "User earned the reward.")
+                }
+            })
+
             super.finish()
         } else {
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
@@ -774,8 +780,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
-        if (mInterstitialAd != null) {
-            mInterstitialAd = null
+        if (mRewardedAd != null) {
+            mRewardedAd = null
         }
 
         super.onDestroy()
