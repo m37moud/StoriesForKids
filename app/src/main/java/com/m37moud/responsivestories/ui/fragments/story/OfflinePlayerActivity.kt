@@ -25,10 +25,10 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
-import com.m37moud.responsivestories.ui.fragments.learn.AD_UNIT_ID
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
 import kotlinx.android.synthetic.main.activity_offline_player.*
 
+const val AD_InterstitialAd_ID = "ca-app-pub-3940256099942544/1033173712"
 
 class OfflinePlayerActivity : AppCompatActivity() {
     private lateinit var player: SimpleExoPlayer
@@ -37,8 +37,6 @@ class OfflinePlayerActivity : AppCompatActivity() {
     lateinit var adLoader: AdLoader
 
     private val KEY_POSITION = "position"
-    private val KEY_PLAYER_PLAY_WHEN_READY = "Ready"
-    private var startPosition = 0L
     private var position = 0L
 
     //ads refrence
@@ -289,7 +287,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
         var adRequest = AdRequest.Builder().build()
 
         InterstitialAd.load(
-            this, AD_UNIT_ID, adRequest,
+            this, AD_InterstitialAd_ID, adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     Log.d("loadAd", adError?.message)

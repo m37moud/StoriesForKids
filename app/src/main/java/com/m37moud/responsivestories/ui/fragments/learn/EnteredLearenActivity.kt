@@ -1,12 +1,14 @@
 package com.m37moud.responsivestories.ui.fragments.learn
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -28,6 +30,7 @@ import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.AnimalsModel
 import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.activity_entered_learen.*
+import kotlinx.android.synthetic.main.folder_container.*
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -35,7 +38,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
-const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/1033173712"
+const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 
 
 class EnteredLearenActivity : AppCompatActivity() {
@@ -63,14 +66,18 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
+
         setContentView(R.layout.activity_entered_learen)
 
-//InterstitialAd
-//        loadAd()
+        //InterstitialAd
+        loadAd()
+        if (mRewardedAd == null) {
+//            changeOrientation()
+        }
         img_sound.setOnClickListener {
 
             img_sound.isEnabled = false
-//            val name = txt_name.text.toString()
+            // val name = txt_name.text.toString()
             val name = initName(list[counter], true)
             img_sound.animate().apply {
 
@@ -689,8 +696,29 @@ class EnteredLearenActivity : AppCompatActivity() {
         left_img_btn.setColorFilter(ContextCompat.getColor(this, R.color.blue))
     }
 
+    private fun changeOrientation() {
+
+//        shouldPlay = false
+//        stopService()
+        if (mAdIsLoading && mRewardedAd != null ) {
+        Log.d("loadAd", "changeOrientation: called")
+        val display = (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay
+        val orientation = display.orientation
+
+            shouldPlay = false
+            if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+            }
+        }else{
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
+        }
+    }
+
 
     private fun loadAd() {
+
         var adRequest = AdRequest.Builder().build()
 
         RewardedAd.load(
@@ -710,37 +738,17 @@ class EnteredLearenActivity : AppCompatActivity() {
                 }
 
                 override fun onAdLoaded(rewardedAd: RewardedAd) {
+
                     Log.d("loadAd", "Ad was loaded.")
                     mRewardedAd = rewardedAd
                     mAdIsLoading = false
-                    mRewardedAd?.fullScreenContentCallback =
-                        object : FullScreenContentCallback() {
-                            override fun onAdDismissedFullScreenContent() {
-                                Log.d("loadAd", "showInterstitial Ad was dismissed.")
-                                // Don't forget to set the ad reference to null so you
-                                // don't show the ad a second time.
-                                mRewardedAd = null
-//                                loadAd()
-                            }
 
-                            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                                Log.d("loadAd", "showInterstitial Ad failed to show.")
-                                // Don't forget to set the ad reference to null so you
-                                // don't show the ad a second time.
-                                mRewardedAd = null
-                            }
-
-                            override fun onAdShowedFullScreenContent() {
-                                Log.d(TAG, "showInterstitial Ad showed fullscreen content.")
-                                // Called when ad is dismissed.
-                                mInterstitialAd = null
-
-                            }
-                        }
 
                 }
             }
         )
+
+
     }
 
 
@@ -753,19 +761,54 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
-        shouldPlay = true
-        startService()
-
+//        shouldPlay = true
+//
+//        startService()
+        Log.d("loadAd", "back pressed")
+//        changeOrientation()
+        stopService()
     }
 
     override fun finish() {
         //show ads
         if (mRewardedAd != null) {
+//            shouldPlay = false
+            mRewardedAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d("loadAd", "showInterstitial Ad was dismissed.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        mRewardedAd = null
+                        mAdIsLoading = false
+//                                shouldPlay = true
+//                                loadAd()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                        Log.d("loadAd", "showInterstitial Ad failed to show.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        mRewardedAd = null
+                        shouldPlay = true
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+
+                        Log.d("loadAd", "showInterstitial Ad showed fullscreen content.")
+                        // Called when ad is dismissed.
+                        mRewardedAd = null
+                        mAdIsLoading = true
+
+                    }
+                }
+//            mAdIsLoading = true
             mRewardedAd?.show(this, OnUserEarnedRewardListener() {
+
                 fun onUserEarnedReward(rewardItem: RewardItem) {
-                    var rewardAmount = rewardItem.getReward()
-                    var rewardType = rewardItem.getType()
-                    Log.d("finish", "User earned the reward.")
+//                    var rewardAmount = rewardItem.getReward()
+                    var rewardType = rewardItem.type
+                    Log.d("loadAd", "User earned the reward.")
                 }
             })
 
@@ -782,6 +825,8 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onDestroy() {
         if (mRewardedAd != null) {
             mRewardedAd = null
+//            changeOrientation()
+
         }
 
         super.onDestroy()
@@ -792,6 +837,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         if (!shouldPlay) {
             stopService()
         }
+        Log.d("loadAd", "onStop")
+
     }
 
     private fun startService() {

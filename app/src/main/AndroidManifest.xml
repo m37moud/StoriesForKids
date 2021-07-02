@@ -41,7 +41,6 @@
         <activity
             android:name=".ui.fragments.learn.EnteredLearenActivity"
             android:label="@string/title_activity_entered_learen"
-            android:screenOrientation="landscape"
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
             android:name=".HomeActivity"

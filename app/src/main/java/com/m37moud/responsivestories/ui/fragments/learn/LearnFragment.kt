@@ -43,8 +43,12 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
         //start service and play music
+        if(!shouldPlay ){
+            shouldPlay = true
+            startService()
+        }
 
-        startService()
+
 
         display()
 
