@@ -44,7 +44,7 @@ import kotlin.collections.ArrayList
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class StoryFragment : Fragment(), DownloadTracker.Listener {
-
+// we need to use applicationContext
     private var _binding: FragmentStoryBinding? = null
     private val binding get() = _binding!!
 

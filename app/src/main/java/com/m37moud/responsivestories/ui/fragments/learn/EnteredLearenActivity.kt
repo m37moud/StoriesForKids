@@ -18,11 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
@@ -66,14 +62,14 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
-
+//        changeOrientation()
         setContentView(R.layout.activity_entered_learen)
 
         //InterstitialAd
         loadAd()
-        if (mRewardedAd == null) {
-//            changeOrientation()
-        }
+//        if (mRewardedAd == null) {
+////            changeOrientation()
+//        }
         img_sound.setOnClickListener {
 
             img_sound.isEnabled = false
@@ -697,11 +693,11 @@ class EnteredLearenActivity : AppCompatActivity() {
     }
 
     private fun changeOrientation() {
-
+        Log.d("loadAd", "changeOrientation: called")
 //        shouldPlay = false
 //        stopService()
         if (mAdIsLoading && mRewardedAd != null ) {
-        Log.d("loadAd", "changeOrientation: called")
+
         val display = (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay
         val orientation = display.orientation
 
@@ -716,6 +712,33 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
     }
 
+    //banner ads        //work from job
+    private fun showAds() {
+
+        val adRequest = AdRequest.Builder()
+
+            .build()
+//        ad_viewOffline.adListener = object : AdListener(){
+//            override fun onAdLoaded() {
+//                super.onAdLoaded()
+//           ad_viewOffline.visibility = View.VISIBLE
+//            }
+//
+//            override fun onAdFailedToLoad(int i) {
+//                super.onAdFailedToLoad(i)
+//                ad_viewOffline.visibility = View.GONE
+//            }
+//        }
+
+        ad_viewOffline.visibility = View.VISIBLE
+        ad_viewOffline.loadAd(adRequest)
+
+
+    }
+    private fun hideAds(){
+        ad_viewOffline.pause()
+        ad_viewOffline.visibility = View.GONE
+    }
 
     private fun loadAd() {
 
@@ -754,6 +777,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        showAds()
         startService()
     }
 
@@ -820,6 +844,12 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     }
+    override fun onPause() {
+        hideAds()
+        super.onPause()
+
+    }
+
 
 
     override fun onDestroy() {

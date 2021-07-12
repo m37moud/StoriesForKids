@@ -30,9 +30,7 @@
             android:value="ca-app-pub-3940256099942544~3347511713" />
 
 
-        <activity
-            android:name=".ui.fragments.story.OfflinePlayerActivity"
-            />
+        <activity android:name=".ui.fragments.story.OfflinePlayerActivity" />
 
         <service
             android:name=".util.MediaService"
@@ -40,6 +38,8 @@
 
         <activity
             android:name=".ui.fragments.learn.EnteredLearenActivity"
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:screenOrientation="landscape"
             android:label="@string/title_activity_entered_learen"
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
