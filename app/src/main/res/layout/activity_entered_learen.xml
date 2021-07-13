@@ -7,6 +7,17 @@
     android:background="@drawable/background"
     tools:context=".ui.fragments.learn.EnteredLearenActivity">
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/ad_viewOffline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="wrap_content"
@@ -29,8 +40,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <include
-                layout="@layout/folder_container"/>
+            <include layout="@layout/folder_container" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -133,6 +143,7 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -140,14 +151,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/ad_viewOffline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center"
-            app:adSize="SMART_BANNER"
-            app:adUnitId="ca-app-pub-3940256099942544/6300978111"
-          />
+
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/bottom_background"

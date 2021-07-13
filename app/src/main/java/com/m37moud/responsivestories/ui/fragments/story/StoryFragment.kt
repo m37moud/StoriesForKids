@@ -300,11 +300,11 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     }
 
     private fun buildDataSourceFactory(): DataSource.Factory? {
-        return AdaptiveExoplayer.getInstance(requireContext()).buildDataSourceFactory()
+        return AdaptiveExoplayer.getInstance(context).buildDataSourceFactory()
     }
 
     private fun initManagers() {
-        val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(requireContext())
+        val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(context)
         downloadTracker = application.downloadTracker!!
         downloadManager = application.downloadManager!!
     }
@@ -313,7 +313,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     private fun loadVideos() {
         downloadedList = ArrayList()
 
-        AdaptiveExoplayer.getInstance(requireContext())
+        AdaptiveExoplayer.getInstance(context)
             .downloadTracker.downloads.entries.forEach { (keyUri, download) ->
                 Log.d("TAG", "loadVideos: " + download.toString())
                 downloadedList.add(download)

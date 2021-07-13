@@ -1,15 +1,18 @@
 package com.m37moud.responsivestories.ui.fragments.learn
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -26,7 +29,7 @@ import kotlinx.android.synthetic.main.fragment_third_screen.*
 
 class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 
-    private var _binding:FragmentLearnBinding? = null
+    private var _binding: FragmentLearnBinding? = null
     private val binding get() = _binding!!
     private val mAdapter: LearnAdapter by lazy { LearnAdapter(requireContext(), this) }
     private var category: LearnModel? = null
@@ -43,7 +46,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
         //start service and play music
-        if(!shouldPlay ){
+        if (!shouldPlay) {
             shouldPlay = true
             startService()
         }
@@ -113,6 +116,26 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         Log.d("LearnFragment", "clicked: $position")
     }
 
+//    from work date 13/7/2021 *****************
+
+
+//    private fun changeOrientation() {
+//        Log.d("loadAd", "changeOrientation: called")
+//
+//        val display = (getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager).defaultDisplay
+//        val orientation = display.orientation
+//
+//
+//
+//        if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
+//            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//
+//        } else {
+//            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+//
+//        }
+//    }
+
     private fun playImgSound(name: String) {
         var path: String?
 
@@ -155,6 +178,23 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
     }
 
 
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            setFullScreen()
+            Toast.makeText(requireContext(), "landscape", Toast.LENGTH_SHORT).show()
+            category_img.visibility = View.GONE
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            category_img.visibility = View.VISIBLE
+            Toast.makeText(requireContext(), "portrait", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+
+
     override fun onDestroy() {
         stopService()
         super.onDestroy()
@@ -180,7 +220,6 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         shouldPlay = false
         super.onResume()
     }
-
 
 
     private fun startService() {

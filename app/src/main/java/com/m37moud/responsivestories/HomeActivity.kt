@@ -2,10 +2,13 @@ package com.m37moud.responsivestories
 
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -16,11 +19,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.fragment_learn.*
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -187,26 +193,55 @@ class HomeActivity : AppCompatActivity() {
     private fun showAds(){
 
         val adRequest = AdRequest.Builder()
-
             .build()
         ad_view.loadAd(adRequest)
+        ad_view.adListener = object: AdListener() {
+            override fun onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                ad_view.visibility = View.VISIBLE
+            }
+
+            override fun onAdFailedToLoad(adError : LoadAdError) {
+                // Code to be executed when an ad request fails.
+                ad_view.visibility = View.GONE
+
+            }
+
+        }
+
+    }
 
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            setFullScreen()
+            supportActionBar?.hide()
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            supportActionBar?.show()
+
+        }
     }
     public override fun onPause() {
         ad_view.pause()
+        ad_view.visibility = View.GONE
         super.onPause()
     }
 
     // Called when returning to the activity
     public override fun onResume() {
-        super.onResume()
         ad_view.resume()
+        ad_view.visibility = View.VISIBLE
+        super.onResume()
+
     }
 
     // Called before the activity is destroyed
     public override fun onDestroy() {
         ad_view.destroy()
+        ad_view.visibility = View.GONE
         super.onDestroy()
     }
 }

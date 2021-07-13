@@ -44,6 +44,7 @@
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
             android:name=".HomeActivity"
+            android:configChanges="orientation|screenSize|layoutDirection"
             android:label="@string/title_activity_home"
             android:theme="@style/HomePageStyle" />
 

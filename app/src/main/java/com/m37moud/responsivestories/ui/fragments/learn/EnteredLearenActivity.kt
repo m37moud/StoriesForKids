@@ -62,7 +62,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
-//        changeOrientation()
+////        changeOrientation()
         setContentView(R.layout.activity_entered_learen)
 
         //InterstitialAd
@@ -718,17 +718,16 @@ class EnteredLearenActivity : AppCompatActivity() {
         val adRequest = AdRequest.Builder()
 
             .build()
-//        ad_viewOffline.adListener = object : AdListener(){
-//            override fun onAdLoaded() {
-//                super.onAdLoaded()
-//           ad_viewOffline.visibility = View.VISIBLE
-//            }
-//
-//            override fun onAdFailedToLoad(int i) {
-//                super.onAdFailedToLoad(i)
-//                ad_viewOffline.visibility = View.GONE
-//            }
-//        }
+
+        ad_viewOffline.adListener = object : AdListener(){
+            override fun onAdLoaded() {
+           ad_viewOffline.visibility = View.VISIBLE
+            }
+
+            override fun onAdFailedToLoad(adError : LoadAdError) {
+                ad_viewOffline.visibility = View.GONE
+            }
+        }
 
         ad_viewOffline.visibility = View.VISIBLE
         ad_viewOffline.loadAd(adRequest)
