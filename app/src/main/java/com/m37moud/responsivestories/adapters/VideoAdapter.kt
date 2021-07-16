@@ -2,6 +2,7 @@ package com.m37moud.responsivestories.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.text.TextUtils
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +44,8 @@ class VideoAdapter(
         val title: String? = videoModel.title
         val date: String? = videoModel.timestamp
         val url: String? = videoModel.videoUri
+        val thumb: String? = videoModel.videoThumb
+
 
         val cal = Calendar.getInstance()
         cal.timeInMillis = date!!.toLong()
@@ -52,10 +55,18 @@ class VideoAdapter(
 //        holder.vidImg.load(url)
         val requestOptions = RequestOptions()
             .placeholder(R.drawable.ic_error_placeholder)
-        Glide.with(context)
-            .applyDefaultRequestOptions(requestOptions)
-            .asDrawable()
-            .load(url).into(holder.vidImg)
+        if(TextUtils.isEmpty(thumb)){
+            Glide.with(context)
+                .applyDefaultRequestOptions(requestOptions)
+                .asDrawable()
+                .load(url).into(holder.vidImg)
+        }else{
+            Glide.with(context)
+                .applyDefaultRequestOptions(requestOptions)
+                .asDrawable()
+                .load(thumb).into(holder.vidImg)
+        }
+
 
 
 
