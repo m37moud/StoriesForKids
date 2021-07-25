@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <include layout="@layout/activity_home" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -21,13 +20,14 @@
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways"
             android:background="@android:color/transparent"
             android:elevation="0dp"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIcon="@drawable/ic_menu"
 
             />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <include layout="@layout/activity_home" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
