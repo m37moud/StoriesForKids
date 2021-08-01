@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">كيدز</string>
-    <string name="alphabet">الحروف</string>
+    <string name="alphabets">الحروف</string>
     <string name="numbers">الارقام</string>
     <string name="shapes">الاشكال</string>
     <string name="colors">الالوان</string>
@@ -26,5 +26,4 @@
     <string name="story">حكاية</string>
     <string name="arabic">عربى</string>
     <string name="english">انجليزى</string>
-    <string name="alphabets">الحروف</string>
 </resources>

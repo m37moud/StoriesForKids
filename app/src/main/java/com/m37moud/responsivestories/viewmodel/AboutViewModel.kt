@@ -26,7 +26,7 @@ class AboutViewModel() : ViewModel() {
 
 
         val pm = a.packageManager
-        var pi: PackageInfo? = null
+        var pi: PackageInfo?
         try {
             pi = pm.getPackageInfo(a.packageName, 0)
             version = pi.versionName

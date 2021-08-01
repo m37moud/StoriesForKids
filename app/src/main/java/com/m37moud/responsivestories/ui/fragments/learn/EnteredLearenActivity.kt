@@ -414,7 +414,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         val n = name.split(".")
 
-        var nameOnly: String? = null
+        var nameOnly: String?
 
         nameOnly = n[0]
 

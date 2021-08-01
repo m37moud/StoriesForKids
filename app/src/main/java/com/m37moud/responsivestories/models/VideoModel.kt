@@ -10,7 +10,7 @@ class VideoModel {
     var videoCategory: String? = null
     var videoDescription: String? = null
     var videoType: String? = null
-    var videoUpdate: Boolean? = false
+    var videoUpdate: Boolean = false
 
 
     //fire base require empty constructor
@@ -26,7 +26,7 @@ class VideoModel {
         videoCategory: String?,
         videoDescription: String?,
         videoType: String?,
-        videoUpdate: Boolean?
+        videoUpdate: Boolean
     ) {
         this.id = id
         this.title = title

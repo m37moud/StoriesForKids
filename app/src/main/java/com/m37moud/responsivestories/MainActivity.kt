@@ -48,13 +48,12 @@ class MainActivity : AppCompatActivity() {
             // Get new FCM registration token
             val token = task.result
             val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
-            val uploadId = referenceVideos.push().key
             referenceVideos.child("client").setValue(token)
                 .addOnSuccessListener {
                     Log.d("Fetching", "sendRegistrationToServer :  successful ")
                 }
                 .addOnFailureListener { e ->
-                    Log.d("Fetching", " sendRegistrationToServer :  err ")
+                    Log.d("Fetching", " sendRegistrationToServer :  err "+e.message.toString())
 
                     //failed to add info to database
                 }

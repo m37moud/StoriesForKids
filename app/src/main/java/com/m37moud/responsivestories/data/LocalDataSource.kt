@@ -2,6 +2,7 @@ package com.m37moud.responsivestories.data
 
 import com.m37moud.responsivestories.data.database.VideoDao
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
+import com.m37moud.responsivestories.models.VideoModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -23,5 +24,8 @@ class LocalDataSource @Inject constructor(
 
     suspend fun updateVideo(videoEntity: VideoEntity) {
         videosDao.updateVideo(videoEntity)
+    }
+    suspend fun updateVideoComplete(tid :Int , video : VideoModel) {
+        videosDao.updateVideoComplete(tid , video)
     }
 }

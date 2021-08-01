@@ -122,7 +122,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
         binding.addVideoFab.setOnClickListener {
 //            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
-//            startDownload()
         }
 
         return binding.root
@@ -503,19 +502,36 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         })
     }
 
-    private fun updateCheck(listVid: ArrayList<VideoModel>) = CoroutineScope(Dispatchers.IO).launch {
-        listVid.forEach {
-            if (it.videoUpdate!!) {
-                updateVideo(it)
-            }
-        }
-
-//        withContext(Dispatchers.Main){
+//    private fun updateCheck(listVid: ArrayList<VideoModel>) =
+//        CoroutineScope(Dispatchers.IO).launch {
+//            listVid.forEach {
+//                if (it.videoUpdate!!) {
+//
+//                    updateVideo(it)
+//                }
+//            }
+//
+////        withContext(Dispatchers.Main){
+////
+////        }
+//
 //
 //        }
 
 
-    }
+    //edite from work date 1/8
+    private fun updateCheck(listVid: ArrayList<VideoModel>)
+       {
+           Log.d("mah updateCheck", "method called")
+            listVid.forEach {
+
+                if (it.videoUpdate) {
+                    Log.d("mah updateCheck", "method called" + it.videoUpdate)
+                    updateVideo(it)
+                }
+            }
+
+        }
 
     private fun getDatabaseList() {
         Log.d("mah getDatabaseList", "method called")
@@ -620,13 +636,32 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         mainViewModel.deleteVideo(videoData)
 
     }
+
     //from work 31/7
     // too doo create method to update model.updatevideo to false again
     private fun updateVideo(model: VideoModel) {
 
         val videoData = VideoEntity(savedRecipeId, model)
-        Log.d("deleteVideo", "videoData!" + videoData.toString())
-        mainViewModel.deleteVideo(videoData)
+        Log.d("updateVideo", "entity!" + videoData.toString())
+        Log.d("updateVideo", "model!" + model.title.toString())
+
+        //update all fields in room database
+        val result = mainViewModel.updateVideo(videoData)
+        Log.d("updateVideo", "update ? " + result.toString())
+
+//        if (result.isCompleted) {
+            //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
+
+            mainViewModel.updateVideoComplete(model)
+            //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
+
+            mainViewModel.updateVideoRoomComplete(savedRecipeId, model)
+
+//        } else {
+//            Log.d("updateVideo", "videoData! failed" )
+//            Toast.makeText(requireContext(), "update failed", Toast.LENGTH_SHORT).show()
+//        }
+
 
     }
 

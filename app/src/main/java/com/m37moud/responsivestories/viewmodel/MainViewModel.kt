@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.google.firebase.database.DataSnapshot
@@ -40,13 +41,25 @@ class MainViewModel @ViewModelInject constructor(
             repository.local.deleteVideo(videoEntity)
         }
 
+    //update all fields in room database
     fun updateVideo(videoEntity: VideoEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.updateVideo(videoEntity)
         }
 
+    //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
+    fun updateVideoRoomComplete(tid: Int, video: VideoModel) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.updateVideoComplete(tid, video)
+        }
+
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
+
+    //after update room database update firebase property back it to false
+    fun updateVideoComplete(model: VideoModel) = viewModelScope.launch {
+        updateComplete(model)
+    }
 
     @ExperimentalCoroutinesApi
     fun loadVideosFromFirebase() {
@@ -107,6 +120,24 @@ class MainViewModel @ViewModelInject constructor(
         } else {
             videosResponse.value = NetworkResult.Error("No Internet Connection.")
         }
+
+    }
+
+    private suspend fun updateComplete(model: VideoModel) {
+        if (hasInternetConnection()) {
+            val dbRef = FirebaseDatabase.getInstance().getReference("Videos")
+            val l = dbRef.child(model.id!!)
+            l.child("videoUpdate").setValue("false")
+                .addOnSuccessListener {
+                    Toast.makeText(getApplication(), "update is complete", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(getApplication(), "update is faild", Toast.LENGTH_SHORT).show()
+
+                }
+        }
+
 
     }
 

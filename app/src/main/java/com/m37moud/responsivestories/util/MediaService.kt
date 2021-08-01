@@ -43,9 +43,9 @@ class MediaService : Service() {
 
 
      fun playBackgroundSound() {
-        var path: String? = null
+         var path: String?
 
-        try {
+         try {
             mediaPlayer = MediaPlayer()
 
             path = "sound/sfx/loop.mp3"
