@@ -525,8 +525,8 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
            Log.d("mah updateCheck", "method called")
             listVid.forEach {
 
-                if (it.videoUpdate) {
-                    Log.d("mah updateCheck", "method called" + it.videoUpdate)
+                if (it.update) {
+                    Log.d("mah updateCheck", "method called" + it.update)
                     updateVideo(it)
                 }
             }

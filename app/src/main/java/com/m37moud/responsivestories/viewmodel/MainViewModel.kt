@@ -88,7 +88,7 @@ class MainViewModel @ViewModelInject constructor(
                             ds.let {
 
                                 //get data as model
-                                val modelVideo = ds.getValue(VideoModel::class.java)
+                                val modelVideo: VideoModel? = ds.getValue(VideoModel::class.java)
                                 //add to array list
                                 if (modelVideo != null) {
 
