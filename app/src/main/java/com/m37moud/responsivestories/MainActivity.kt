@@ -7,13 +7,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
+import com.m37moud.responsivestories.util.MyFirebaseMessagingService
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+const val TOPIC = "/topics/myTopic2"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,6 +36,42 @@ class MainActivity : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = Firebase.analytics
 
+
+        // Get token
+        // [START log_reg_token]
+        Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("getToken", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
+            val uploadId = referenceVideos.push().key
+            referenceVideos.child("client").setValue(token)
+                .addOnSuccessListener {
+                    Log.d("Fetching", "sendRegistrationToServer :  successful ")
+                }
+                .addOnFailureListener { e ->
+                    Log.d("Fetching", " sendRegistrationToServer :  err ")
+
+                    //failed to add info to database
+                }
+
+        })
+        // [END log_reg_token]
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+            .addOnCompleteListener { task ->
+                Log.d("subscribet", "succ ")
+                if (!task.isSuccessful) {
+                    Log.d("subscribe", "faild ")
+                }
+
+                Toast.makeText(baseContext, "msg", Toast.LENGTH_SHORT).show()
+            }
         MobileAds.initialize(this)
         MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
@@ -56,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
 //        when app end download status = false
-        Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false" )
+        Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
         videosViewModel.saveDownloadStatus(false)
         super.onDestroy()
     }

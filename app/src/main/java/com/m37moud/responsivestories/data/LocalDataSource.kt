@@ -20,4 +20,8 @@ class LocalDataSource @Inject constructor(
     suspend fun deleteVideo(videoEntity: VideoEntity) {
         videosDao.deleteVideo(videoEntity)
     }
+
+    suspend fun updateVideo(videoEntity: VideoEntity) {
+        videosDao.updateVideo(videoEntity)
+    }
 }

@@ -40,6 +40,11 @@ class MainViewModel @ViewModelInject constructor(
             repository.local.deleteVideo(videoEntity)
         }
 
+    fun updateVideo(videoEntity: VideoEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.updateVideo(videoEntity)
+        }
+
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
 
@@ -76,8 +81,9 @@ class MainViewModel @ViewModelInject constructor(
 
                                     list.add(modelVideo)
 //                                    saveVideoData(modelVideo)
-                                }else{
-                                    videosResponse.value = NetworkResult.Error("sorry we will add new videos.")
+                                } else {
+                                    videosResponse.value =
+                                        NetworkResult.Error("sorry we will add new videos.")
                                 }
 
                             }
@@ -98,14 +104,14 @@ class MainViewModel @ViewModelInject constructor(
 //                fragment.offline()
 
             }
-        }else {
+        } else {
             videosResponse.value = NetworkResult.Error("No Internet Connection.")
         }
 
     }
 
 
-    fun sendVideoListToCheck(list : ArrayList<VideoModel>) : ArrayList<VideoModel>{
+    fun sendVideoListToCheck(list: ArrayList<VideoModel>): ArrayList<VideoModel> {
 
         return list
     }
@@ -117,9 +123,6 @@ class MainViewModel @ViewModelInject constructor(
         insertVideos(videoData)
 
     }
-
-
-
 
 
     private fun hasInternetConnection(): Boolean {

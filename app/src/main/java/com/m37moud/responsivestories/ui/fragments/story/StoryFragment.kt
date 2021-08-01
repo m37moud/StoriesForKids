@@ -2,7 +2,6 @@ package com.m37moud.responsivestories.ui.fragments.story
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +22,6 @@ import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
-import com.m37moud.responsivestories.AddVideoActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
@@ -34,9 +32,8 @@ import com.m37moud.responsivestories.util.*
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -44,7 +41,7 @@ import kotlin.collections.ArrayList
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class StoryFragment : Fragment(), DownloadTracker.Listener {
-// we need to use applicationContext
+    // we need to use applicationContext
     private var _binding: FragmentStoryBinding? = null
     private val binding get() = _binding!!
 
@@ -124,7 +121,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
 
         binding.addVideoFab.setOnClickListener {
-            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
+//            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
 //            startDownload()
         }
 
@@ -465,8 +462,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
                     response.data?.let {
                         listVid = it
+
                         if (!listVid.isNullOrEmpty()) { // check online list
                             Log.d("mah requestApiData", "online list is " + listVid.toString())
+//                            check for updates
+                            updateCheck(listVid)
+
                             //get offline list
                             getDatabaseList()
                             if (!roomList.isNullOrEmpty()) {// check offline list
@@ -500,6 +501,20 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                 }
             }
         })
+    }
+
+    private fun updateCheck(listVid: ArrayList<VideoModel>) = CoroutineScope(Dispatchers.IO).launch {
+        listVid.forEach {
+            if (it.videoUpdate!!) {
+                updateVideo(it)
+            }
+        }
+
+//        withContext(Dispatchers.Main){
+//
+//        }
+
+
     }
 
     private fun getDatabaseList() {
@@ -578,8 +593,8 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     }
 
-    private fun createNotification(model : VideoModel){
-        Log.d("createNotification", "notify called" )
+    private fun createNotification(model: VideoModel) {
+        Log.d("createNotification", "notify called")
         val notificationManager =
             requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = AppUtil.createExoDownloadNotificationChannel(requireContext())
@@ -599,6 +614,15 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     }
 
     private fun deleteVideo(model: VideoModel) {
+
+        val videoData = VideoEntity(savedRecipeId, model)
+        Log.d("deleteVideo", "videoData!" + videoData.toString())
+        mainViewModel.deleteVideo(videoData)
+
+    }
+    //from work 31/7
+    // too doo create method to update model.updatevideo to false again
+    private fun updateVideo(model: VideoModel) {
 
         val videoData = VideoEntity(savedRecipeId, model)
         Log.d("deleteVideo", "videoData!" + videoData.toString())
@@ -637,7 +661,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
         }
     }
-
 
 
     override fun onDestroyView() {

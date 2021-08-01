@@ -18,6 +18,9 @@ interface VideoDao {
     @Delete
     suspend fun deleteVideo(videoEntity : VideoEntity)
 
+    @Update(entity = VideoEntity::class)
+    suspend fun updateVideo(videoEntity : VideoEntity)
+
 
 
 }
