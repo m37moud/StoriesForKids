@@ -25,7 +25,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
-import com.m37moud.responsivestories.data.database.entity.VideoEntity
+import com.m37moud.responsivestories.data.database.entity.VideoEntity2
 import com.m37moud.responsivestories.databinding.FragmentStoryBinding
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.*
@@ -56,10 +56,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     private lateinit var listVid: ArrayList<VideoModel>
     private lateinit var roomList: ArrayList<VideoModel>
-    private lateinit var roomEntityList: ArrayList<VideoEntity>
+//    private lateinit var roomList: ArrayList<VideoEntity2>
+    private lateinit var roomEntityList: ArrayList<VideoEntity2>
     private lateinit var downloadedList: ArrayList<Download>
 
-    private var savedRecipeId = 0
+//    private var savedRecipeId = 0
+    private var savedRecipeId = ""
 
     private val mAdapter by lazy {
         VideoAdapter(
@@ -261,8 +263,8 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                         "DownloadREMOVING sucsess!download = " + id + "\n " + vidId
                     )
                     if (vidId!! == id)
-                        savedRecipeId = roomEntityList[it].id
-                    deleteVideo(roomList[it])
+                        savedRecipeId = roomEntityList[it].id.toString()
+                    deleteVideo(roomList[it].id.toString())
                 }
             }
             STATE_RESTARTING -> {
@@ -328,7 +330,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     Log.d("mah readDatabase", "if statement true")
 
                     val list = database as ArrayList
-
+//room change
                     val adapter = DownloadedVideoAdapter(
                         requireActivity()
                     )
@@ -546,7 +548,9 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     roomEntityList = database
 
                     list.forEach {
-                        val ls = it.videos
+//                        val ls = it.videos
+                        //room change
+                        val ls = it as VideoModel
                         roomList.add(ls)
                     }
 
@@ -601,7 +605,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     private fun saveVideoData(model: VideoModel) {
 
-        val videoData = VideoEntity(savedRecipeId, model)
+        val videoData = VideoEntity2(model.id, model.title,model.timestamp,model.videoUri,model.videoSlide,model.videoThumb,model.videoCategory)
         Log.d("saveVideoData", "videoData!" + videoData.toString())
         mainViewModel.insertVideos(videoData)
         createNotification(model)
@@ -629,11 +633,17 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     }
 
-    private fun deleteVideo(model: VideoModel) {
+//    private fun deleteVideo(model: VideoModel) {
+//
+//        val videoData = VideoEntity(savedRecipeId, model)
+//        Log.d("deleteVideo", "videoData!" + videoData.toString())
+//        mainViewModel.deleteVideo(videoData)
+//
+//    }
+    private fun deleteVideo(id: String) {
 
-        val videoData = VideoEntity(savedRecipeId, model)
-        Log.d("deleteVideo", "videoData!" + videoData.toString())
-        mainViewModel.deleteVideo(videoData)
+//        val videoData = VideoEntity2(savedRecipeId)
+        mainViewModel.deleteVideo(id)
 
     }
 
@@ -641,7 +651,10 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     // too doo create method to update model.updatevideo to false again
     private fun updateVideo(model: VideoModel) {
 
-        val videoData = VideoEntity(savedRecipeId, model)
+//        val videoData = VideoEntity(savedRecipeId, model)
+
+        val videoData = VideoEntity2(model.id, model.title,model.timestamp,model.videoUri,model.videoSlide,model.videoThumb,model.videoCategory)
+
         Log.d("updateVideo", "entity!" + videoData.toString())
         Log.d("updateVideo", "model!" + model.title.toString())
 
@@ -654,8 +667,8 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
             mainViewModel.updateVideoComplete(model)
             //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
-
-            mainViewModel.updateVideoRoomComplete(savedRecipeId, model)
+//room change
+            mainViewModel.updateVideoRoomComplete(savedRecipeId.toInt(), false)
 
 //        } else {
 //            Log.d("updateVideo", "videoData! failed" )

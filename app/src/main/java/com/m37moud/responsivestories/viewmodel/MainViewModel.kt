@@ -13,7 +13,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.m37moud.responsivestories.data.Repository
-import com.m37moud.responsivestories.data.database.entity.VideoEntity
+import com.m37moud.responsivestories.data.database.entity.VideoEntity2
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -26,29 +26,34 @@ class MainViewModel @ViewModelInject constructor(
 ) : AndroidViewModel(application) {
 
     //local database
-    val readVideos: LiveData<List<VideoEntity>> =
+    val readVideos: LiveData<List<VideoEntity2>> =
         repository.local.readVideos().asLiveData()
 
 
-    fun insertVideos(videoEntity: VideoEntity) =
+    fun insertVideos(videoEntity: VideoEntity2) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertVideos(videoEntity)
         }
 
 
-    fun deleteVideo(videoEntity: VideoEntity) =
+//    fun deleteVideo(videoEntity: VideoEntity2) =
+//        viewModelScope.launch(Dispatchers.IO) {
+//            repository.local.deleteVideo(videoEntity)
+//        }
+    fun deleteVideo(id: String) =
         viewModelScope.launch(Dispatchers.IO) {
-            repository.local.deleteVideo(videoEntity)
+            repository.local.deleteVideo(id)
         }
 
     //update all fields in room database
-    fun updateVideo(videoEntity: VideoEntity) =
+    fun updateVideo(videoEntity: VideoEntity2) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.updateVideo(videoEntity)
         }
 
     //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
-    fun updateVideoRoomComplete(tid: Int, video: VideoModel) =
+    //room change
+    fun updateVideoRoomComplete(tid: Int, video: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.updateVideoComplete(tid, video)
         }
@@ -147,13 +152,13 @@ class MainViewModel @ViewModelInject constructor(
         return list
     }
 
-    private fun saveVideoData(model: VideoModel) {
-
-        val videoData = VideoEntity(0, model)
-        Log.d("saveVideoData", "videoData!" + videoData.toString())
-        insertVideos(videoData)
-
-    }
+//    private fun saveVideoData(model: VideoModel) {
+//
+//        val videoData = VideoEntity2(0, model)
+//        Log.d("saveVideoData", "videoData!" + videoData.toString())
+//        insertVideos(videoData)
+//
+//    }
 
 
     private fun hasInternetConnection(): Boolean {

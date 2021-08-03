@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.m37moud.responsivestories.ui.fragments.story.OfflinePlayerActivity
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.data.database.entity.VideoEntity
+import com.m37moud.responsivestories.data.database.entity.VideoEntity2
 import com.m37moud.responsivestories.util.VideosDiffUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -22,8 +22,8 @@ import kotlin.collections.ArrayList
 class DownloadedVideoAdapter(
     var context: Context
 ) : RecyclerView.Adapter<DownloadedVideoAdapter.HolderVideo>() {
-
-    var vidList = emptyList<VideoEntity>()
+//room changed3/8
+    var vidList = emptyList<VideoEntity2>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderVideo {
         val view = LayoutInflater.from(context).inflate(R.layout.row_video, parent, false)
         return HolderVideo(
@@ -39,10 +39,10 @@ class DownloadedVideoAdapter(
         val videoModel = vidList[position]
 
 //        val id: String? = videoModel.videos.id
-        val title: String? = videoModel.videos.title
-        val date: String? = videoModel.videos.timestamp
-        val url: String? = videoModel.videos.videoUri
-        val thumb: String? = videoModel.videos.videoThumb
+        val title: String? = videoModel.title
+        val date: String? = videoModel.timestamp
+        val url: String? = videoModel.videoUri
+        val thumb: String? = videoModel.videoThumb
 
         val cal = Calendar.getInstance()
         cal.timeInMillis = date!!.toLong()
@@ -89,8 +89,8 @@ class DownloadedVideoAdapter(
 //        var progress : ProgressBar = itemView.findViewById(R.id.progress_bar    )
 
     }
-
-    fun setData(newData: ArrayList<VideoEntity>) {
+//room change
+    fun setData(newData: ArrayList<VideoEntity2>) {
         val recipesDiffUtil =
             VideosDiffUtil(vidList, newData)
         val diffUtilResult = DiffUtil.calculateDiff(recipesDiffUtil)
