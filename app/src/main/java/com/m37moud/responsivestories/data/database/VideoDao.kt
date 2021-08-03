@@ -22,7 +22,7 @@ interface VideoDao {
     @Update(entity = VideoEntity::class)
     suspend fun updateVideo(videoEntity : VideoEntity)
 
-    @Query("UPDATE videos_table SET videos = :video WHERE id = :tid")
+    @Query("UPDATE videos_table SET update = :video WHERE id = :tid")
     suspend fun updateVideoComplete(tid :Int , video : VideoModel)
 
 

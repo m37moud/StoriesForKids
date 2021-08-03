@@ -21,6 +21,7 @@ class Constants {
 
         const val DATABASE_NAME = "videos_database"
         const val VIDEOS_TABLE = "videos_table"
+        const val VIDEO_TABLE = "video_table"
 
 
 
