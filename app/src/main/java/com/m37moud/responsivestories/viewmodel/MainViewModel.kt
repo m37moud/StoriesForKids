@@ -132,13 +132,15 @@ class MainViewModel @ViewModelInject constructor(
         if (hasInternetConnection()) {
             val dbRef = FirebaseDatabase.getInstance().getReference("Videos")
             val l = dbRef.child(model.id!!)
-            l.child("videoUpdate").setValue("false")
+            l.child("update").setValue(false)
                 .addOnSuccessListener {
                     Toast.makeText(getApplication(), "update is complete", Toast.LENGTH_SHORT)
                         .show()
+                    //fun updateVideoRoomComplete(tid: Int, video: Boolean)
+                    updateVideoRoomComplete(model.id!!.toInt(),false)
                 }
                 .addOnFailureListener {
-                    Toast.makeText(getApplication(), "update is faild", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(getApplication(), "update is failed", Toast.LENGTH_SHORT).show()
 
                 }
         }

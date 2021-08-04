@@ -8,7 +8,7 @@ import com.m37moud.responsivestories.data.database.entity.VideoEntity2
 
 @Database(
     entities = [VideoEntity2::class],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(VideosTypeConverter::class)

@@ -91,7 +91,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
+
         videosViewModel.saveDownloadStatus(false)
+        Log.d("MainActivity", "onStart: ")
         super.onStart()
     }
 

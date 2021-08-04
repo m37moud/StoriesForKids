@@ -6,11 +6,11 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.m37moud.responsivestories.util.Constants
 
-@Entity(tableName = Constants.VIDEO_TABLE, indices = [Index(value = ["videos"], unique = true)])
+@Entity(tableName = Constants.VIDEO_TABLE)
 
 class VideoEntity2 (
     @PrimaryKey
-    var id: String? = null,
+    var id: String,
 
     @ColumnInfo(name = "title")
     var title: String? = null,

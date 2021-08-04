@@ -18,6 +18,7 @@
         <action
             android:id="@+id/action_splashFragment_to_homeActivity"
             app:destination="@id/homeActivity"
+            app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
