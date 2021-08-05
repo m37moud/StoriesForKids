@@ -8,10 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.m37moud.responsivestories.data.Repository
 import com.m37moud.responsivestories.data.database.entity.VideoEntity2
 import com.m37moud.responsivestories.models.VideoModel
@@ -51,9 +48,9 @@ class MainViewModel @ViewModelInject constructor(
             repository.local.updateVideo(videoEntity)
         }
 
-    //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
+    //when update is complete and property (videoUpdate) back to false in fire base should update either in database
     //room change
-    fun updateVideoRoomComplete(tid: Int, video: Boolean) =
+    fun updateVideoRoomComplete(tid: String, video: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.updateVideoComplete(tid, video)
         }
@@ -130,37 +127,51 @@ class MainViewModel @ViewModelInject constructor(
 
     private suspend fun updateComplete(model: VideoModel) {
         if (hasInternetConnection()) {
-            val dbRef = FirebaseDatabase.getInstance().getReference("Videos")
-            val l = dbRef.child(model.id!!)
-            l.child("update").setValue(false)
-                .addOnSuccessListener {
-                    Toast.makeText(getApplication(), "update is complete", Toast.LENGTH_SHORT)
-                        .show()
-                    //fun updateVideoRoomComplete(tid: Int, video: Boolean)
-                    updateVideoRoomComplete(model.id!!.toInt(),false)
-                }
-                .addOnFailureListener {
-                    Toast.makeText(getApplication(), "update is failed", Toast.LENGTH_SHORT).show()
 
+            val ref = FirebaseDatabase.getInstance().reference
+            val applesQuery: Query =
+                ref.child("Videos").orderByChild("id").equalTo(model.id)
+            applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (appleSnapshot in dataSnapshot.children) {
+                        appleSnapshot.ref.child("update").setValue(false) .addOnSuccessListener {
+                            Toast.makeText(getApplication(), "update is complete", Toast.LENGTH_SHORT)
+                                .show()
+                            //when update is complete and properties (videoUpdate) back to false in firebase should update either in database
+                            updateVideoRoomComplete(model.id!!,false)
+                        }
+                            .addOnFailureListener {
+                                Toast.makeText(getApplication(), "update is failed", Toast.LENGTH_SHORT).show()
+
+                            }
+
+                    }
+                    Log.d("updateComplete", "${model.title} video is update : successfully ")
+//                Toast.makeText(this@MainActivity, "", Toast.LENGTH_SHORT).show()
                 }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("updateComplete", "onCancelled", databaseError.toException())
+                }
+            })
+
+//            val dbRef = FirebaseDatabase.getInstance().getReference("Videos")
+//            val l = dbRef.child(model.id!!)
+//            l.child("update").setValue(false)
+//                .addOnSuccessListener {
+//                    Toast.makeText(getApplication(), "update is complete", Toast.LENGTH_SHORT)
+//                        .show()
+//                    //fun updateVideoRoomComplete(tid: Int, video: Boolean)
+//                    updateVideoRoomComplete(model.id!!,false)
+//                }
+//                .addOnFailureListener {
+//                    Toast.makeText(getApplication(), "update is failed", Toast.LENGTH_SHORT).show()
+//
+//                }
         }
 
 
     }
-
-
-    fun sendVideoListToCheck(list: ArrayList<VideoModel>): ArrayList<VideoModel> {
-
-        return list
-    }
-
-//    private fun saveVideoData(model: VideoModel) {
-//
-//        val videoData = VideoEntity2(0, model)
-//        Log.d("saveVideoData", "videoData!" + videoData.toString())
-//        insertVideos(videoData)
-//
-//    }
 
 
     private fun hasInternetConnection(): Boolean {

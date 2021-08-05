@@ -27,7 +27,7 @@ class LocalDataSource @Inject constructor(
     suspend fun updateVideo(videoEntity: VideoEntity2) {
         videosDao.updateVideo(videoEntity)
     }
-    suspend fun updateVideoComplete(tid :Int , video : Boolean) {
+    suspend fun updateVideoComplete(tid :String , video : Boolean) {
         videosDao.updateVideoComplete(tid , video)
     }
 }

@@ -28,7 +28,7 @@ interface VideoDao {
     suspend fun updateVideo(videoEntity : VideoEntity2)
 
     @Query("UPDATE video_table SET updateOk = :video WHERE id = :tid")
-    suspend fun updateVideoComplete(tid :Int , video : Boolean)
+    suspend fun updateVideoComplete(tid :String , video : Boolean)
 
 
 

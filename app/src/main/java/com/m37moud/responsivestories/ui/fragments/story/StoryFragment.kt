@@ -65,7 +65,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     //    private var savedRecipeId = 0
     private var savedRecipeId = ""
-
+    private var counter = 0
     private val mAdapter by lazy {
         VideoAdapter(
             requireContext()
@@ -257,7 +257,10 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     .show()
                 //download id
                 val id = download.request.id
-                val size = roomList.size - 1
+                val size = roomList.size
+                if (counter == size) {
+                    readDatabase()
+                }
                 repeat(roomList.size) {
 
 
@@ -266,16 +269,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                         "mah DownloadREMOVING",
                         "DownloadREMOVING sucsess!download = " + id + "\n " + vidId
                     )
-                    if (vidId!! == id)
+                    if (vidId == id) {
                         savedRecipeId = roomEntityList[it].id
-                    deleteVideo(roomList[it].id.toString())
+                        deleteVideo(roomList[it].id.toString())
 
-                    Log.d(
-                        "mah onDownloadsChanged",
-                        "counter " + "\n " + it
-                    )
+                    }
 
-                    if (it == size) readDatabase()
                 }
             }
             STATE_RESTARTING -> {
@@ -288,7 +287,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 //                Log.d("EXO  DOWNLOADING ", "finish" + download.toString())
                 //download id
                 val id = download.request.id
-                val size = listVid.size - 1
+
                 repeat(listVid.size) {
 
 
@@ -302,15 +301,16 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                         saveVideoData(listVid[it])
                         Log.d(
                             "mah onDownloadsChanged",
-                            "counter " + "\n " + it
+                            "counter " + "\n " + counter
                         )
+                        //refresh the list again
+//                        if (counter == size) {
+//                            readDatabase()
+//                        }
 
-                        if (it == size) readDatabase()
                     }
 
-
                 }
-                //refresh the list again
 
 
             }
@@ -342,12 +342,14 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
 
     }
-
+//5/8 work
     private fun readDatabase() {
+//        counter = 0
         Log.d("mah readDatabase", "readDatabase called!")
         hideLoading()
         lifecycleScope.launch {
-            mainViewModel.readVideos.observeOnce(viewLifecycleOwner, Observer { database ->
+
+            mainViewModel.readVideos.observe(viewLifecycleOwner, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     Log.d("mah readDatabase", "if statement true")
@@ -364,7 +366,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                 } else {
                     Log.d("mah readDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-
+                    mainViewModel.readVideos.removeObservers(viewLifecycleOwner)
                     firstRequestApiData()
                 }
             })
@@ -602,13 +604,13 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     private fun firstRequestApiData() {
 
-        Log.d("mah firstRequestApiData", "requestApiData called!")
+        Log.d("readDatabase firstRequestApiData", "requestApiData called!")
         mainViewModel.loadVideosFromFirebase()
 
         mainViewModel.videosResponse.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
-                    Log.d("mah firstRequestApiData", "requestApiData sucsess!")
+                    Log.d("readDatabase firstRequestApiData", "requestApiData sucsess!")
                     hideLoading()
                     binding.rcStory.adapter = mAdapter
                     response.data?.let {
@@ -623,6 +625,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                         "mah firstRequestApiData error! \n" + response.toString()
                     )
                     offline()
+
                     Toast.makeText(
                         requireContext(),
                         response.message.toString(),
@@ -639,7 +642,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
 
     private fun saveVideoData(model: VideoModel) {
-        Log.d("saveVideoData", "videoData!" + model)
+        Log.d("readDatabase saveVideoData", "videoData!" + model)
         val id = model.id!!
 
         val videoData: VideoEntity2 = VideoEntity2(
@@ -654,10 +657,18 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             model.videoType,
             model.update
         )
-        Log.d("saveVideoData", "videoData!" + videoData.toString())
-        mainViewModel.insertVideos(videoData)
-        createNotification(model)
-//        readDatabase()
+        mainViewModel.insertVideos(videoData).invokeOnCompletion {
+            counter++
+            val size = listVid.size
+            Log.d("readDatabase saveVideoData", "isert all videos !" + size)
+            Log.d("readDatabase saveVideoData", "isert all videos !" + counter)
+            //refresh the list again
+            if (counter == size) {
+
+                readDatabase()
+            }
+            createNotification(model)
+        }
 
     }
 
@@ -690,18 +701,16 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 //    }
     private fun deleteVideo(id: String) {
 
-//        val videoData = VideoEntity2(savedRecipeId)
-        mainViewModel.deleteVideo(id)
+        mainViewModel.deleteVideo(id).invokeOnCompletion {
+            counter++
+        }
 
     }
 
-    //from work 1/8
     // update video model in room database then back the boolean value in firebase to false then the same in room database
     private fun updateVideo(model: VideoModel) {
 
-//        val videoData = VideoEntity(savedRecipeId, model)
         val id = model.id!!
-
         val videoData = VideoEntity2(
             id,
             model.title,
@@ -719,25 +728,15 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         Log.d("updateVideo", "model!" + model.title.toString())
 
         //update all fields in room database
-        val result = mainViewModel.updateVideo(videoData)
-        Log.d("updateVideo", "update ? " + result.toString())
+        mainViewModel.updateVideo(videoData).invokeOnCompletion {
 
-        if (result.isCompleted) {
-            //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
-
+            //when update is complete and properties (videoUpdate) back to false in fire base should update either in database
             mainViewModel.updateVideoComplete(model)
-            //when update is complete and propertiey (videoUpdate) back to false in fire base should update either in database
-//room change
-//            mainViewModel.updateVideoRoomComplete(savedRecipeId.toInt(), false)
+            readDatabase()
 
-        } else {
-            Log.d("updateVideo", "videoData! failed")
-            Toast.makeText(requireContext(), "update failed", Toast.LENGTH_SHORT).show()
         }
 
-
     }
-
 
     private fun firstCheck() {
         videosViewModel.readShouldDownload.observe(viewLifecycleOwner, Observer {
@@ -772,30 +771,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
         }
     }
-
-//    private fun backStrangeItemFromOnlineList(
-//        listOne: ArrayList<VideoEntity2>,
-//        listTwo: ArrayList<VideoModel>
-//    ): List<VideoModel> {
-//
-//        return listTwo.filterNot { lis ->
-//            listOne.any {
-//                lis.id == it.id
-//            }
-//        }
-//    }
-
-//    private fun backStrangeItemFromOfflineList(
-//        listOne: ArrayList<VideoModel>,
-//        listTwo: ArrayList<VideoEntity2>
-//    ): List<VideoModel> {
-//
-//        return listTwo.filterNot { lis ->
-//            listOne.any {
-//                lis.id == it.id
-//            }
-//        }
-//    }
 
 
     override fun onDestroyView() {

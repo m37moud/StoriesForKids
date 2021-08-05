@@ -38,7 +38,6 @@ class DownloadedVideoAdapter(
     override fun onBindViewHolder(holder: HolderVideo, position: Int) {
         val videoModel = vidList[position]
 
-//        val id: String? = videoModel.videos.id
         val title: String? = videoModel.title
         val date: String? = videoModel.timestamp
         val url: String? = videoModel.videoUri
@@ -70,7 +69,6 @@ class DownloadedVideoAdapter(
 //        setVideoUrl(videoModel,holder)
         holder.itemView.setOnClickListener {
             val intent = Intent(it.context, OfflinePlayerActivity::class.java)
-//            val intent = Intent(it.context, PlayerActivity::class.java)
             intent.putExtra("videoUri", url)
             context.startActivity(intent)
 
