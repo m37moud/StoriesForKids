@@ -2,12 +2,14 @@ package com.m37moud.responsivestories.ui.fragments.story
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.HorizontalScrollView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -16,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.exoplayer2.offline.Download.*
 import com.google.android.exoplayer2.offline.DownloadManager
@@ -342,7 +345,8 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
 
     }
-//5/8 work
+
+    //5/8 work
     private fun readDatabase() {
 //        counter = 0
         Log.d("mah readDatabase", "readDatabase called!")
@@ -769,6 +773,23 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             listOne.any {
                 lis.id == it.id
             }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            val layout = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
+
+            binding.rcStory.layoutManager = layout
+            binding.rcStory.setHasFixedSize(true)
+//            Toast.makeText(requireContext(), "landscape", Toast.LENGTH_SHORT).show()
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            binding.rcStory.layoutManager = GridLayoutManager(requireContext(), 2)
+            binding.rcStory.setHasFixedSize(true)
+
+//            Toast.makeText(requireContext(), "portrait", Toast.LENGTH_SHORT).show()
         }
     }
 

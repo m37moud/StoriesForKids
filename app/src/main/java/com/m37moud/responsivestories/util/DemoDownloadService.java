@@ -255,7 +255,7 @@ public class DemoDownloadService extends DownloadService implements DownloadTrac
                         .setSmallIcon(R.mipmap.ic_launcher)
 //                        .setGroup(GROUP_KEY_WORK_EMAIL)
                         .addAction(new NotificationCompat.Action(R.drawable.ic_play_arrow_black_24dp, "Pause", pendingIntentPause))
-                        .addAction(new NotificationCompat.Action(R.drawable.ic_play_arrow_black_24dp, "Cancel", pendingIntentCancel))
+//                        .addAction(new NotificationCompat.Action(R.drawable.ic_play_arrow_black_24dp, "Cancel", pendingIntentCancel))
                         .build();
 
 

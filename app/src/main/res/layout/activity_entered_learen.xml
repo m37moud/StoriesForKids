@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/entered_activity"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -142,7 +143,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -162,8 +163,41 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/backgroundbubble" />
 
+        <RelativeLayout
+            android:id="@+id/utility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:visibility="gone">
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/img_home"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="60dp"
+                android:onClick="homeButton"
+                app:srcCompat="@drawable/ic_home"
+                app:tint="@color/checkedChipTextColor" />
 
+            <ImageView
+                android:id="@+id/img_replay"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="60dp"
+                android:onClick="replayButton"
+                app:srcCompat="@drawable/ic_replay"
+                app:tint="@color/checkedChipTextColor" />
+
+
+        </RelativeLayout>
+
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

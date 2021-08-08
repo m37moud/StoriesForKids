@@ -2,7 +2,6 @@ package com.m37moud.responsivestories.ui.fragments.learn
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.Path
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -15,15 +14,13 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.models.AnimalsModel
 import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.activity_entered_learen.*
 import kotlinx.android.synthetic.main.folder_container.*
@@ -33,6 +30,8 @@ import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
+import com.m37moud.responsivestories.R
+
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 
@@ -314,6 +313,8 @@ class EnteredLearenActivity : AppCompatActivity() {
             )
             folderContainer.visibility = View.VISIBLE
             containerCardContainer.visibility = View.GONE
+            utility.visibility = View.GONE
+
 
             //init on click listener to arabic container
             arabic_container.setOnClickListener {
@@ -485,6 +486,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     private fun setImage(imgList: ArrayList<String>) {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
+        utility.visibility = View.VISIBLE
 
         Log.d("setImage", "setImage: " + imgList.toString())
 
@@ -724,7 +726,7 @@ class EnteredLearenActivity : AppCompatActivity() {
            ad_viewOffline.visibility = View.VISIBLE
             }
 
-            override fun onAdFailedToLoad(adError : LoadAdError) {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
                 ad_viewOffline.visibility = View.GONE
             }
         }
@@ -881,5 +883,62 @@ class EnteredLearenActivity : AppCompatActivity() {
         val intent = Intent(this, MediaService::class.java)
 
         stopService(intent)
+    }
+
+    fun homeButton(view: View) {
+
+        //show ads
+        if (mRewardedAd != null) {
+//            shouldPlay = false
+            mRewardedAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d("loadAd", "showInterstitial Ad was dismissed.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        mRewardedAd = null
+                        mAdIsLoading = false
+//                                shouldPlay = true
+//                                loadAd()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                        Log.d("loadAd", "showInterstitial Ad failed to show.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        mRewardedAd = null
+                        shouldPlay = true
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+
+                        Log.d("loadAd", "showInterstitial Ad showed fullscreen content.")
+                        // Called when ad is dismissed.
+                        mRewardedAd = null
+                        mAdIsLoading = true
+
+                    }
+                }
+//            mAdIsLoading = true
+            mRewardedAd?.show(this, OnUserEarnedRewardListener() {
+
+                fun onUserEarnedReward(rewardItem: RewardItem) {
+//                    var rewardAmount = rewardItem.getReward()
+                    var rewardType = rewardItem.type
+                    Log.d("loadAd", "User earned the reward.")
+                }
+            })
+
+            super.finish()
+        } else {
+            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
+            super.finish()
+        }
+    }
+
+    fun replayButton(view: View) {
+        val name = initName(list[counter], showEng)
+        val path = category.plus("Name") + folder + File.separator + name
+        playImgSound(path)
     }
 }
