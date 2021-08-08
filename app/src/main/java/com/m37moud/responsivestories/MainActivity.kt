@@ -15,7 +15,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.ktx.messaging
+import com.m37moud.responsivestories.util.FirebaseService
 import com.m37moud.responsivestories.util.MyFirebaseMessagingService
+import android.content.Context
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var videosViewModel: VideosViewModel
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-
+    val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,30 +39,62 @@ class MainActivity : AppCompatActivity() {
         firebaseAnalytics = Firebase.analytics
 
 
-        // Get token
-        // [START log_reg_token]
-        Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("getToken", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
+        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Get new FCM registration token
+                val token = task.result
+                FirebaseService.token = token
+                Log.d(TAG, "token: ${token.toString()}")
+                val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
+                referenceVideos.child("client").setValue(token)
+                    .addOnSuccessListener {
+                        Log.d("Fetching", "sendRegistrationToServer :  successful ")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.d(
+                            "Fetching",
+                            " sendRegistrationToServer :  err " + e.message.toString()
+                        )
+
+                        //failed to add info to database
+                    }
+                // Log and toast
+                val msg = getString(R.string.msg_token_fmt, token)
+                Log.d(TAG, msg)
+                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            } else {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
             }
 
-            // Get new FCM registration token
-            val token = task.result
-            val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
-            referenceVideos.child("client").setValue(token)
-                .addOnSuccessListener {
-                    Log.d("Fetching", "sendRegistrationToServer :  successful ")
-                }
-                .addOnFailureListener { e ->
-                    Log.d("Fetching", " sendRegistrationToServer :  err "+e.message.toString())
 
-                    //failed to add info to database
-                }
+        }
 
-        })
+
+        // Get token
+        // [START log_reg_token]
+//        Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
+//            if (!task.isSuccessful) {
+//                Log.w("getToken", "Fetching FCM registration token failed", task.exception)
+//                return@OnCompleteListener
+//            }
+//
+//            // Get new FCM registration token
+//            val token = task.result
+//            val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
+//            referenceVideos.child("client").setValue(token)
+//                .addOnSuccessListener {
+//                    Log.d("Fetching", "sendRegistrationToServer :  successful ")
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.d("Fetching", " sendRegistrationToServer :  err " + e.message.toString())
+//
+//                    //failed to add info to database
+//                }
+//
+//        })
         // [END log_reg_token]
-
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
             .addOnCompleteListener { task ->

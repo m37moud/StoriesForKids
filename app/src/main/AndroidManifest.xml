@@ -66,7 +66,6 @@
             android:name=".ui.fragments.story.OnlinePlayerActivity"
             android:configChanges="orientation|screenSize|layoutDirection" />
 
-        <activity android:name=".AddVideoActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -87,7 +86,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
         <service
-            android:name=".util.MyFirebaseMessagingService"
+            android:name=".util.FirebaseService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
