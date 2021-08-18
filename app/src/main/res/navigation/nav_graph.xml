@@ -13,7 +13,9 @@
             android:id="@+id/action_storyFragment_to_learnFragment"
             app:destination="@id/learnFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/storyFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/learnFragment"

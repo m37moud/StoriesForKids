@@ -62,6 +62,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setFullScreen()
 ////        changeOrientation()
+
         setContentView(R.layout.activity_entered_learen)
 
         //InterstitialAd

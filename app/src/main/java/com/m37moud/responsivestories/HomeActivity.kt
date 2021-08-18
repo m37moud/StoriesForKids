@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -39,29 +40,37 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
+//        setContentView(R.layout.activity_home)
         setSupportActionBar(toolBar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolBar.setTitleTextColor(ContextCompat.getColor(this, R.color.white))
 
         drawerLayout = findViewById(R.id.drawer_layout)
-
+        val navOptions = NavOptions.Builder()
+            .setPopUpTo(R.id.splashFragment, true).build()
+//        navOptions.findNavController(R.id.homeHostFragment).navigate(R.id.action_splashFragment_to_homeActivity,null,navOptions)
         navController = findNavController(R.id.homeHostFragment)
 
 
+//
+//        appBarConfiguration = AppBarConfiguration(
+//            navController.graph
+//            , drawerLayout
+//        )
 
-        appBarConfiguration = AppBarConfiguration(
-            navController.graph
-            , drawerLayout
-        )
 
-
-//        val appBarConfigurationToBottom = AppBarConfiguration(
+//         appBarConfiguration = AppBarConfiguration(
 //            setOf(
 //                R.id.storyFragment,
 //                R.id.learnFragment
 //            )
 //        )
+//
+         appBarConfiguration = AppBarConfiguration.Builder(R.id.storyFragment, R.id.learnFragment)
+             .setOpenableLayout(drawerLayout)
+
+            .build()
 
         //to show fragment activity in nav host fragment
         bottomNavigationView.setupWithNavController(navController)
@@ -124,12 +133,12 @@ class HomeActivity : AppCompatActivity() {
         showAds()
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.drawer, menu)
-        return true
-    }
+//
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        menuInflater.inflate(R.menu.drawer, menu)
+//        return true
+//    }
 
     override fun onSupportNavigateUp(): Boolean {
 
@@ -243,5 +252,13 @@ class HomeActivity : AppCompatActivity() {
         ad_view.destroy()
         ad_view.visibility = View.GONE
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 }

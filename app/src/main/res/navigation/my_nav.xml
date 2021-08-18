@@ -35,6 +35,6 @@
     <activity
         android:id="@+id/homeActivity"
         android:name="com.m37moud.responsivestories.HomeActivity"
-        android:label="app_bar_main"
-        tools:layout="@layout/app_bar_main" />
+        android:label="activity_home"
+        tools:layout="@layout/activity_home" />
 </navigation>
