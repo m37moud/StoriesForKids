@@ -46,5 +46,6 @@
     <string name="arabic">Arabic</string>
     <string name="english">English</string>
     <string name="msg_token_fmt" translatable="false">FCM registration Token: %s</string>
+    <string name="apply">apply</string>
 
 </resources>

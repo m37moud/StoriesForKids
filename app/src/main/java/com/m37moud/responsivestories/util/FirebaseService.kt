@@ -15,7 +15,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.ui.fragments.story.StoryFragment
+import com.m37moud.responsivestories.ui.fragments.story.StoryActivity
 import kotlin.random.Random
 
 private const val CHANNEL_ID = "my_channel"
@@ -42,7 +42,7 @@ class FirebaseService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val intent = Intent(this, StoryFragment::class.java)
+        val intent = Intent(this, StoryActivity::class.java)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
 

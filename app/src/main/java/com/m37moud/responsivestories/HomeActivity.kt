@@ -6,15 +6,12 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -27,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.fragment_learn.*
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -42,14 +38,13 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_drawer)
 //        setContentView(R.layout.activity_home)
         setSupportActionBar(toolBar)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolBar.setTitleTextColor(ContextCompat.getColor(this, R.color.white))
 
         drawerLayout = findViewById(R.id.drawer_layout)
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.splashFragment, true).build()
+
 //        navOptions.findNavController(R.id.homeHostFragment).navigate(R.id.action_splashFragment_to_homeActivity,null,navOptions)
+//        navController.popBackStack(R.id.homeHostFragment, true)
         navController = findNavController(R.id.homeHostFragment)
 
 
@@ -69,7 +64,6 @@ class HomeActivity : AppCompatActivity() {
 //
          appBarConfiguration = AppBarConfiguration.Builder(R.id.storyFragment, R.id.learnFragment)
              .setOpenableLayout(drawerLayout)
-
             .build()
 
         //to show fragment activity in nav host fragment
@@ -120,8 +114,6 @@ class HomeActivity : AppCompatActivity() {
         }
 //
 
-
-//        setupActionBarWithNavController(navController, appBarConfigurationToBottom)
 //to show details for bottom nav view  in app bar
         setupActionBarWithNavController(navController, appBarConfiguration)
 
@@ -142,8 +134,8 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
 
-        val navDrawerController = findNavController(R.id.homeHostFragment)
-        return navDrawerController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+//        val navDrawerController = findNavController(R.id.homeHostFragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
 
@@ -254,11 +246,16 @@ class HomeActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
+//    override fun onBackPressed() {
+//
+//        val navigationController = navHostFragment.findNavController()
+//        if (navigationController.currentDestination?.id == R.id.homeActivity) {
+//            finish()
+//
+//        } else {
+//            super.onBackPressed()
+//        }
+//
+//    }
+
 }

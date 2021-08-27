@@ -21,33 +21,59 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ResponsiveStories"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ui.SplashActivity"
+            android:theme="@style/SplashScreenStyle"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.fragments.started.onboarding.ViewPagerActivity"
+            android:theme="@style/ViewPagerScreenStyle"
+            android:screenOrientation="landscape" />
 
-        <!-- Sample AdMob App ID: ca-app-pub-9331212887639574~2078263925 -->
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
-
-
-        <activity android:name=".ui.fragments.story.OfflinePlayerActivity" />
-
-        <service
-            android:name=".util.MediaService"
-            android:enabled="true" />
+        <activity
+            android:name=".ui.fragments.story.StoryActivity"
+            android:theme="@style/StoryScreenStyle"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".ui.fragments.learn.LearnActivity"
+            android:theme="@style/LearnScreenStyle"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".ui.StartActivity"
+            android:theme="@style/StartScreenStyle"
+            android:screenOrientation="landscape" />
 
         <activity
             android:name=".ui.fragments.learn.EnteredLearenActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
-            android:screenOrientation="landscape"
             android:label="@string/title_activity_entered_learen"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
             android:name=".HomeActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:label="@string/title_activity_home"
             android:theme="@style/HomePageStyle" />
+        <activity android:name=".ui.fragments.story.OfflinePlayerActivity"
+            android:screenOrientation="landscape"
+            />
+        <activity
+            android:name=".ui.fragments.story.OnlinePlayerActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|layoutDirection" />
 
+        <service
+            android:name=".util.MediaService"
+            android:enabled="true" />
         <service
             android:name=".util.DemoDownloadService"
             android:exported="false">
@@ -61,37 +87,29 @@
             android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <activity
-            android:name=".ui.fragments.story.OnlinePlayerActivity"
-            android:configChanges="orientation|screenSize|layoutDirection" />
-
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_child" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
         <service
             android:name=".util.FirebaseService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
+        </service> <!-- Sample AdMob App ID: ca-app-pub-9331212887639574~2078263925 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_child" />
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
     </application>
 
 </manifest>

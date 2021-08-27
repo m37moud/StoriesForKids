@@ -57,6 +57,7 @@ class MainViewModel @ViewModelInject constructor(
 
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
+    var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
 
     //after update room database update firebase property back it to false
     fun updateVideoComplete(model: VideoModel) = viewModelScope.launch {
@@ -124,6 +125,68 @@ class MainViewModel @ViewModelInject constructor(
         }
 
     }
+
+    fun loadCategoriesFromFirebase() {
+        categoriesResponse.value = NetworkResult.Loading()
+        if (hasInternetConnection()) {
+            try {
+                //init array list before adding data
+
+                val list: ArrayList<VideoModel> = ArrayList()
+
+                val dbRef = FirebaseDatabase.getInstance().getReference("Categories")
+
+
+                dbRef.addValueEventListener(object : ValueEventListener {
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d("error", "Value is: " + error.message)
+
+                    }
+
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        //clear the list before adding data
+
+                        for (ds in snapshot.children) {
+                            ds.let {
+
+                                //get data as model
+                                val modelVideo: VideoModel? = ds.getValue(VideoModel::class.java)
+                                //add to array list
+                                if (modelVideo != null) {
+
+                                    list.add(modelVideo)
+//                                    saveVideoData(modelVideo)
+                                } else {
+                                    categoriesResponse.value =
+                                        NetworkResult.Error("sorry we will add new videos.")
+                                }
+
+                            }
+
+                        }
+//                        sendVideoListToCheck(list)
+                        categoriesResponse.value = NetworkResult.Success(list)
+//                        fragment.successDashboardItemsList(list)
+
+                    }
+
+                })
+
+            } catch (e: Exception) {
+
+                categoriesResponse.value = NetworkResult.Error("Videos not found.")
+//                fragment.hideLoading()
+//                fragment.offline()
+
+            }
+        } else {
+            categoriesResponse.value = NetworkResult.Error("No Internet Connection.")
+        }
+
+    }
+
 
     private suspend fun updateComplete(model: VideoModel) {
         if (hasInternetConnection()) {

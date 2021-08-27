@@ -10,22 +10,20 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
-        tools:context=".ui.fragments.learn.LearnFragment">
+        android:background="@color/mediumGray"
+        tools:context=".ui.fragments.learn.LearnActivity">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary">
+            android:background="@color/mediumGray">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_margin="8dp"
                 app:cardCornerRadius="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -67,23 +65,26 @@
 
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:src="@drawable/ic_error_placeholder" />
+                        android:src="@drawable/ic_error_placeholder"
+                        android:visibility="gone" />
 
 
-                        <ImageView
-                            android:id="@+id/img_click"
-                            android:layout_width="81dp"
-                            android:layout_height="67dp"
-                            android:layout_gravity="bottom|start"
-                            android:layout_margin="20dp"
-                            android:layout_marginBottom="28dp"
-                            android:background="@drawable/button_rounded"
-                            android:layoutDirection="rtl"
-                            android:src="@drawable/ic_next"
+                    <ImageView
+                        android:id="@+id/img_click"
+                        android:layout_width="81dp"
+                        android:layout_height="67dp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_margin="20dp"
+                        android:layout_marginBottom="28dp"
+                        android:background="@drawable/button_rounded"
+                        app:tint="@color/mediumGray"
+                        android:layoutDirection="rtl"
 
-                            />
+                        android:src="@drawable/ic_next"
 
-                    </FrameLayout>
+                        />
+
+                </FrameLayout>
 
 
 

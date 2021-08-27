@@ -31,6 +31,10 @@ class Constants {
         const val PREFERENCES_NAME = "story_preferences"
 
 
+        const val DEFAULT_MEAL_TYPE = ""
+        const val DEFAULT_DIET_TYPE = ""
+
+
 
 
     }

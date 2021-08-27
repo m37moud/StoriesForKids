@@ -18,33 +18,33 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.LearnAdapter
-import com.m37moud.responsivestories.databinding.FragmentLearnBinding
+import com.m37moud.responsivestories.databinding.ActivityLearnBinding
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import com.m37moud.responsivestories.util.MediaService
-import kotlinx.android.synthetic.main.fragment_learn.*
-import kotlinx.android.synthetic.main.fragment_learn.view.*
+import kotlinx.android.synthetic.main.activity_learn.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 
-class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
+class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
-    private var _binding: FragmentLearnBinding? = null
+    private var _binding: ActivityLearnBinding ? = null
     private val binding get() = _binding!!
-    private val mAdapter: LearnAdapter by lazy { LearnAdapter(requireContext(), this) }
+    private val mAdapter: LearnAdapter by lazy { LearnAdapter(this@LearnActivity, this) }
     private var category: LearnModel? = null
 
 
     private var shouldPlay = false
     private var categoryPosition = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        _binding = FragmentLearnBinding.inflate(inflater, container, false)
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        _binding = ActivityLearnBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         //start service and play music
         if (!shouldPlay) {
             shouldPlay = true
@@ -59,7 +59,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 
 
         binding.imgClick.setOnClickListener {
-            val intent = Intent(requireContext(), EnteredLearenActivity::class.java)
+            val intent = Intent(this@LearnActivity, EnteredLearenActivity::class.java)
 
             //get image name from Constans list
             val url = Constants.img[categoryPosition]
@@ -69,16 +69,15 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
             finish
         }
 
-
-        return binding.root
     }
+
 
 
     private fun setupRecyclerView() {
         binding.rvTitle.adapter = mAdapter
         binding.rvTitle.setHasFixedSize(true)
         binding.rvTitle.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(this@LearnActivity, LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun display() {
@@ -147,7 +146,7 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
             Log.d("soundmd", "play: " + path)
             val mediaPlayer = MediaPlayer()
 
-            val descriptor = context?.assets?.openFd(path)
+            val descriptor = this@LearnActivity?.assets?.openFd(path)
             if (descriptor != null) {
                 mediaPlayer.setDataSource(
                     descriptor.fileDescriptor,
@@ -185,11 +184,11 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 //            setFullScreen()
-            Toast.makeText(requireContext(), "landscape", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@LearnActivity, "landscape", Toast.LENGTH_SHORT).show()
             category_img.visibility = View.GONE
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             category_img.visibility = View.VISIBLE
-            Toast.makeText(requireContext(), "portrait", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@LearnActivity, "portrait", Toast.LENGTH_SHORT).show()
 
         }
     }
@@ -223,22 +222,23 @@ class LearnFragment : Fragment(), LearnAdapter.ItemClickListener {
 
 
     private fun startService() {
-        val intent = Intent(context, MediaService::class.java)
-        if (context != null) {
-            context?.startService(intent)
+        val intent = Intent(this@LearnActivity, MediaService::class.java)
+        if (this@LearnActivity != null) {
+            this@LearnActivity?.startService(intent)
         }
     }
 
 
     private fun stopService() {
-        val intent = Intent(context, MediaService::class.java)
-        if (context != null) {
-            context?.stopService(intent)
+        val intent = Intent(this@LearnActivity, MediaService::class.java)
+        if (this@LearnActivity != null) {
+            this@LearnActivity?.stopService(intent)
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        _binding = null
+//    }
 }

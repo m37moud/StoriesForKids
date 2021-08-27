@@ -8,12 +8,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.HorizontalScrollView
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,12 +24,14 @@ import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
 import com.m37moud.responsivestories.data.database.entity.VideoEntity2
-import com.m37moud.responsivestories.databinding.FragmentStoryBinding
+import com.m37moud.responsivestories.databinding.ActivityStoryBinding
 import com.m37moud.responsivestories.models.VideoModel
+import com.m37moud.responsivestories.ui.fragments.story.bottomsheet.CategoriesBottomSheet
 import com.m37moud.responsivestories.util.*
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
@@ -43,9 +44,9 @@ import kotlin.collections.ArrayList
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class StoryFragment : Fragment(), DownloadTracker.Listener {
+class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     // we need to use applicationContext
-    private var _binding: FragmentStoryBinding? = null
+    private var _binding: ActivityStoryBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var mainViewModel: MainViewModel
@@ -71,38 +72,35 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     private var counter = 0
     private val mAdapter by lazy {
         VideoAdapter(
-            requireContext()
+            this@StoryActivity
         )
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-        videosViewModel = ViewModelProvider(requireActivity()).get(VideosViewModel::class.java)
+        _binding = ActivityStoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+        mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
+        videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
         listVid = ArrayList()
         roomList = ArrayList()
 
-    }
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        _binding = FragmentStoryBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         ///
         initRecyclerView()
-        videosViewModel.readBackOnline.observe(viewLifecycleOwner, Observer {
+        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
             videosViewModel.backOnline = it
         })
 
 
         lifecycleScope.launchWhenStarted {
             networkListener = NetworkListener()
-            networkListener.checkNetworkAvailability(requireContext())
+            networkListener.checkNetworkAvailability(this@StoryActivity)
                 .collect { status ->
                     Log.d("NetworkListener", status.toString())
                     videosViewModel.networkStatus = status
@@ -117,7 +115,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         loadVideos()
 
         //check if is there new videos **
-        videosViewModel.readShouldDownload.observe(viewLifecycleOwner, Observer {
+        videosViewModel.readShouldDownload.observe(this@StoryActivity, Observer {
             Log.d("mah firstCheck", " called! + it = $it ")
             if (!it) {
                 firstCheck()
@@ -129,12 +127,16 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         dataSourceFactory = buildDataSourceFactory()!!
 
 
-        binding.addVideoFab.setOnClickListener {
+        binding.selectCategoryFab.setOnClickListener {
+
+            val bottom = CategoriesBottomSheet()
+            bottom.show(supportFragmentManager,bottom.tag)
+
 //            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
         }
 
-        return binding.root
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -168,8 +170,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
     private fun initRecyclerView() {
 
-        binding.rcStory.layoutManager = GridLayoutManager(requireContext(), 2)
+        val layout = LinearLayoutManager(this@StoryActivity,LinearLayoutManager.HORIZONTAL, false)
+        binding.rcStory.layoutManager = layout
         binding.rcStory.setHasFixedSize(true)
+
+//        binding.rcStory.layoutManager = GridLayoutManager(this@StoryActivity, 2)
+//        binding.rcStory.setHasFixedSize(true)
 
     }
 
@@ -177,12 +183,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     private fun startService() {
         try {
             DownloadService.start(
-                requireContext(),
+                this@StoryActivity,
                 DemoDownloadService::class.java
             )
         } catch (e: IllegalStateException) {
             DownloadService.startForeground(
-                requireContext(),
+                this@StoryActivity,
                 DemoDownloadService::class.java
             )
         }
@@ -246,7 +252,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             STATE_STOPPED -> {
             }
             STATE_DOWNLOADING -> {
-                Toast.makeText(requireContext(), "Downloading started .", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@StoryActivity, "Downloading started .", Toast.LENGTH_SHORT).show()
 //                Log.d(
 //                    "EXO DOWNLOADING ",
 //                    " " + download.contentLength
@@ -256,7 +262,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
 
             STATE_REMOVING -> {
 
-                Toast.makeText(requireContext(), "DownloadREMOVING .", Toast.LENGTH_SHORT)
+                Toast.makeText(this@StoryActivity, "DownloadREMOVING .", Toast.LENGTH_SHORT)
                     .show()
                 //download id
                 val id = download.request.id
@@ -285,7 +291,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
             //job work 4/8
             STATE_COMPLETED -> {
-                Toast.makeText(requireContext(), "Downloading finished .", Toast.LENGTH_SHORT)
+                Toast.makeText(this@StoryActivity, "Downloading finished .", Toast.LENGTH_SHORT)
                     .show()
 //                Log.d("EXO  DOWNLOADING ", "finish" + download.toString())
                 //download id
@@ -324,11 +330,11 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     }
 
     private fun buildDataSourceFactory(): DataSource.Factory? {
-        return AdaptiveExoplayer.getInstance(context).buildDataSourceFactory()
+        return AdaptiveExoplayer.getInstance(this@StoryActivity).buildDataSourceFactory()
     }
 
     private fun initManagers() {
-        val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(context)
+        val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(this@StoryActivity)
         downloadTracker = application.downloadTracker!!
         downloadManager = application.downloadManager!!
     }
@@ -337,7 +343,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     private fun loadVideos() {
         downloadedList = ArrayList()
 
-        AdaptiveExoplayer.getInstance(context)
+        AdaptiveExoplayer.getInstance(this@StoryActivity)
             .downloadTracker.downloads.entries.forEach { (keyUri, download) ->
                 Log.d("TAG", "loadVideos: " + download.toString())
                 downloadedList.add(download)
@@ -353,7 +359,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         hideLoading()
         lifecycleScope.launch {
 
-            mainViewModel.readVideos.observe(viewLifecycleOwner, Observer { database ->
+            mainViewModel.readVideos.observe(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     Log.d("mah readDatabase", "if statement true")
@@ -361,7 +367,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     listReadDatabase = database as ArrayList
 //room change
                     val adapterReadDatabase = DownloadedVideoAdapter(
-                        requireActivity()
+                        this@StoryActivity
                     )
                     adapterReadDatabase.setData(listReadDatabase)
                     binding.rcStory.adapter = adapterReadDatabase
@@ -370,7 +376,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                 } else {
                     Log.d("mah readDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                    mainViewModel.readVideos.removeObservers(viewLifecycleOwner)
+                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
                     firstRequestApiData()
                 }
             })
@@ -485,7 +491,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         Log.d("mah firstCheck requestApiData", "method calle is ")
 
         mainViewModel.loadVideosFromFirebase()
-        mainViewModel.videosResponse.observe(viewLifecycleOwner, Observer { response ->
+        mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
                     Log.d("mah requestApiData", "requestApiData sucsess!")
@@ -521,7 +527,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                         "mah requestApiData error! \n" + response.toString()
                     )
                     Toast.makeText(
-                        requireContext(),
+                        this@StoryActivity,
                         response.message.toString(),
                         Toast.LENGTH_SHORT
                     ).show()
@@ -532,22 +538,6 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
             }
         })
     }
-
-//    private fun updateCheck(listVid: ArrayList<VideoModel>) =
-//        CoroutineScope(Dispatchers.IO).launch {
-//            listVid.forEach {
-//                if (it.videoUpdate!!) {
-//
-//                    updateVideo(it)
-//                }
-//            }
-//
-////        withContext(Dispatchers.Main){
-////
-////        }
-//
-//
-//        }
 
 
     private fun updateCheck(listVid: ArrayList<VideoModel>) {
@@ -568,7 +558,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         roomList.clear()
 
         lifecycleScope.launch {
-            mainViewModel.readVideos.observeOnce(viewLifecycleOwner, Observer { database ->
+            mainViewModel.readVideos.observeOnce(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     val list = database as ArrayList
@@ -611,7 +601,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         Log.d("readDatabase firstRequestApiData", "requestApiData called!")
         mainViewModel.loadVideosFromFirebase()
 
-        mainViewModel.videosResponse.observe(viewLifecycleOwner, Observer { response ->
+        mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
                     Log.d("readDatabase firstRequestApiData", "requestApiData sucsess!")
@@ -619,7 +609,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     binding.rcStory.adapter = mAdapter
                     response.data?.let {
                         mAdapter.setData(it)
-                        mainViewModel.videosResponse.removeObservers(viewLifecycleOwner)
+                        mainViewModel.videosResponse.removeObservers(this@StoryActivity)
                     }
                 }
 
@@ -631,7 +621,7 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
                     offline()
 
                     Toast.makeText(
-                        requireContext(),
+                        this@StoryActivity,
                         response.message.toString(),
                         Toast.LENGTH_SHORT
                     ).show()
@@ -679,12 +669,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     private fun createNotification(model: VideoModel) {
         Log.d("createNotification", "notify called")
         val notificationManager =
-            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channelId = AppUtil.createExoDownloadNotificationChannel(requireContext())
+            this@StoryActivity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = AppUtil.createExoDownloadNotificationChannel(this@StoryActivity)
 
         val notificationCompleted =
-            NotificationCompat.Builder(requireContext(), channelId)
-                .setColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+            NotificationCompat.Builder(this@StoryActivity, channelId)
+                .setColor(ContextCompat.getColor(this@StoryActivity, R.color.colorAccent))
                 .setContentTitle(model.title)
                 .setContentText("new story is added")
                 .setAutoCancel(false)
@@ -743,12 +733,12 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
     }
 
     private fun firstCheck() {
-        videosViewModel.readShouldDownload.observe(viewLifecycleOwner, Observer {
+        videosViewModel.readShouldDownload.observe(this@StoryActivity, Observer {
             Log.d("mah firstCheck", "method calle is " + it.toString())
             //check for daily check
             if (!it) {
                 Toast.makeText(
-                    requireContext(),
+                    this@StoryActivity,
                     "check for new videos",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -776,31 +766,31 @@ class StoryFragment : Fragment(), DownloadTracker.Listener {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            val layout = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            val layout = LinearLayoutManager(this@StoryActivity,LinearLayoutManager.HORIZONTAL, false)
+//
+//            binding.rcStory.layoutManager = layout
+//            binding.rcStory.setHasFixedSize(true)
+////            Toast.makeText(requireContext(), "landscape", Toast.LENGTH_SHORT).show()
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            binding.rcStory.layoutManager = GridLayoutManager(this@StoryActivity, 2)
+//            binding.rcStory.setHasFixedSize(true)
+//
+////            Toast.makeText(requireContext(), "portrait", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
-            binding.rcStory.layoutManager = layout
-            binding.rcStory.setHasFixedSize(true)
-//            Toast.makeText(requireContext(), "landscape", Toast.LENGTH_SHORT).show()
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            binding.rcStory.layoutManager = GridLayoutManager(requireContext(), 2)
-            binding.rcStory.setHasFixedSize(true)
-
-//            Toast.makeText(requireContext(), "portrait", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
+    override fun onDestroy() {
+        super.onDestroy()
         downloadTracker.removeListener(this)
         //whe app end download status = false
         _binding = null
     }
+
+
 
 
 }

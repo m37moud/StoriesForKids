@@ -73,6 +73,14 @@
                 app:layout_constraintBottom_toBottomOf="@+id/vid_img"
                 app:layout_constraintEnd_toEndOf="@+id/title_vid"
                 app:layout_constraintStart_toStartOf="@+id/title_vid" />
+            <View
+                android:id="@+id/gradient_overlay"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:background="@drawable/graient_overlay"
+                app:layout_constraintBottom_toBottomOf="@+id/vid_img"
+                app:layout_constraintEnd_toEndOf="@+id/title_vid"
+                app:layout_constraintStart_toStartOf="@+id/title_vid" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
