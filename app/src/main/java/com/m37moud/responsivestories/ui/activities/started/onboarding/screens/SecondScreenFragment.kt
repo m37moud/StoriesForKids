@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui.fragments.started.onboarding.screens
+package com.m37moud.responsivestories.ui.activities.started.onboarding.screens
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/mediumGray"
-        tools:context=".ui.fragments.learn.LearnActivity">
+        tools:context=".ui.activities.learn.LearnActivity">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,6 +23,7 @@
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/mediumGray"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -71,8 +72,8 @@
 
                     <ImageView
                         android:id="@+id/img_click"
-                        android:layout_width="81dp"
-                        android:layout_height="67dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:layout_gravity="bottom|start"
                         android:layout_margin="20dp"
                         android:layout_marginBottom="28dp"

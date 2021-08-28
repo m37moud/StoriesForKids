@@ -1,12 +1,10 @@
-package com.m37moud.responsivestories.ui.fragments.story
+package com.m37moud.responsivestories.ui.activities.story
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -16,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.exoplayer2.offline.Download.*
@@ -24,14 +21,13 @@ import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
-import com.m37moud.responsivestories.data.database.entity.VideoEntity2
+import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.databinding.ActivityStoryBinding
 import com.m37moud.responsivestories.models.VideoModel
-import com.m37moud.responsivestories.ui.fragments.story.bottomsheet.CategoriesBottomSheet
+import com.m37moud.responsivestories.ui.activities.story.bottomsheet.CategoriesBottomSheet
 import com.m37moud.responsivestories.util.*
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
@@ -62,9 +58,9 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private lateinit var roomList: ArrayList<VideoModel>
 
     //    private lateinit var roomList: ArrayList<VideoEntity2>
-    private lateinit var roomEntityList: ArrayList<VideoEntity2>
+    private lateinit var roomEntityList: ArrayList<VideoEntity>
     private lateinit var downloadedList: ArrayList<Download>
-    private lateinit var listReadDatabase: ArrayList<VideoEntity2>
+    private lateinit var listReadDatabase: ArrayList<VideoEntity>
 
 
     //    private var savedRecipeId = 0
@@ -639,7 +635,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         Log.d("readDatabase saveVideoData", "videoData!" + model)
         val id = model.id!!
 
-        val videoData: VideoEntity2 = VideoEntity2(
+        val videoData: VideoEntity = VideoEntity(
             id,
             model.title,
             model.timestamp,
@@ -705,7 +701,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun updateVideo(model: VideoModel) {
 
         val id = model.id!!
-        val videoData = VideoEntity2(
+        val videoData = VideoEntity(
             id,
             model.title,
             model.timestamp,

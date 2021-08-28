@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui
+package com.m37moud.responsivestories.ui.activities.started.onboarding
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

@@ -3,11 +3,11 @@ package com.m37moud.responsivestories.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
-import com.m37moud.responsivestories.data.database.entity.VideoEntity2
 
 @Database(
-    entities = [VideoEntity2::class],
+    entities = [VideoEntity::class , CategoriesEntity::class],
     version = 1,
     exportSchema = false
 )

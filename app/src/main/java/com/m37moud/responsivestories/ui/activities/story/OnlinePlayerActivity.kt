@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui.fragments.story
+package com.m37moud.responsivestories.ui.activities.story
 
 import android.net.Uri
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ExtractorsFactory

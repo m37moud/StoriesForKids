@@ -1,5 +1,8 @@
 package com.m37moud.responsivestories.util
 
+import android.view.Window
+import android.view.WindowManager
+
 class Constants {
     companion object {
 
@@ -22,6 +25,7 @@ class Constants {
         const val DATABASE_NAME = "videos_database"
         const val VIDEOS_TABLE = "videos_table"
         const val VIDEO_TABLE = "video_table"
+        const val CATEGORY_TABLE = "category_table"
 
 
 

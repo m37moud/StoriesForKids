@@ -5,15 +5,15 @@
     android:id="@+id/imgVidRow"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    >
+    android:layout_margin="8dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="@color/strokeColor"
@@ -25,17 +25,27 @@
 
             <ImageView
                 android:id="@+id/vid_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_error_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/like_imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_heart"
+
+                app:tint="@color/mediumGray" />
 
             <TextView
                 android:id="@+id/title_vid"
@@ -73,14 +83,14 @@
                 app:layout_constraintBottom_toBottomOf="@+id/vid_img"
                 app:layout_constraintEnd_toEndOf="@+id/title_vid"
                 app:layout_constraintStart_toStartOf="@+id/title_vid" />
+
             <View
-                android:id="@+id/gradient_overlay"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:background="@drawable/graient_overlay"
-                app:layout_constraintBottom_toBottomOf="@+id/vid_img"
-                app:layout_constraintEnd_toEndOf="@+id/title_vid"
-                app:layout_constraintStart_toStartOf="@+id/title_vid" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 

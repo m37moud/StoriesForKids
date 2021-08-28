@@ -26,4 +26,6 @@
     <string name="story">حكاية</string>
     <string name="arabic">عربى</string>
     <string name="english">انجليزى</string>
+    <string name="apply">تطبيق</string>
+    <string name="finish">انهاء</string>
 </resources>

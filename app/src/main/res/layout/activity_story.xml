@@ -10,8 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/mediumGray"
-        tools:context=".ui.fragments.story.StoryActivity">
+        android:background="@color/lightMediumGray"
+        tools:context=".ui.activities.story.StoryActivity">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
@@ -29,20 +29,21 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
+                android:background="@color/mediumGray"
                 android:layout_height="match_parent">
 
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rc_story"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:visibility="visible"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:listitem="@layout/row_video" />
 
 
@@ -103,12 +104,11 @@
             android:layout_marginBottom="24dp"
             android:clickable="true"
             android:focusable="true"
-            android:foregroundTint="@color/colorPrimary"
             android:src="@drawable/ic_menu"
             app:backgroundTint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/colorPrimary" />
+            app:tint="@color/mediumGray" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

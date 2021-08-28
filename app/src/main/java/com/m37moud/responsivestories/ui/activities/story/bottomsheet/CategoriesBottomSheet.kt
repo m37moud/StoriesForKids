@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui.fragments.story.bottomsheet
+package com.m37moud.responsivestories.ui.activities.story.bottomsheet
 
 import android.os.Bundle
 import android.util.Log
@@ -37,7 +37,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val mView = inflater.inflate(R.layout.recipes_bottom_sheet, container, false)
+        val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
 
 //        recipesViewModel.readMealAndDietType.asLiveData().observe(viewLifecycleOwner) { value ->
 //            Log.d("mah RecipesBottomSheet", "requestApiData sucsess!" + value.toString())

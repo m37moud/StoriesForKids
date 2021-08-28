@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context=".ui.fragments.story.OnlinePlayerActivity">
+    tools:context=".ui.activities.story.OnlinePlayerActivity">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/OfflinePlayerView"

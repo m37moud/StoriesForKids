@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui
+package com.m37moud.responsivestories.ui.activities.started.onboarding
 
 import android.content.Context
 import android.content.Intent
@@ -6,10 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowManager
-import com.m37moud.responsivestories.HomeActivity
-import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.ui.fragments.started.onboarding.ViewPagerActivity
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

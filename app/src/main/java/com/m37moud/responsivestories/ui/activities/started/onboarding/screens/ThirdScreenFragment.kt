@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui.fragments.started.onboarding.screens
+package com.m37moud.responsivestories.ui.activities.started.onboarding.screens
 
 import android.content.Context
 import android.content.Intent
@@ -7,10 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.ui.StartActivity
+import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 import kotlinx.android.synthetic.main.fragment_third_screen.view.*
 
@@ -29,8 +28,8 @@ class ThirdScreenFragment : Fragment() {
         view.finish.setOnClickListener {
 //            findNavController().navigate(R.id.action_viewPagerFragment_to_storyFragment2)
             startActivity(Intent(requireContext(), StartActivity::class.java))
-            finish
 
+            requireActivity().finish()
 
             onBoardingFinished()
 

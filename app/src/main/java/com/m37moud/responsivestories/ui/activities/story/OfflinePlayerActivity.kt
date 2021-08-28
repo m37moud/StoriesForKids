@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui.fragments.story
+package com.m37moud.responsivestories.ui.activities.story
 
 import android.content.res.Configuration
 import android.net.Uri

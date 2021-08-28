@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".ui.fragments.started.onboarding.screens.FirstScreenFragment">
+    tools:context=".ui.activities.started.onboarding.screens.FirstScreenFragment">
 
 
     <ImageView
@@ -55,7 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="40dp"
-        android:text="Next"
+        android:layoutDirection="rtl"
+        android:text="@string/next"
         android:textColor="@color/blue"
         android:textSize="22sp"
         android:textStyle="bold"

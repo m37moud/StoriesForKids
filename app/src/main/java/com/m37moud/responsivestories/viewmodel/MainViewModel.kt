@@ -10,7 +10,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.google.firebase.database.*
 import com.m37moud.responsivestories.data.Repository
-import com.m37moud.responsivestories.data.database.entity.VideoEntity2
+import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
+import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -23,17 +24,27 @@ class MainViewModel @ViewModelInject constructor(
 ) : AndroidViewModel(application) {
 
     //local database
-    val readVideos: LiveData<List<VideoEntity2>> =
+    val readVideos: LiveData<List<VideoEntity>> =
         repository.local.readVideos().asLiveData()
 
 
-    fun insertVideos(videoEntity: VideoEntity2) =
+    fun insertVideos(videoEntity: VideoEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertVideos(videoEntity)
         }
 
+    //Categories
+    val readCategories: LiveData<List<CategoriesEntity>> =
+        repository.local.readCategories().asLiveData()
 
-//    fun deleteVideo(videoEntity: VideoEntity2) =
+
+    fun insertVideos(categoriesEntity: CategoriesEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.insertCategories(categoriesEntity)
+        }
+
+
+    //    fun deleteVideo(videoEntity: VideoEntity2) =
 //        viewModelScope.launch(Dispatchers.IO) {
 //            repository.local.deleteVideo(videoEntity)
 //        }
@@ -43,7 +54,7 @@ class MainViewModel @ViewModelInject constructor(
         }
 
     //update all fields in room database
-    fun updateVideo(videoEntity: VideoEntity2) =
+    fun updateVideo(videoEntity: VideoEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.updateVideo(videoEntity)
         }
@@ -57,7 +68,8 @@ class MainViewModel @ViewModelInject constructor(
 
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
-    var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
+    var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> =
+        MutableLiveData()
 
     //after update room database update firebase property back it to false
     fun updateVideoComplete(model: VideoModel) = viewModelScope.launch {
@@ -71,7 +83,6 @@ class MainViewModel @ViewModelInject constructor(
             try {
                 //init array list before adding data
 
-                val list: ArrayList<VideoModel> = ArrayList()
 
                 val dbRef = FirebaseDatabase.getInstance().getReference("Videos")
 
@@ -86,6 +97,7 @@ class MainViewModel @ViewModelInject constructor(
 
                     override fun onDataChange(snapshot: DataSnapshot) {
                         //clear the list before adding data
+                        val list: ArrayList<VideoModel> = ArrayList()
 
                         for (ds in snapshot.children) {
                             ds.let {
@@ -132,10 +144,8 @@ class MainViewModel @ViewModelInject constructor(
             try {
                 //init array list before adding data
 
-                val list: ArrayList<VideoModel> = ArrayList()
 
                 val dbRef = FirebaseDatabase.getInstance().getReference("Categories")
-
 
                 dbRef.addValueEventListener(object : ValueEventListener {
 
@@ -144,9 +154,9 @@ class MainViewModel @ViewModelInject constructor(
 
                     }
 
-
                     override fun onDataChange(snapshot: DataSnapshot) {
                         //clear the list before adding data
+                        val list: ArrayList<VideoModel> = ArrayList()
 
                         for (ds in snapshot.children) {
                             ds.let {
@@ -197,14 +207,22 @@ class MainViewModel @ViewModelInject constructor(
             applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (appleSnapshot in dataSnapshot.children) {
-                        appleSnapshot.ref.child("update").setValue(false) .addOnSuccessListener {
-                            Toast.makeText(getApplication(), "update is complete", Toast.LENGTH_SHORT)
+                        appleSnapshot.ref.child("update").setValue(false).addOnSuccessListener {
+                            Toast.makeText(
+                                getApplication(),
+                                "update is complete",
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
                             //when update is complete and properties (videoUpdate) back to false in firebase should update either in database
-                            updateVideoRoomComplete(model.id!!,false)
+                            updateVideoRoomComplete(model.id!!, false)
                         }
                             .addOnFailureListener {
-                                Toast.makeText(getApplication(), "update is failed", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    getApplication(),
+                                    "update is failed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
                             }
 

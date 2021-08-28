@@ -19,11 +19,14 @@
         app:strokeColor="@color/strokeColor"
         app:strokeWidth="2dp"
         tools:ignore="MissingConstraints"
+        android:background="@android:color/transparent"
+
         tools:layout_editor_absoluteX="144dp"
         tools:layout_editor_absoluteY="131dp">
 
         <FrameLayout
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content">
 
             <ImageView
@@ -98,13 +101,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="5dp"
-            android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_email"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
             app:layout_constraintStart_toStartOf="@+id/facebook_fab"
-            app:tint="@color/white" />
+            app:backgroundTint="@color/white"
+            app:tint="@color/mediumGray" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/facebook_fab"
@@ -112,13 +115,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="5dp"
-            android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_facebook"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
             app:layout_constraintStart_toStartOf="@+id/youtube_fab"
-            app:tint="@color/white" />
+            app:backgroundTint="@color/white"
+            app:tint="@color/mediumGray" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/youtube_fab"
@@ -126,13 +129,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="5dp"
-            android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_youtube"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
             app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
-            app:tint="@color/white" />
+            app:backgroundTint="@color/white"
+            app:tint="@color/mediumGray" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/open_menu_fab"
@@ -144,10 +147,11 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/white"
+            app:tint="@color/mediumGray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/white" />
+             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -177,8 +181,8 @@
 
             <ImageView
                 android:id="@+id/img_main_home"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="end"
                 android:layout_marginEnd="60dp"
@@ -189,8 +193,8 @@
 
             <ImageView
                 android:id="@+id/img_main_replay"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="top"
                 android:layout_marginStart="60dp"

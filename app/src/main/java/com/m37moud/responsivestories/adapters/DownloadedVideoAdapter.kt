@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.m37moud.responsivestories.ui.fragments.story.OfflinePlayerActivity
+import com.m37moud.responsivestories.ui.activities.story.OfflinePlayerActivity
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.data.database.entity.VideoEntity2
+import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.util.VideosDiffUtil
 import java.util.*
 import kotlin.collections.ArrayList
@@ -23,7 +23,7 @@ class DownloadedVideoAdapter(
     var context: Context
 ) : RecyclerView.Adapter<DownloadedVideoAdapter.HolderVideo>() {
 //room changed3/8
-    var vidList = emptyList<VideoEntity2>()
+    var vidList = emptyList<VideoEntity>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderVideo {
         val view = LayoutInflater.from(context).inflate(R.layout.row_video, parent, false)
         return HolderVideo(
@@ -88,7 +88,7 @@ class DownloadedVideoAdapter(
 
     }
 //room change
-    fun setData(newData: ArrayList<VideoEntity2>) {
+    fun setData(newData: ArrayList<VideoEntity>) {
         val recipesDiffUtil =
             VideosDiffUtil(vidList, newData)
         val diffUtilResult = DiffUtil.calculateDiff(recipesDiffUtil)

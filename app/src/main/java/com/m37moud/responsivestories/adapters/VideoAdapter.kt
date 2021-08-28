@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.VideoModel
-import com.m37moud.responsivestories.ui.fragments.story.OnlinePlayerActivity
+import com.m37moud.responsivestories.ui.activities.story.OnlinePlayerActivity
 import com.m37moud.responsivestories.util.VideosDiffUtil
 import java.util.*
 

@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".ui.StartActivity">
+    tools:context=".ui.activities.started.onboarding.StartActivity">
 
 
     <ImageView
         android:id="@+id/start"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginEnd="584dp"
+        android:layout_marginEnd="650dp"
         android:layout_marginBottom="48dp"
         android:background="@drawable/button_rounded"
         android:layoutDirection="rtl"
