@@ -24,8 +24,10 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
+import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.databinding.ActivityStoryBinding
+import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.ui.activities.story.bottomsheet.CategoriesBottomSheet
 import com.m37moud.responsivestories.util.*
@@ -55,12 +57,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private lateinit var dataSourceFactory: DataSource.Factory
 
     private lateinit var listVid: ArrayList<VideoModel>
+    private lateinit var listCategory: ArrayList<CategoriesModel>
     private lateinit var roomList: ArrayList<VideoModel>
 
     //    private lateinit var roomList: ArrayList<VideoEntity2>
     private lateinit var roomEntityList: ArrayList<VideoEntity>
     private lateinit var downloadedList: ArrayList<Download>
     private lateinit var listReadDatabase: ArrayList<VideoEntity>
+    private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
 
 
     //    private var savedRecipeId = 0
@@ -85,6 +89,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
         listVid = ArrayList()
         roomList = ArrayList()
+        listCategory = ArrayList()
 
         binding.lifecycleOwner = this
         ///
@@ -109,7 +114,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         initManagers()
         loadVideos()
-
+        getCategoriesFromFirebase()
         //check if is there new videos **
         videosViewModel.readShouldDownload.observe(this@StoryActivity, Observer {
             Log.d("mah firstCheck", " called! + it = $it ")
@@ -122,14 +127,27 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         dataSourceFactory = buildDataSourceFactory()!!
 
+        readCategoriesFromDatabase()
 
-        binding.selectCategoryFab.setOnClickListener {
+//
 
-            val bottom = CategoriesBottomSheet()
-            bottom.show(supportFragmentManager,bottom.tag)
+            binding.selectCategoryFab.setOnClickListener {
+                if (listCategory.isNotEmpty()) {
+                    binding.selectCategoryFab.isClickable = true
+                val bottomSheetFragment = CategoriesBottomSheet()
+                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("myListCategory", listCategory)
+                bottomSheetFragment.arguments = bundle
+            } else
+                {
+                    Toast.makeText(this@StoryActivity, "try to fetch Categories", Toast.LENGTH_SHORT).show()
+//            binding.selectCategoryFab.isClickable = false
+                }
 
 //            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
         }
+
 
     }
 
@@ -166,7 +184,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
     private fun initRecyclerView() {
 
-        val layout = LinearLayoutManager(this@StoryActivity,LinearLayoutManager.HORIZONTAL, false)
+        val layout = LinearLayoutManager(this@StoryActivity, LinearLayoutManager.HORIZONTAL, false)
         binding.rcStory.layoutManager = layout
         binding.rcStory.setHasFixedSize(true)
 
@@ -248,7 +266,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             STATE_STOPPED -> {
             }
             STATE_DOWNLOADING -> {
-                Toast.makeText(this@StoryActivity, "Downloading started .", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@StoryActivity, "Downloading started .", Toast.LENGTH_SHORT)
+                    .show()
 //                Log.d(
 //                    "EXO DOWNLOADING ",
 //                    " " + download.contentLength
@@ -486,7 +505,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         listVid.clear()
         Log.d("mah firstCheck requestApiData", "method calle is ")
 
-        mainViewModel.loadVideosFromFirebase()
+        mainViewModel.getVideos()
         mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
@@ -595,7 +614,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun firstRequestApiData() {
 
         Log.d("readDatabase firstRequestApiData", "requestApiData called!")
-        mainViewModel.loadVideosFromFirebase()
+        mainViewModel.getVideos()
 
         mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
             when (response) {
@@ -779,14 +798,98 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //        }
 //    }
 
+    private fun getCategoriesFromFirebase() {
+
+        Log.d("getCategoriesFromFirebase", "getCategories called!")
+        mainViewModel.getCategories()
+
+        mainViewModel.categoriesResponse.observe(this@StoryActivity, Observer { response ->
+            when (response) {
+                is NetworkResult.Success -> {
+                    Log.d("getCategories", "getCategories sucsess!")
+                    hideLoading()
+                    response.data?.let {
+                        prepareSaveCategoriesData(it)
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    Log.d(
+                        "getCategories",
+                        "mah getCategories error! \n" + response.toString()
+                    )
+
+                    Toast.makeText(
+                        this@StoryActivity,
+                        response.message.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is NetworkResult.Loading -> {
+
+                    Log.d("getCategories", "getCategories Loading!")
+                }
+            }
+        })
+    }
+
+    private fun prepareSaveCategoriesData(list: ArrayList<CategoriesModel>) {
+        Log.d("prepareSaveCategoriesData ", "CategoriesModel! called")
+
+        if (list.isNotEmpty()) {
+            list.forEach {
+                saveCategoriesData(it)
+            }
+        }
+
+    }
+
+    private fun saveCategoriesData(model: CategoriesModel) {
+        Log.d("readDatabase saveVideoData", "videoData!" + model)
+        val id = model.categoryId!!
+
+        val categoryData: CategoriesEntity = CategoriesEntity(
+            id,
+            model.categoryName,
+            model.categoryImage
+        )
+        mainViewModel.insertCategories(categoryData).invokeOnCompletion {
+            val size = listCategory.size
+            Log.d("readDatabase saveVideoData", "isert all videos !" + size)
+
+
+
+        }
+
+    }
+
+    private fun readCategoriesFromDatabase() {
+        Log.d("mah readCategoriesFromDatabase", "readCategoriesFromDatabase called!")
+        lifecycleScope.launch {
+            mainViewModel.readCategories.observe(this@StoryActivity, Observer { database ->
+                if (database.isNotEmpty()) {
+
+                    Log.d("mah readCategoriesFromDatabase", "if statement true")
+
+                    listCategory = database as ArrayList<CategoriesModel>
+
+
+                    Log.d("mah readCategoriesFromDatabase", "list is " + listCategory)
+
+                } else {
+                    Log.d("mah readCategoriesFromDatabase", "if statement is false ...")
+//                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+                    mainViewModel.readCategories.removeObservers(this@StoryActivity)
+                }
+            })
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         downloadTracker.removeListener(this)
         //whe app end download status = false
         _binding = null
     }
-
-
 
 
 }

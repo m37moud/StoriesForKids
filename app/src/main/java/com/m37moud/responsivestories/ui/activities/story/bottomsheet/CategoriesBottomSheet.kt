@@ -15,6 +15,8 @@ import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.util.Constants.Companion.DEFAULT_DIET_TYPE
 import com.m37moud.responsivestories.util.Constants.Companion.DEFAULT_MEAL_TYPE
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
+import kotlinx.android.synthetic.main.categories_bottom_sheet.view.*
+import java.util.ArrayList
 
 class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
@@ -38,6 +40,14 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         // Inflate the layout for this fragment
         val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
+//        val data = arguments?.getParcelableArrayList("myListCategory")
+        val data = arguments?.getParcelableArrayList<CategoriesModel>("myListCategory") as ArrayList<CategoriesModel>
+        Log.d("CategoriesBottomSheet", "onCreateView: " + data)
+
+        if (data != null) {
+            initChip(data, mView.categories_chipGroub)
+        }
+
 
 //        recipesViewModel.readMealAndDietType.asLiveData().observe(viewLifecycleOwner) { value ->
 //            Log.d("mah RecipesBottomSheet", "requestApiData sucsess!" + value.toString())
@@ -81,6 +91,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
         return mView
     }
+
     override fun onStart() {
         super.onStart()
         //this forces the sheet to appear at max height even on landscape
@@ -99,15 +110,16 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     }
 
 
-    private fun initChip(list: ArrayList<CategoriesModel>, chipGroup: ChipGroup){
+    private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
 
-
-        repeat(list.size) {
-            val model = list[it]
-            val chip = Chip(requireContext())
-            chip.text = model.categoryName
-            chip.setTextAppearance(R.style.customChipStyle)
-            chipGroup.addView(chip)
+        if (list != null) {
+            repeat(list.size) {
+                val model = list[it]
+                val chip = Chip(requireContext())
+                chip.text = model.categoryName
+                chip.setTextAppearance(R.style.customChipStyle)
+                chipGroup.addView(chip)
+            }
         }
 
 

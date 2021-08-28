@@ -12,6 +12,7 @@ import com.google.firebase.database.*
 import com.m37moud.responsivestories.data.Repository
 import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
+import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,7 @@ class MainViewModel @ViewModelInject constructor(
         repository.local.readCategories().asLiveData()
 
 
-    fun insertVideos(categoriesEntity: CategoriesEntity) =
+    fun insertCategories(categoriesEntity: CategoriesEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertCategories(categoriesEntity)
         }
@@ -68,32 +69,34 @@ class MainViewModel @ViewModelInject constructor(
 
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
-    var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> =
+    var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<CategoriesModel>>> =
         MutableLiveData()
+
+    fun getVideos() = viewModelScope.launch {
+        loadVideosFromFirebase()
+    }
+    fun getCategories() = viewModelScope.launch {
+        loadCategoriesFromFirebase()
+    }
 
     //after update room database update firebase property back it to false
     fun updateVideoComplete(model: VideoModel) = viewModelScope.launch {
         updateComplete(model)
     }
 
-    @ExperimentalCoroutinesApi
-    fun loadVideosFromFirebase() {
+
+    private suspend fun loadVideosFromFirebase() {
         videosResponse.value = NetworkResult.Loading()
         if (hasInternetConnection()) {
             try {
                 //init array list before adding data
-
-
                 val dbRef = FirebaseDatabase.getInstance().getReference("Videos")
-
-
                 dbRef.addValueEventListener(object : ValueEventListener {
 
                     override fun onCancelled(error: DatabaseError) {
                         Log.d("errore", "Value is: " + error.message)
 
                     }
-
 
                     override fun onDataChange(snapshot: DataSnapshot) {
                         //clear the list before adding data
@@ -138,7 +141,7 @@ class MainViewModel @ViewModelInject constructor(
 
     }
 
-    fun loadCategoriesFromFirebase() {
+    private suspend fun loadCategoriesFromFirebase() {
         categoriesResponse.value = NetworkResult.Loading()
         if (hasInternetConnection()) {
             try {
@@ -156,17 +159,17 @@ class MainViewModel @ViewModelInject constructor(
 
                     override fun onDataChange(snapshot: DataSnapshot) {
                         //clear the list before adding data
-                        val list: ArrayList<VideoModel> = ArrayList()
+                        val list: ArrayList<CategoriesModel> = ArrayList()
 
                         for (ds in snapshot.children) {
                             ds.let {
 
                                 //get data as model
-                                val modelVideo: VideoModel? = ds.getValue(VideoModel::class.java)
+                                val modelCAtegory: CategoriesModel? = ds.getValue(CategoriesModel::class.java)
                                 //add to array list
-                                if (modelVideo != null) {
+                                if (modelCAtegory != null) {
 
-                                    list.add(modelVideo)
+                                    list.add(modelCAtegory)
 //                                    saveVideoData(modelVideo)
                                 } else {
                                     categoriesResponse.value =
