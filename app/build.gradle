@@ -156,6 +156,7 @@ dependencies {
     // debugImplementation because LeakCanary should only run in debug builds.
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
-
+// scrolling BackGround
+    implementation 'com.github.Q42:AndroidScrollingImageView:1.3.4'
 
 }

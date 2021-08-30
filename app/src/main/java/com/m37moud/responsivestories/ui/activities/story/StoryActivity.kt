@@ -2,6 +2,7 @@ package com.m37moud.responsivestories.ui.activities.story
 
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -31,11 +32,13 @@ import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.ui.activities.story.bottomsheet.CategoriesBottomSheet
 import com.m37moud.responsivestories.util.*
+import com.m37moud.responsivestories.util.Constants.Companion.getRandomColor
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 

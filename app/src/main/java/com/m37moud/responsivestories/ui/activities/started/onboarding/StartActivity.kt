@@ -1,11 +1,13 @@
 package com.m37moud.responsivestories.ui.activities.started.onboarding
 
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.util.Constants
 import kotlinx.android.synthetic.main.activity_start.*
 
 class StartActivity : AppCompatActivity() {
@@ -20,5 +22,19 @@ class StartActivity : AppCompatActivity() {
             startActivity(Intent(this@StartActivity, MainActivity::class.java))
 //            finish()
         }
+
+        val colors = IntArray(2)
+        colors[0] = Constants.getRandomColor()
+        colors[1] = Constants.getRandomColor()
+
+
+        val gd = GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM, colors
+        )
+
+        gd.gradientType = GradientDrawable.RADIAL_GRADIENT
+        gd.gradientRadius = 300f
+        gd.cornerRadius = 0f
+        main_FrameLayout.background = gd
     }
 }

@@ -180,7 +180,8 @@
                 android:layout_marginEnd="60dp"
                 android:onClick="homeButton"
                 app:srcCompat="@drawable/ic_home"
-                app:tint="@color/checkedChipTextColor" />
+                android:background="@drawable/button_rounded"
+                app:tint="@color/blue" />
 
             <ImageView
                 android:id="@+id/img_replay"
@@ -192,7 +193,8 @@
                 android:layout_marginTop="60dp"
                 android:onClick="replayButton"
                 app:srcCompat="@drawable/ic_replay"
-                app:tint="@color/checkedChipTextColor" />
+                android:background="@drawable/button_rounded"
+                app:tint="@color/blue" />
 
 
         </RelativeLayout>

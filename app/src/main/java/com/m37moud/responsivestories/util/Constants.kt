@@ -1,7 +1,7 @@
 package com.m37moud.responsivestories.util
 
-import android.view.Window
-import android.view.WindowManager
+import android.graphics.Color
+import java.util.*
 
 class Constants {
     companion object {
@@ -39,7 +39,10 @@ class Constants {
         const val DEFAULT_DIET_TYPE = ""
 
 
-
+        fun getRandomColor(): Int {
+            val rnd = Random()
+            return Color.argb(255, rnd.nextInt(256), rnd.nextInt(56), rnd.nextInt(256))
+        }
 
     }
 }
