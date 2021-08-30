@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
     tools:context=".MainActivity">
-
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/story_card_view"
@@ -88,89 +89,32 @@
     </com.google.android.material.card.MaterialCardView>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        >
 
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/gmail_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:src="@drawable/ic_email"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
-            app:layout_constraintStart_toStartOf="@+id/facebook_fab"
-            app:backgroundTint="@color/white"
-            app:tint="@color/mediumGray" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/facebook_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:src="@drawable/ic_facebook"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
-            app:layout_constraintStart_toStartOf="@+id/youtube_fab"
-            app:backgroundTint="@color/white"
-            app:tint="@color/mediumGray" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/youtube_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:src="@drawable/ic_youtube"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
-            app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
-            app:backgroundTint="@color/white"
-            app:tint="@color/mediumGray" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/open_menu_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_add"
-            app:backgroundTint="@color/white"
-            app:tint="@color/mediumGray"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-             />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <FrameLayout
+     <FrameLayout
         android:id="@+id/main_FrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        >
 
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/bottom_background"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/backgroundbubble" />
+        <com.q42.android.scrollingimageview.ScrollingImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:scaleType="fitXY"
+            scrolling_image_view:speed="60dp"
+            scrolling_image_view:source="@drawable/tst1_background"
+            scrolling_image_view:initialState="started"/>
+
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|bottom"
+            />
+
+
 
         <RelativeLayout
             android:id="@+id/main_utility"
@@ -189,7 +133,7 @@
                 android:onClick="homeMainButton"
                 app:srcCompat="@drawable/ic_home"
                 android:background="@drawable/button_rounded"
-                app:tint="@color/mediumGray"/>
+                app:tint="@color/blue"/>
 
             <ImageView
                 android:id="@+id/img_main_replay"
@@ -201,10 +145,76 @@
                 android:onClick="replayMainButton"
                 app:srcCompat="@drawable/ic_replay"
                 android:background="@drawable/button_rounded"
-                app:tint="@color/mediumGray" />
+                app:tint="@color/blue" />
 
 
         </RelativeLayout>
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="bottom|start"
+             >
+
+
+             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                 android:id="@+id/gmail_fab"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="bottom"
+                 android:layout_marginBottom="5dp"
+                 android:focusable="true"
+                 android:src="@drawable/ic_email"
+                 android:visibility="invisible"
+                 app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
+                 app:layout_constraintStart_toStartOf="@+id/facebook_fab"
+                 app:backgroundTint="@color/white"
+                 app:tint="@color/mediumGray" />
+
+             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                 android:id="@+id/facebook_fab"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="bottom"
+                 android:layout_marginBottom="5dp"
+                 android:focusable="true"
+                 android:src="@drawable/ic_facebook"
+                 android:visibility="invisible"
+                 app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
+                 app:layout_constraintStart_toStartOf="@+id/youtube_fab"
+                 app:backgroundTint="@color/white"
+                 app:tint="@color/mediumGray" />
+
+             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                 android:id="@+id/youtube_fab"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="bottom"
+                 android:layout_marginBottom="5dp"
+                 android:focusable="true"
+                 android:src="@drawable/ic_youtube"
+                 android:visibility="invisible"
+                 app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
+                 app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
+                 app:backgroundTint="@color/white"
+                 app:tint="@color/mediumGray" />
+
+             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                 android:id="@+id/open_menu_fab"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="bottom"
+                 android:layout_marginStart="16dp"
+                 android:layout_marginBottom="8dp"
+                 android:clickable="true"
+                 android:focusable="true"
+                 android:src="@drawable/ic_add"
+                 app:backgroundTint="@color/white"
+                 app:tint="@color/mediumGray"
+                 app:layout_constraintBottom_toBottomOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </FrameLayout>

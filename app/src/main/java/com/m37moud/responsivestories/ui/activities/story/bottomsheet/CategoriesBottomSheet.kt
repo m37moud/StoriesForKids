@@ -45,7 +45,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         Log.d("CategoriesBottomSheet", "onCreateView: " + data)
 
         if (data != null) {
-            initChip(data, mView.categories_chipGroub)
+//            initChip(data, mView.categories_chipGroub)
         }
 
 

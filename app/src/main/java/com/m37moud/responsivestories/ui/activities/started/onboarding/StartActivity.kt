@@ -20,21 +20,33 @@ class StartActivity : AppCompatActivity() {
         )
         start.setOnClickListener {
             startActivity(Intent(this@StartActivity, MainActivity::class.java))
+            start.isClickable =false
 //            finish()
         }
 
-        val colors = IntArray(2)
-        colors[0] = Constants.getRandomColor()
-        colors[1] = Constants.getRandomColor()
+//        val colors = IntArray(2)
+//        colors[0] = Constants.getRandomColor()
+//        colors[1] = Constants.getRandomColor()
+//
+//
+//        val gd = GradientDrawable(
+//            GradientDrawable.Orientation.TOP_BOTTOM, colors
+//        )
+//
+//        gd.gradientType = GradientDrawable.RADIAL_GRADIENT
+//        gd.gradientRadius = 300f
+//        gd.cornerRadius = 0f
+//        main_FrameLayout.background = gd
+    }
 
+    override fun onResume() {
+        start.isClickable =true
 
-        val gd = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM, colors
-        )
+        super.onResume()
+    }
 
-        gd.gradientType = GradientDrawable.RADIAL_GRADIENT
-        gd.gradientRadius = 300f
-        gd.cornerRadius = 0f
-        main_FrameLayout.background = gd
+    override fun onStart() {
+        start.isClickable =true
+        super.onStart()
     }
 }

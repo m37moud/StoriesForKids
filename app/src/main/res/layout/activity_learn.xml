@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -33,7 +35,36 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:strokeColor="@color/strokeColor"
                 app:strokeWidth="1dp">
+                <FrameLayout
+                    android:id="@+id/main_FrameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
+
+                    <com.q42.android.scrollingimageview.ScrollingImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom"
+                        android:scaleType="fitXY"
+                        scrolling_image_view:speed="60dp"
+                        scrolling_image_view:source="@drawable/tst1_background"
+                        scrolling_image_view:initialState="started"/>
+
+
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal|bottom"
+                        android:background="@drawable/activities_background"
+                        />
+
+
+                </FrameLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_title"
@@ -78,7 +109,7 @@
                         android:layout_margin="20dp"
                         android:layout_marginBottom="28dp"
                         android:background="@drawable/button_rounded"
-                        app:tint="@color/mediumGray"
+                        app:tint="@color/blue"
                         android:layoutDirection="rtl"
 
                         android:src="@drawable/ic_next"

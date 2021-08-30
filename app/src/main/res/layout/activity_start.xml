@@ -8,6 +8,44 @@
     tools:context=".ui.activities.started.onboarding.StartActivity">
 
 
+
+    <FrameLayout
+        android:id="@+id/main_FrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <com.q42.android.scrollingimageview.ScrollingImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:scaleType="fitXY"
+            scrolling_image_view:speed="60dp"
+            scrolling_image_view:source="@drawable/tst1_background"
+            scrolling_image_view:initialState="started"/>
+
+        <com.q42.android.scrollingimageview.ScrollingImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            scrolling_image_view:speed="114dp"
+            scrolling_image_view:source="@drawable/scrolling_foreground" />
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|bottom"
+            android:background="@drawable/activities_background"
+            />
+
+
+    </FrameLayout>
+
     <ImageView
         android:id="@+id/start"
         android:layout_width="60dp"
@@ -20,44 +58,6 @@
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/mediumGray" />
-    <FrameLayout
-        android:id="@+id/main_FrameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/activities_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            scrolling_image_view:speed="60dp"
-            scrolling_image_view:source="@drawable/scrolling_background"
-            scrolling_image_view:initialState="started"/>
-
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            scrolling_image_view:speed="114dp"
-            scrolling_image_view:source="@drawable/scrolling_foreground" />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:src="@drawable/van" />
-
-
-
-    </FrameLayout>
-
-
+        app:tint="@color/blue" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
