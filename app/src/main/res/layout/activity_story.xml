@@ -28,7 +28,6 @@
             app:strokeWidth="1dp">
 
             <FrameLayout
-                android:id="@+id/main_FrameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -49,6 +48,7 @@
 
 
                 <FrameLayout
+                    android:id="@+id/story_FrameLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal|bottom"

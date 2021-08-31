@@ -2,12 +2,38 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
     tools:context=".MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <com.q42.android.scrollingimageview.ScrollingImageView
+            android:id="@+id/main_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            scrolling_image_view:initialState="started"
+            scrolling_image_view:source="@drawable/tst1_background"
+            scrolling_image_view:speed="60dp" />
+
+
+        <FrameLayout
+            android:id="@+id/main_FrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|bottom"
+            android:alpha="0.2"
+            />
+
+    </FrameLayout>
+
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/story_card_view"
@@ -15,12 +41,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginEnd="160dp"
+        android:background="@android:color/transparent"
         android:layoutDirection="rtl"
         app:cardCornerRadius="10dp"
         app:strokeColor="@color/strokeColor"
         app:strokeWidth="2dp"
         tools:ignore="MissingConstraints"
-        android:background="@android:color/transparent"
 
         tools:layout_editor_absoluteX="144dp"
         tools:layout_editor_absoluteY="131dp">
@@ -36,7 +62,7 @@
                 android:layout_height="150dp"
                 android:padding="10dp"
                 android:src="@drawable/ic_videos"
-                app:tint="@color/mediumGray"
+                app:tint="@color/darkGray"
                 tools:layout_editor_absoluteX="192dp"
                 tools:layout_editor_absoluteY="149dp" />
 
@@ -44,11 +70,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
-                android:text="@string/story" />
+                android:text="@string/story"
+                android:textSize="30sp"
+                android:textStyle="bold" />
         </FrameLayout>
 
 
     </com.google.android.material.card.MaterialCardView>
+
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/learn_card_view"
@@ -73,7 +102,7 @@
                 android:layout_height="150dp"
                 android:padding="10dp"
                 android:src="@drawable/ic_videos"
-                app:tint="@color/mediumGray"
+                app:tint="@color/darkGray"
                 tools:layout_editor_absoluteX="454dp"
                 tools:layout_editor_absoluteY="148dp" />
 
@@ -81,7 +110,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
-                android:text="@string/learn" />
+                android:text="@string/learn"
+                android:textSize="30sp"
+                android:textStyle="bold" />
 
         </FrameLayout>
 
@@ -89,134 +120,106 @@
     </com.google.android.material.card.MaterialCardView>
 
 
-
-     <FrameLayout
-        android:id="@+id/main_FrameLayout"
+    <RelativeLayout
+        android:id="@+id/main_utility"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/img_main_home"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginEnd="60dp"
+            android:background="@drawable/button_rounded"
+            android:onClick="homeMainButton"
+            app:srcCompat="@drawable/ic_home"
+            app:tint="@color/darkGray" />
+
+        <ImageView
+            android:id="@+id/img_main_replay"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="top"
+            android:layout_marginStart="60dp"
+            android:background="@drawable/button_rounded"
+            android:onClick="replayMainButton"
+            app:srcCompat="@drawable/ic_replay"
+            app:tint="@color/darkGray" />
 
 
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:scaleType="fitXY"
-            scrolling_image_view:speed="60dp"
-            scrolling_image_view:source="@drawable/tst1_background"
-            scrolling_image_view:initialState="started"/>
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start">
 
 
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|bottom"
-            />
-
-
-
-        <RelativeLayout
-            android:id="@+id/main_utility"
-            android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/gmail_fab"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:visibility="visible">
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:focusable="true"
+            android:src="@drawable/ic_email"
+            android:visibility="invisible"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
+            app:layout_constraintStart_toStartOf="@+id/facebook_fab"
+            app:tint="@color/darkGray" />
 
-            <ImageView
-                android:id="@+id/img_main_home"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="end"
-                android:layout_marginEnd="60dp"
-                android:onClick="homeMainButton"
-                app:srcCompat="@drawable/ic_home"
-                android:background="@drawable/button_rounded"
-                app:tint="@color/blue"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/facebook_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:focusable="true"
+            android:src="@drawable/ic_facebook"
+            android:visibility="invisible"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
+            app:layout_constraintStart_toStartOf="@+id/youtube_fab"
+            app:tint="@color/darkGray" />
 
-            <ImageView
-                android:id="@+id/img_main_replay"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentStart="true"
-                android:layout_gravity="top"
-                android:layout_marginStart="60dp"
-                android:onClick="replayMainButton"
-                app:srcCompat="@drawable/ic_replay"
-                android:background="@drawable/button_rounded"
-                app:tint="@color/blue" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/youtube_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:focusable="true"
+            android:src="@drawable/ic_youtube"
+            android:visibility="invisible"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
+            app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
+            app:tint="@color/darkGray" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/open_menu_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/darkGray" />
 
-        </RelativeLayout>
-         <androidx.constraintlayout.widget.ConstraintLayout
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_gravity="bottom|start"
-             >
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                 android:id="@+id/gmail_fab"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="bottom"
-                 android:layout_marginBottom="5dp"
-                 android:focusable="true"
-                 android:src="@drawable/ic_email"
-                 android:visibility="invisible"
-                 app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
-                 app:layout_constraintStart_toStartOf="@+id/facebook_fab"
-                 app:backgroundTint="@color/white"
-                 app:tint="@color/mediumGray" />
-
-             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                 android:id="@+id/facebook_fab"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="bottom"
-                 android:layout_marginBottom="5dp"
-                 android:focusable="true"
-                 android:src="@drawable/ic_facebook"
-                 android:visibility="invisible"
-                 app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
-                 app:layout_constraintStart_toStartOf="@+id/youtube_fab"
-                 app:backgroundTint="@color/white"
-                 app:tint="@color/mediumGray" />
-
-             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                 android:id="@+id/youtube_fab"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="bottom"
-                 android:layout_marginBottom="5dp"
-                 android:focusable="true"
-                 android:src="@drawable/ic_youtube"
-                 android:visibility="invisible"
-                 app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
-                 app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
-                 app:backgroundTint="@color/white"
-                 app:tint="@color/mediumGray" />
-
-             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                 android:id="@+id/open_menu_fab"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="bottom"
-                 android:layout_marginStart="16dp"
-                 android:layout_marginBottom="8dp"
-                 android:clickable="true"
-                 android:focusable="true"
-                 android:src="@drawable/ic_add"
-                 app:backgroundTint="@color/white"
-                 app:tint="@color/mediumGray"
-                 app:layout_constraintBottom_toBottomOf="parent"
-                 app:layout_constraintStart_toStartOf="parent"
-                 />
-
-         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </FrameLayout>
 
 </FrameLayout>

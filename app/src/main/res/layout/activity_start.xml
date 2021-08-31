@@ -7,10 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.started.onboarding.StartActivity">
 
-
-
     <FrameLayout
-        android:id="@+id/main_FrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,44 +17,47 @@
 
 
         <com.q42.android.scrollingimageview.ScrollingImageView
+            android:id="@+id/start_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
+            android:visibility="gone"
+            app:tint="@color/white"
             android:scaleType="fitXY"
             scrolling_image_view:speed="60dp"
             scrolling_image_view:source="@drawable/tst1_background"
             scrolling_image_view:initialState="started"/>
 
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            scrolling_image_view:speed="114dp"
-            scrolling_image_view:source="@drawable/scrolling_foreground" />
-
 
         <FrameLayout
+            android:id="@+id/start_FrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|bottom"
             android:background="@drawable/activities_background"
+            android:alpha="0.1"
+            android:layout_gravity="center_horizontal|bottom"
             />
+
 
 
     </FrameLayout>
 
     <ImageView
         android:id="@+id/start"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginEnd="650dp"
         android:layout_marginBottom="48dp"
+        android:padding="20dp"
         android:background="@drawable/button_rounded"
         android:layoutDirection="rtl"
-        android:rotation="180"
-        android:src="@drawable/ic_arrow_back"
+        android:src="@android:drawable/ic_media_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/blue" />
+        app:tint="@color/darkGray" />
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

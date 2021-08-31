@@ -41,11 +41,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         // Inflate the layout for this fragment
         val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
 //        val data = arguments?.getParcelableArrayList("myListCategory")
-        val data = arguments?.getParcelableArrayList<CategoriesModel>("myListCategory") as ArrayList<CategoriesModel>
+        val data =
+            arguments?.getParcelableArrayList<CategoriesModel>("myListCategory") as ArrayList<CategoriesModel>
         Log.d("CategoriesBottomSheet", "onCreateView: " + data)
 
         if (data != null) {
-//            initChip(data, mView.categories_chipGroub)
+            initChip(data, mView.categories_chipGroub)
         }
 
 
@@ -111,14 +112,15 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
-
-        if (list != null) {
-            repeat(list.size) {
-                val model = list[it]
-                val chip = Chip(requireContext())
-                chip.text = model.categoryName
-                chip.setTextAppearance(R.style.customChipStyle)
-                chipGroup.addView(chip)
+        if (list is ArrayList<CategoriesModel>) {
+            if (list != null) {
+                repeat(list.size) {
+                    val model = list[it]
+                    val chip = Chip(requireContext())
+                    chip.text = model.categoryName
+                    chip.setTextAppearance(R.style.customChipStyle)
+                    chipGroup.addView(chip)
+                }
             }
         }
 

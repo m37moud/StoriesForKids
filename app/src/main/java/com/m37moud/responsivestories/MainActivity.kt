@@ -22,9 +22,11 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
+import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_start.*
 
 const val TOPIC = "/topics/myTopic2"
 
@@ -130,6 +132,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         videosViewModel = ViewModelProvider(this@MainActivity).get(VideosViewModel::class.java)
+
+
+        //init background
+        Constants.initBackgroundColor(main_FrameLayout, this@MainActivity)
+        main_scroll.visibility = View.VISIBLE
 
     }
 
@@ -244,6 +251,10 @@ class MainActivity : AppCompatActivity() {
             Intent.ACTION_SEND,
             Uri.parse("https://www.youtube.com/channel/UC7pejtgsjgdPODeWGgXLFuQ?sub_confirmation=1")
         )
+    }
+
+    private fun initMainActivityAnimation(){
+
     }
 
 }

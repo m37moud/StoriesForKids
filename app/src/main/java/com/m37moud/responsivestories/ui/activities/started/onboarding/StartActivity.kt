@@ -1,14 +1,17 @@
 package com.m37moud.responsivestories.ui.activities.started.onboarding
 
 import android.content.Intent
-import android.graphics.drawable.GradientDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isInvisible
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.initBackgroundColor
 import kotlinx.android.synthetic.main.activity_start.*
+import java.util.*
+
 
 class StartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +40,17 @@ class StartActivity : AppCompatActivity() {
 //        gd.gradientRadius = 300f
 //        gd.cornerRadius = 0f
 //        main_FrameLayout.background = gd
+
+//        val androidColors = resources.getIntArray(R.array.androidcolors)
+//        val randomAndroidColor = androidColors[Random().nextInt(androidColors.size)]
+//        view.setBackgroundColor(randomAndroidColor)
+
+
+//        initBackgroundColor(start_FrameLayout,this@StartActivity)
+        start_scroll.visibility = View.VISIBLE
     }
+
+
 
     override fun onResume() {
         start.isClickable =true

@@ -3,6 +3,7 @@
 
     <gradient
         android:angle="45"
+
         android:endColor="@android:color/transparent"
          />
     <corners
@@ -11,7 +12,7 @@
         android:topLeftRadius="50dp"
         android:topRightRadius="50dp" />
 
-    <stroke android:color="@color/blue"
-        android:width="2dp"/>
+    <stroke android:color="@color/darkGray"
+        android:width="3dp"/>
 
 </shape>

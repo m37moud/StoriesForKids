@@ -1,6 +1,10 @@
 package com.m37moud.responsivestories.util
 
+import android.content.Context
 import android.graphics.Color
+import android.widget.FrameLayout
+import com.m37moud.responsivestories.R
+import kotlinx.android.synthetic.main.activity_start.*
 import java.util.*
 
 class Constants {
@@ -42,6 +46,20 @@ class Constants {
         fun getRandomColor(): Int {
             val rnd = Random()
             return Color.argb(255, rnd.nextInt(256), rnd.nextInt(56), rnd.nextInt(256))
+        }
+         fun initBackgroundColor(frame: FrameLayout? , context :Context) {
+             val androidColors = context.resources.getIntArray(R.array.androidcolors)
+             val randomAndroidColor = androidColors[Random().nextInt(androidColors.size)]
+             frame!!.setBackgroundColor(randomAndroidColor)
+
+//            val androidColors = context.resources.getStringArray(R.array.androidcolors)
+//            val randomAndroidColor = androidColors[Random().nextInt(androidColors.size)]
+//            frame!!.setBackgroundColor(randomAndroidColor.toInt())
+
+//             val generator: ColorGenerator = ColorGenerator.MATERIAL
+//
+//             val color: Int = generator.getRandomColor()
+//             frame.background = color
         }
 
     }

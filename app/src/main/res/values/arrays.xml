@@ -44,4 +44,13 @@
         <item>1</item>
         <item>3</item>
     </integer-array>
+
+    <integer-array name="androidcolors">
+        <item>@color/orange</item>
+        <item>@color/red</item>
+        <item>@color/blue2</item>
+        <item>@color/purple</item>
+        <item>@color/gnt_green</item>
+    </integer-array>
+
 </resources>
