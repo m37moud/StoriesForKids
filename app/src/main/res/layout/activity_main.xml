@@ -8,15 +8,17 @@
     tools:context=".MainActivity">
 
     <FrameLayout
+        android:id="@+id/main_FrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="@drawable/main_background">
 
         <com.q42.android.scrollingimageview.ScrollingImageView
             android:id="@+id/main_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
+            android:alpha="0.5"
             android:scaleType="fitXY"
             android:visibility="gone"
             scrolling_image_view:initialState="started"
@@ -24,100 +26,93 @@
             scrolling_image_view:speed="60dp" />
 
 
-        <FrameLayout
-            android:id="@+id/main_FrameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|bottom"
-            android:alpha="0.2"
-            />
-
     </FrameLayout>
 
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/story_card_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginEnd="160dp"
-        android:background="@android:color/transparent"
         android:layoutDirection="rtl"
-        app:cardCornerRadius="10dp"
-        app:strokeColor="@color/strokeColor"
-        app:strokeWidth="2dp"
-        tools:ignore="MissingConstraints"
+        android:orientation="vertical">
 
-        tools:layout_editor_absoluteX="144dp"
-        tools:layout_editor_absoluteY="131dp">
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="wrap_content"
-
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_img_rounded"
+            android:orientation="vertical">
 
             <ImageView
-
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:padding="10dp"
+
                 android:src="@drawable/ic_videos"
                 app:tint="@color/darkGray"
                 tools:layout_editor_absoluteX="192dp"
                 tools:layout_editor_absoluteY="149dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:text="@string/story"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-        </FrameLayout>
 
+        </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/main_background_txt"
+            android:backgroundTint="@color/darkGray"
+            android:foreground="@drawable/main_forground_txt"
+            android:paddingLeft="35dp"
+            android:paddingRight="35dp"
+            android:text="@string/story"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
+    </LinearLayout>
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/learn_card_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="160dp"
         android:layoutDirection="rtl"
-        app:cardCornerRadius="10dp"
-        app:strokeColor="@color/strokeColor"
-        app:strokeWidth="2dp"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="438dp"
-        tools:layout_editor_absoluteY="131dp">
+        android:orientation="vertical">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_img_rounded"
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:padding="10dp"
                 android:src="@drawable/ic_videos"
                 app:tint="@color/darkGray"
-                tools:layout_editor_absoluteX="454dp"
-                tools:layout_editor_absoluteY="148dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:text="@string/learn"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-        </FrameLayout>
+                tools:layout_editor_absoluteX="192dp"
+                tools:layout_editor_absoluteY="149dp" />
 
 
-    </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/main_background_txt"
+            android:backgroundTint="@color/darkGray"
+            android:foreground="@drawable/main_forground_txt"
+            android:paddingLeft="35dp"
+            android:paddingRight="35dp"
+            android:text="@string/learn"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 
     <RelativeLayout
@@ -131,27 +126,37 @@
             android:id="@+id/img_main_home"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:padding="15dp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
             android:layout_marginEnd="60dp"
             android:background="@drawable/button_rounded"
+            android:backgroundTint="@color/red2"
+            android:backgroundTintMode="add"
+            android:foreground="@drawable/btn_foreground"
             android:onClick="homeMainButton"
+            android:padding="15dp"
             app:srcCompat="@drawable/ic_home"
-            app:tint="@color/darkGray" />
+            app:tint="@color/white"
+
+            />
 
         <ImageView
             android:id="@+id/img_main_replay"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:padding="15dp"
             android:layout_alignParentStart="true"
             android:layout_gravity="top"
             android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
             android:background="@drawable/button_rounded"
+            android:backgroundTint="@color/red2"
+            android:backgroundTintMode="add"
+            android:foreground="@drawable/btn_foreground"
+            android:foregroundTintMode="screen"
             android:onClick="replayMainButton"
+            android:padding="15dp"
             app:srcCompat="@drawable/ic_replay"
-            app:tint="@color/darkGray" />
+            app:tint="@color/white" />
 
 
     </RelativeLayout>

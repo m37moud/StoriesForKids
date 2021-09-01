@@ -19,6 +19,7 @@ import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.activity_learn.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 
 class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
@@ -63,6 +64,9 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             startActivity(intent)
             finish
         }
+
+        Constants.initBackgroundColor(learn_FrameLayout, this@LearnActivity)
+        learn_scroll.visibility = View.VISIBLE
 
     }
 

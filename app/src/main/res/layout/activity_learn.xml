@@ -2,7 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -26,7 +25,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/mediumGray"
-                android:layout_margin="8dp"
                 app:cardCornerRadius="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -46,23 +44,21 @@
 
 
                     <com.q42.android.scrollingimageview.ScrollingImageView
+                        android:id="@+id/learn_scroll"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="bottom"
                         android:scaleType="fitXY"
+                        android:visibility="gone"
                         scrolling_image_view:speed="60dp"
                         scrolling_image_view:source="@drawable/tst1_background"
                         scrolling_image_view:initialState="started"/>
-
-
 
                     <FrameLayout
                         android:id="@+id/learn_FrameLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal|bottom"
-                        android:background="@drawable/activities_background"
-                        />
+                        android:alpha="0.2" />
 
 
                 </FrameLayout>
@@ -110,9 +106,11 @@
                         android:layout_margin="20dp"
                         android:layout_marginBottom="28dp"
                         android:background="@drawable/button_rounded"
-                        app:tint="@color/blue"
+                        android:backgroundTint="@color/red2"
+                        android:backgroundTintMode="add"
+                        android:foreground="@drawable/btn_foreground"
+                        app:tint="@color/white"
                         android:layoutDirection="rtl"
-
                         android:src="@drawable/ic_next"
 
                         />

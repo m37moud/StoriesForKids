@@ -49,14 +49,14 @@ class StartActivity : AppCompatActivity() {
 //        initBackgroundColor(start_FrameLayout,this@StartActivity)
         start_scroll.visibility = View.VISIBLE
     }
-
-
-
     override fun onResume() {
         start.isClickable =true
 
         super.onResume()
     }
+
+
+
 
     override fun onStart() {
         start.isClickable =true

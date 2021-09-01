@@ -36,6 +36,8 @@ import com.m37moud.responsivestories.util.Constants.Companion.getRandomColor
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_story.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -150,7 +152,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 //            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
         }
-
+        Constants.initBackgroundColor(story_FrameLayout, this@StoryActivity)
+        story_scroll.visibility = View.VISIBLE
 
     }
 

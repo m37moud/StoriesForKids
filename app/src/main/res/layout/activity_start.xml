@@ -10,6 +10,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/start_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,21 +23,12 @@
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:visibility="gone"
-            app:tint="@color/white"
             android:scaleType="fitXY"
+            android:alpha="0.5"
             scrolling_image_view:speed="60dp"
             scrolling_image_view:source="@drawable/tst1_background"
             scrolling_image_view:initialState="started"/>
 
-
-        <FrameLayout
-            android:id="@+id/start_FrameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/activities_background"
-            android:alpha="0.1"
-            android:layout_gravity="center_horizontal|bottom"
-            />
 
 
 
@@ -50,11 +42,14 @@
         android:layout_marginBottom="48dp"
         android:padding="20dp"
         android:background="@drawable/button_rounded"
+        android:backgroundTint="@color/blue"
+        android:backgroundTintMode="screen"
+        android:foreground="@drawable/btn_foreground"
         android:layoutDirection="rtl"
         android:src="@android:drawable/ic_media_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/darkGray" />
+        app:tint="@color/white" />
 
 
 

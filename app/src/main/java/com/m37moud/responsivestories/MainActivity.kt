@@ -18,6 +18,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
@@ -35,10 +37,30 @@ class MainActivity : AppCompatActivity() {
 
 
     //fab button menu
-    private val rotateOpen : Animation by lazy { AnimationUtils.loadAnimation(this , R.anim.rotate_open_anim) }
-    private val rotateClose : Animation by lazy { AnimationUtils.loadAnimation(this , R.anim.rotate_close_anim) }
-    private val fromBottom : Animation by lazy { AnimationUtils.loadAnimation(this , R.anim.from_bottom_anim) }
-    private val toBottom : Animation by lazy { AnimationUtils.loadAnimation(this , R.anim.to_bottom_anim) }
+    private val rotateOpen: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_open_anim
+        )
+    }
+    private val rotateClose: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_close_anim
+        )
+    }
+    private val fromBottom: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_bottom_anim
+        )
+    }
+    private val toBottom: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.to_bottom_anim
+        )
+    }
     private var clicked = false
 
     private lateinit var videosViewModel: VideosViewModel
@@ -47,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setFullScreen()
         setContentView(R.layout.activity_main)
 
         supportActionBar?.hide()
@@ -64,11 +87,14 @@ class MainActivity : AppCompatActivity() {
         //start story activity
         story_card_view.setOnClickListener {
             startActivity(Intent(this@MainActivity, StoryActivity::class.java))
+            story_card_view.isClickable = false
 //            finish()
         }
 
         learn_card_view.setOnClickListener {
-            startActivity(Intent(this@MainActivity, LearnActivity::class.java))
+            startActivity(
+                Intent(this@MainActivity, LearnActivity::class.java))
+                learn_card_view.isClickable = false
 //            finish()
         }
 
@@ -135,7 +161,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //init background
-        Constants.initBackgroundColor(main_FrameLayout, this@MainActivity)
+//        Constants.initBackgroundColor(main_FrameLayout, this@MainActivity)
         main_scroll.visibility = View.VISIBLE
 
     }
@@ -147,37 +173,38 @@ class MainActivity : AppCompatActivity() {
         clicked = !clicked
     }
 
-    private fun setAnimation(clicked : Boolean) {
-      if(!clicked){
-          facebook_fab.startAnimation(fromBottom)
-          gmail_fab.startAnimation(fromBottom)
-          youtube_fab.startAnimation(fromBottom)
-          open_menu_fab.startAnimation(rotateOpen)
-      }else{
-          facebook_fab.startAnimation(toBottom)
-          gmail_fab.startAnimation(toBottom)
-          youtube_fab.startAnimation(toBottom)
-          open_menu_fab.startAnimation(rotateClose)
-      }
+    private fun setAnimation(clicked: Boolean) {
+        if (!clicked) {
+            facebook_fab.startAnimation(fromBottom)
+            gmail_fab.startAnimation(fromBottom)
+            youtube_fab.startAnimation(fromBottom)
+            open_menu_fab.startAnimation(rotateOpen)
+        } else {
+            facebook_fab.startAnimation(toBottom)
+            gmail_fab.startAnimation(toBottom)
+            youtube_fab.startAnimation(toBottom)
+            open_menu_fab.startAnimation(rotateClose)
+        }
     }
 
-    private fun setVisibility(clicked : Boolean) {
-       if(!clicked){
-           youtube_fab.visibility = View.VISIBLE
-           gmail_fab.visibility = View.VISIBLE
-           facebook_fab.visibility = View.VISIBLE
-       }else{
-           youtube_fab.visibility = View.INVISIBLE
-           gmail_fab.visibility = View.INVISIBLE
-           facebook_fab.visibility = View.INVISIBLE
-       }
+    private fun setVisibility(clicked: Boolean) {
+        if (!clicked) {
+            youtube_fab.visibility = View.VISIBLE
+            gmail_fab.visibility = View.VISIBLE
+            facebook_fab.visibility = View.VISIBLE
+        } else {
+            youtube_fab.visibility = View.INVISIBLE
+            gmail_fab.visibility = View.INVISIBLE
+            facebook_fab.visibility = View.INVISIBLE
+        }
     }
-    private fun setClickable(clicked : Boolean) {
-        if(!clicked){
+
+    private fun setClickable(clicked: Boolean) {
+        if (!clicked) {
             youtube_fab.isClickable = true
             gmail_fab.isClickable = true
             facebook_fab.isClickable = true
-        }else{
+        } else {
             youtube_fab.isClickable = false
             gmail_fab.isClickable = false
             facebook_fab.isClickable = false
@@ -235,14 +262,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun getOpenMailIntent(): Intent? = try {
 
-        Intent(Intent.ACTION_SENDTO ).apply {
+        Intent(Intent.ACTION_SENDTO).apply {
             type = "text/plain"
 //            type = "message/rfc822"
             data = Uri.parse("mailto:m37moud00@gmail.com")
             putExtra(Intent.EXTRA_TEXT, "that is a great app ")
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name).plus(" App "))
         }.also { readyIntent ->
-            startActivity(Intent.createChooser(readyIntent,"Send feedback"))
+            startActivity(Intent.createChooser(readyIntent, "Send feedback"))
         }
 
     } catch (e: Exception) {
@@ -253,8 +280,23 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun initMainActivityAnimation(){
+    override fun onResume() {
+        learn_card_view.isClickable = true
+        story_card_view.isClickable = true
+
+        super.onResume()
+    }
+
+    private fun initMainActivityAnimation() {
 
     }
+    private fun setFullScreen() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+    }
+
 
 }
