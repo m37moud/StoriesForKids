@@ -43,6 +43,8 @@
         android:layout_marginStart="76dp"
         android:layout_marginBottom="40dp"
         android:scaleType="fitXY"
+        android:layoutDirection="rtl"
+
         android:src="@drawable/startrabit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -52,6 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
+        android:layoutDirection="rtl"
+
         android:src="@drawable/startforeground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +66,8 @@
         android:layout_height="100dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
+        android:layoutDirection="rtl"
+
         android:scaleType="fitXY"
         android:src="@drawable/startbird"
         app:layout_constraintEnd_toEndOf="parent"
