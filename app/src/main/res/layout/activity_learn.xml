@@ -68,7 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="45dp"
+                    android:layout_marginTop="40dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
 
@@ -103,7 +103,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_gravity="bottom|start"
-                        android:layout_margin="20dp"
+                        android:layout_margin="10dp"
                         android:layout_marginBottom="28dp"
                         android:background="@drawable/button_rounded"
                         android:backgroundTint="@color/red2"

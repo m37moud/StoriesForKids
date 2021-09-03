@@ -22,10 +22,12 @@ class FirstScreenFragment : Fragment() {
         val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
         view.next.setOnClickListener {
             viewPager?.currentItem = 1
+            requireActivity().finish()
 
         }
 
         return view
     }
+
 
 }

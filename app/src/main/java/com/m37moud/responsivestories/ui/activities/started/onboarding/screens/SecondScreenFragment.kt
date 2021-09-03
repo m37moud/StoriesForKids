@@ -22,6 +22,8 @@ class SecondScreenFragment : Fragment() {
 
         view.next2.setOnClickListener {
             viewPager?.currentItem = 2
+            requireActivity().finish()
+
         }
 
         return view

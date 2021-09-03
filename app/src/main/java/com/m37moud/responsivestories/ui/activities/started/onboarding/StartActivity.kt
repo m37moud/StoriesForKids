@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import com.m37moud.responsivestories.MainActivity
@@ -14,6 +16,22 @@ import java.util.*
 
 
 class StartActivity : AppCompatActivity() {
+
+    //bird animation
+    private val birdAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.start_bird_anim
+        )
+    }
+//play button
+    private val playAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.zoom_in
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
@@ -48,6 +66,9 @@ class StartActivity : AppCompatActivity() {
 
 //        initBackgroundColor(start_FrameLayout,this@StartActivity)
         start_scroll.visibility = View.VISIBLE
+        start_bird.startAnimation(birdAnim)
+        start.startAnimation(playAnim)
+
     }
     override fun onResume() {
         start.isClickable =true

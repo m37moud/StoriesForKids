@@ -160,7 +160,14 @@
 
 
     </RelativeLayout>
-
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:scaleType="fitXY"
+        android:layout_gravity="bottom"
+        android:src="@drawable/maingrass"
+        />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -180,6 +187,7 @@
             app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
             app:layout_constraintStart_toStartOf="@+id/facebook_fab"
             app:tint="@color/darkGray" />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/facebook_fab"
@@ -225,6 +233,8 @@
             app:tint="@color/darkGray" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 </FrameLayout>

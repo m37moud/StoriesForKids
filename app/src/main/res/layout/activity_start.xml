@@ -7,12 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.started.onboarding.StartActivity">
 
+
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/start_background"
+        android:background="@drawable/startbackground"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -22,37 +26,72 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
-            android:visibility="gone"
-            android:scaleType="fitXY"
             android:alpha="0.5"
-            scrolling_image_view:speed="60dp"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            scrolling_image_view:initialState="started"
             scrolling_image_view:source="@drawable/tst1_background"
-            scrolling_image_view:initialState="started"/>
-
-
+            scrolling_image_view:speed="60dp" />
 
 
     </FrameLayout>
+
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginBottom="40dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/startrabit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/startforeground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/start_bird"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/startbird"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/startbottom1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/start"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginEnd="650dp"
-        android:layout_marginBottom="48dp"
-        android:padding="20dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="65dp"
         android:background="@drawable/button_rounded"
-        android:backgroundTint="@color/blue"
+        android:backgroundTint="@color/darkorange"
         android:backgroundTintMode="screen"
         android:foreground="@drawable/btn_foreground"
         android:layoutDirection="rtl"
+        android:padding="20dp"
         android:src="@android:drawable/ic_media_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@color/white" />
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

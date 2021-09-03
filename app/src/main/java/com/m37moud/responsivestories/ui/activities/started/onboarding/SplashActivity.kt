@@ -6,9 +6,25 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.R
+import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
+
+    private val txtTopAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.splash_top_animation
+        )
+    }
+    private val txtBottomAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.splash_bottom_animation
+        )
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -40,8 +56,12 @@ class SplashActivity : AppCompatActivity() {
                 }
                 finish() // Call this when your activity is done and should be closed.
             },
-            2500
+            3000
         ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
+
+        splash_txt.startAnimation(txtBottomAnimation)
+//        cow.startAnimation(txtTopAnimation)
+
     }
 
 
