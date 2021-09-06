@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -23,6 +24,13 @@ class SplashActivity : AppCompatActivity() {
         AnimationUtils.loadAnimation(
             this,
             R.anim.splash_bottom_animation
+        )
+    }
+
+    private val cowRghtTranslateAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.splash_right_translate
         )
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +68,13 @@ class SplashActivity : AppCompatActivity() {
         ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
 
         splash_txt.startAnimation(txtBottomAnimation)
-//        cow.startAnimation(txtTopAnimation)
+        splash_cow_frame.startAnimation(txtTopAnimation)
+        if(txtTopAnimation.hasEnded())
+        {
+            cow.visibility = View.VISIBLE
+            cow.startAnimation(cowRghtTranslateAnimation)
+
+        }
 
     }
 

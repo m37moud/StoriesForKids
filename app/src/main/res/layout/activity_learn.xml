@@ -107,6 +107,8 @@
                         android:layout_marginBottom="28dp"
                         android:background="@drawable/button_rounded"
                         android:backgroundTint="@color/red2"
+                        android:transitionName="toNextButton"
+
                         android:backgroundTintMode="add"
                         android:foreground="@drawable/btn_foreground"
                         app:tint="@color/white"

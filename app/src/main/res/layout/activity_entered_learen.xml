@@ -181,7 +181,10 @@
                 android:onClick="homeButton"
                 app:srcCompat="@drawable/ic_home"
                 android:background="@drawable/button_rounded"
-                app:tint="@color/blue" />
+                android:backgroundTint="@color/blue"
+                android:backgroundTintMode="screen"
+                android:foreground="@drawable/btn_foreground"
+                app:tint="@color/white" />
 
             <ImageView
                 android:id="@+id/img_replay"
@@ -194,7 +197,10 @@
                 android:onClick="replayButton"
                 app:srcCompat="@drawable/ic_replay"
                 android:background="@drawable/button_rounded"
-                app:tint="@color/blue" />
+                android:backgroundTint="@color/blue"
+                android:backgroundTintMode="screen"
+                android:foreground="@drawable/btn_foreground"
+                app:tint="@color/white" />
 
 
         </RelativeLayout>
