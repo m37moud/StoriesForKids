@@ -17,7 +17,7 @@
 
 
     <FrameLayout
-        android:id="@+id/parent_frame"
+        android:id="@+id/parent_main_frame"
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="match_parent">

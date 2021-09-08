@@ -24,10 +24,12 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
+import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_learn.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 
@@ -76,8 +78,8 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed(
             {
                 loading.visibility = View.GONE
-                parent_frame.visibility = View.VISIBLE
-            }, 3000
+                parent_main_frame.visibility = View.VISIBLE
+            }, 2500
         )
 
         supportActionBar?.hide()
@@ -298,6 +300,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMainActivityAnimation() {
 
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this@MainActivity, StartActivity::class.java)
+        parent_main_frame.visibility = View.GONE
+        startActivity(intent)
+        finish()
+        super.onBackPressed()
     }
 
     private fun setFullScreen() {
