@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -27,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
         )
     }
 
-    private val cowRghtTranslateAnimation: Animation by lazy {
+    private val cowRightTranslateAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
             R.anim.splash_right_translate
@@ -54,13 +55,13 @@ class SplashActivity : AppCompatActivity() {
                 // If user is not logged in or logout manually then user will  be redirected to the Login screen as usual.
 
                 // Get the current logged in user id
-                startActivity(Intent(this@SplashActivity, StartActivity::class.java))
                 if(onBoardingFinished()) {
                     // Launch dashboard screen.
-
+                    startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
                 } else {
                     // Launch the Login Activity
-                    startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
+                    startActivity(Intent(this@SplashActivity, StartActivity::class.java))
+
                 }
                 finish() // Call this when your activity is done and should be closed.
             },
@@ -68,13 +69,29 @@ class SplashActivity : AppCompatActivity() {
         ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
 
         splash_txt.startAnimation(txtBottomAnimation)
-        splash_cow_frame.startAnimation(txtTopAnimation)
-        if(txtTopAnimation.hasEnded())
-        {
+//        splash_cow_frame.startAnimation(txtTopAnimation)
+        splash_cow_frame.animate().apply {
+            splash_cow_frame.startAnimation(txtTopAnimation)
+        }.withEndAction {
+            Log.d("txtTopAnimation", "txtTopAnimation: end")
             cow.visibility = View.VISIBLE
-            cow.startAnimation(cowRghtTranslateAnimation)
+            cowRightTranslateAnimation.startOffset = 1000
+            cow.startAnimation(cowRightTranslateAnimation)
 
-        }
+        }.start()
+
+//        splash_cow_frame.startAnimation(txtTopAnimation.setAnimationListener(object : Animation.AnimationListener))
+
+
+
+
+//        if(txtTopAnimation.hasEnded())
+//        {
+//            Log.d("txtTopAnimation", "txtTopAnimation: end")
+//            cow.visibility = View.VISIBLE
+//            cow.startAnimation(cowRightTranslateAnimation)
+//
+//        }
 
     }
 

@@ -17,6 +17,7 @@ import com.m37moud.responsivestories.util.FirebaseService
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -72,6 +73,13 @@ class MainActivity : AppCompatActivity() {
         setFullScreen()
         setContentView(R.layout.activity_main)
 
+        Handler().postDelayed(
+            {
+                loading.visibility = View.GONE
+                parent_frame.visibility = View.VISIBLE
+            }, 3000
+        )
+
         supportActionBar?.hide()
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = Firebase.analytics
@@ -93,8 +101,9 @@ class MainActivity : AppCompatActivity() {
 
         learn_card_view.setOnClickListener {
             startActivity(
-                Intent(this@MainActivity, LearnActivity::class.java))
-                learn_card_view.isClickable = false
+                Intent(this@MainActivity, LearnActivity::class.java)
+            )
+            learn_card_view.isClickable = false
 //            finish()
         }
 
@@ -290,6 +299,7 @@ class MainActivity : AppCompatActivity() {
     private fun initMainActivityAnimation() {
 
     }
+
     private fun setFullScreen() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(

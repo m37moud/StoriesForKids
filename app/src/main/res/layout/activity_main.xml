@@ -5,238 +5,254 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_background"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/main_FrameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/main_background">
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
 
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:id="@+id/main_scroll"
+
+    <FrameLayout
+        android:id="@+id/parent_frame"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/main_FrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+           >
+
+            <com.q42.android.scrollingimageview.ScrollingImageView
+                android:id="@+id/main_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:alpha="0.5"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                scrolling_image_view:initialState="started"
+                scrolling_image_view:source="@drawable/tst1_background"
+                scrolling_image_view:speed="60dp" />
+
+
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:id="@+id/story_card_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="160dp"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_img_rounded"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+
+                    android:src="@drawable/ic_videos"
+                    app:tint="@color/darkGray"
+                    tools:layout_editor_absoluteX="192dp"
+                    tools:layout_editor_absoluteY="149dp" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:background="@drawable/main_background_txt"
+                android:backgroundTint="@color/darkGray"
+                android:foreground="@drawable/main_forground_txt"
+                android:paddingLeft="35dp"
+                android:paddingRight="35dp"
+                android:text="@string/story"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/learn_card_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="160dp"
+            android:layoutDirection="rtl"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_img_rounded"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/ic_videos"
+                    app:tint="@color/darkGray"
+                    tools:layout_editor_absoluteX="192dp"
+                    tools:layout_editor_absoluteY="149dp" />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:background="@drawable/main_background_txt"
+                android:backgroundTint="@color/darkGray"
+                android:foreground="@drawable/main_forground_txt"
+                android:paddingLeft="35dp"
+                android:paddingRight="35dp"
+                android:text="@string/learn"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/main_utility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/img_main_home"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginEnd="60dp"
+                android:background="@drawable/button_rounded"
+                android:backgroundTint="@color/red2"
+                android:backgroundTintMode="add"
+                android:foreground="@drawable/btn_foreground"
+                android:onClick="homeMainButton"
+                android:padding="15dp"
+                app:srcCompat="@drawable/ic_home"
+                app:tint="@color/white"
+
+                />
+
+            <ImageView
+                android:id="@+id/img_main_replay"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:background="@drawable/button_rounded"
+                android:backgroundTint="@color/red2"
+                android:backgroundTintMode="add"
+                android:foreground="@drawable/btn_foreground"
+                android:foregroundTintMode="screen"
+                android:onClick="replayMainButton"
+                android:padding="15dp"
+                app:srcCompat="@drawable/ic_replay"
+                app:tint="@color/white" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
             android:layout_gravity="bottom"
-            android:alpha="0.5"
             android:scaleType="fitXY"
-            android:visibility="gone"
-            scrolling_image_view:initialState="started"
-            scrolling_image_view:source="@drawable/tst1_background"
-            scrolling_image_view:speed="60dp" />
+            android:src="@drawable/maingrass" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start">
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/gmail_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="5dp"
+                android:focusable="true"
+                android:src="@drawable/ic_email"
+                android:visibility="invisible"
+                app:backgroundTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
+                app:layout_constraintStart_toStartOf="@+id/facebook_fab"
+                app:tint="@color/darkGray" />
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/facebook_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="5dp"
+                android:focusable="true"
+                android:src="@drawable/ic_facebook"
+                android:visibility="invisible"
+                app:backgroundTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
+                app:layout_constraintStart_toStartOf="@+id/youtube_fab"
+                app:tint="@color/darkGray" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/youtube_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="5dp"
+                android:focusable="true"
+                android:src="@drawable/ic_youtube"
+                android:visibility="invisible"
+                app:backgroundTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
+                app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
+                app:tint="@color/darkGray" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/open_menu_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_add"
+                android:transitionName="toNextButton"
+                app:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/darkGray" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </FrameLayout>
-
-
-    <LinearLayout
-        android:id="@+id/story_card_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginEnd="160dp"
-        android:layoutDirection="rtl"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/main_img_rounded"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-
-                android:src="@drawable/ic_videos"
-                app:tint="@color/darkGray"
-                tools:layout_editor_absoluteX="192dp"
-                tools:layout_editor_absoluteY="149dp" />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/main_background_txt"
-            android:backgroundTint="@color/darkGray"
-            android:foreground="@drawable/main_forground_txt"
-            android:paddingLeft="35dp"
-            android:paddingRight="35dp"
-            android:text="@string/story"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/learn_card_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="160dp"
-        android:layoutDirection="rtl"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/main_img_rounded"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/ic_videos"
-                app:tint="@color/darkGray"
-                tools:layout_editor_absoluteX="192dp"
-                tools:layout_editor_absoluteY="149dp" />
-
-
-        </LinearLayout>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/main_background_txt"
-            android:backgroundTint="@color/darkGray"
-            android:foreground="@drawable/main_forground_txt"
-            android:paddingLeft="35dp"
-            android:paddingRight="35dp"
-            android:text="@string/learn"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/main_utility"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/img_main_home"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end"
-            android:layout_marginEnd="60dp"
-            android:background="@drawable/button_rounded"
-            android:backgroundTint="@color/red2"
-            android:backgroundTintMode="add"
-            android:foreground="@drawable/btn_foreground"
-            android:onClick="homeMainButton"
-            android:padding="15dp"
-            app:srcCompat="@drawable/ic_home"
-            app:tint="@color/white"
-
-            />
-
-        <ImageView
-            android:id="@+id/img_main_replay"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentStart="true"
-            android:layout_gravity="top"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="60dp"
-            android:background="@drawable/button_rounded"
-            android:backgroundTint="@color/red2"
-            android:backgroundTintMode="add"
-            android:foreground="@drawable/btn_foreground"
-            android:foregroundTintMode="screen"
-            android:onClick="replayMainButton"
-            android:padding="15dp"
-            app:srcCompat="@drawable/ic_replay"
-            app:tint="@color/white" />
-
-
-    </RelativeLayout>
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:scaleType="fitXY"
-        android:layout_gravity="bottom"
-        android:src="@drawable/maingrass"
-        />
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start">
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/gmail_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:src="@drawable/ic_email"
-            android:visibility="invisible"
-            app:backgroundTint="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/facebook_fab"
-            app:layout_constraintStart_toStartOf="@+id/facebook_fab"
-            app:tint="@color/darkGray" />
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/facebook_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:src="@drawable/ic_facebook"
-            android:visibility="invisible"
-            app:backgroundTint="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/youtube_fab"
-            app:layout_constraintStart_toStartOf="@+id/youtube_fab"
-            app:tint="@color/darkGray" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/youtube_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:src="@drawable/ic_youtube"
-            android:visibility="invisible"
-            app:backgroundTint="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/open_menu_fab"
-            app:layout_constraintStart_toStartOf="@+id/open_menu_fab"
-            app:tint="@color/darkGray" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/open_menu_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="16dp"
-            android:transitionName="toNextButton"
-
-            android:layout_marginBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_add"
-            app:backgroundTint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/darkGray" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
 </FrameLayout>

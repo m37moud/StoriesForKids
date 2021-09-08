@@ -26,7 +26,8 @@ class StartActivity : AppCompatActivity() {
             R.anim.start_bird_anim
         )
     }
-//play button
+
+    //play button
     private val playAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
@@ -38,17 +39,22 @@ class StartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_start)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+        setContentView(R.layout.activity_start)
+
         start.setOnClickListener {
-            startActivity(Intent(this@StartActivity, MainActivity::class.java))
             start.isClickable = false
-                
-           val pair =  Pair<View,String>(start , "toNextButton")
-//            val activityOption = ActivityOptions.makeSceneTransitionAnimation(this , pair)
+            val intent = Intent(this@StartActivity, MainActivity::class.java)
+//           val pair : android.util.Pair =  Pair<View,String>(start , "toNextButton")
+            val activityOption = ActivityOptions.makeSceneTransitionAnimation(
+                this,
+                android.util.Pair.create(start, "toNextButton")
+            )
+            startActivity(intent, activityOption.toBundle())
+
 //            finish()
         }
 
@@ -72,31 +78,33 @@ class StartActivity : AppCompatActivity() {
 
 
 //        initBackgroundColor(start_FrameLayout,this@StartActivity)
+        start_frameLayout_scroll.visibility = View.VISIBLE
         start_scroll.visibility = View.VISIBLE
+
         start_bird.startAnimation(birdAnim)
         start.startAnimation(playAnim)
 
     }
+
     override fun onResume() {
-        start.isClickable =true
+        start.isClickable = true
 
         super.onResume()
     }
 
 
-
-
     override fun onStart() {
-        start.isClickable =true
+        start.isClickable = true
         super.onStart()
     }
 
     override fun onBackPressed() {
-        if(backPressed+2000 > System.currentTimeMillis()){
+        if (backPressed + 2000 > System.currentTimeMillis()) {
             super.onBackPressed()
 
-        }else
-            Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT).show()
+        } else
+            Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
+                .show()
 
         backPressed = System.currentTimeMillis()
     }
