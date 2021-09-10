@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -92,11 +93,27 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         )
         mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
         videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
+
         listVid = ArrayList()
         roomList = ArrayList()
         listCategory = ArrayList()
 
         binding.lifecycleOwner = this
+
+        Constants.initBackgroundColor(parent_story_frame, this@StoryActivity)
+
+
+
+        binding.storyLoading.visibility = View.VISIBLE
+        binding.cardView.visibility = View.INVISIBLE
+
+
+        Handler().postDelayed(
+            {
+                binding.storyLoading.visibility = View.GONE
+                binding.cardView.visibility = View.VISIBLE
+            }, 2500
+        )
         ///
         initRecyclerView()
         videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
@@ -138,6 +155,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
             binding.selectCategoryFab.setOnClickListener {
                 if (listCategory.isNotEmpty()) {
+                    Log.d("selectCategoryFab", "selectCategoryFab: $listCategory")
                     binding.selectCategoryFab.isClickable = true
                 val bottomSheetFragment = CategoriesBottomSheet()
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
@@ -152,8 +170,10 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 //            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
         }
-        Constants.initBackgroundColor(story_FrameLayout, this@StoryActivity)
-        story_scroll.visibility = View.VISIBLE
+//        Constants.initBackgroundColor(story_FrameLayout, this@StoryActivity)
+        val backgroundColor = parent_story_frame.background
+        binding.storyFrameLayout.background = backgroundColor
+        binding.storyScroll.visibility = View.VISIBLE
 
     }
 
@@ -877,7 +897,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
                     Log.d("mah readCategoriesFromDatabase", "if statement true")
 
-                    listCategory = database as ArrayList<CategoriesModel>
+//                    listCategory = database as ArrayList<CategoriesModel>
+                    listCategoriesReadDatabase = database as ArrayList
+                    listCategoriesReadDatabase.forEach {
+                        val categoryModel = CategoriesModel(it.categoryId , it.categoryName , it.categoryImage)
+
+                        listCategory.add(categoryModel)
+
+                    }
 
 
                     Log.d("mah readCategoriesFromDatabase", "list is " + listCategory)

@@ -64,8 +64,13 @@
 
     <style name="Theme.ResponsiveStories.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="customChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chipBackgroundColor</item>
+        <item name="android:textColor">@color/checkedChipTextColor</item>
+        <item name="checkedIconTint">@color/checkedChipBackgroundColor</item>
     </style>
+
+
     <style name="CustomTabLayoutStyle" parent="Widget.Design.TabLayout">
 
         <item name="background">@color/actionBarBackgroundColor</item>

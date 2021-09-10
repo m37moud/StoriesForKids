@@ -5,15 +5,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/start_background"
+
     tools:context=".ui.activities.started.onboarding.StartActivity">
 
+<FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    >
+    <include
+        layout="@layout/loading"
+        />
 
-    <FrameLayout
-        android:id="@+id/start_frameLayout_scroll"
+</FrameLayout>
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/start_parent_frame"
         android:layout_width="match_parent"
+        android:background="@drawable/start_background"
         android:layout_height="match_parent"
-        android:background="@drawable/startbackground"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.7"
@@ -21,40 +37,52 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:id="@+id/start_scroll"
+        <FrameLayout
+            android:id="@+id/start_frameLayout_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:alpha="0.5"
-            android:scaleType="fitXY"
-            android:visibility="gone"
-            scrolling_image_view:initialState="started"
-            scrolling_image_view:source="@drawable/tst1_background"
-            scrolling_image_view:speed="60dp" />
+            android:visibility="gone">
+
+            <com.q42.android.scrollingimageview.ScrollingImageView
+                android:id="@+id/start_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:alpha="0.5"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                scrolling_image_view:initialState="started"
+                scrolling_image_view:source="@drawable/tst1_background"
+                scrolling_image_view:speed="60dp" />
 
 
-    </FrameLayout>
+        </FrameLayout>
 
 
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginBottom="40dp"
-        android:scaleType="fitXY"
-        android:layoutDirection="rtl"
-
-        android:src="@drawable/startrabit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/start"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/button_rounded"
+            android:backgroundTint="@color/darkorange"
+            android:backgroundTintMode="screen"
+            android:foreground="@drawable/btn_foreground"
+            android:layoutDirection="rtl"
+            android:padding="20dp"
+            android:transitionName="toNextButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/ic_media_play"
+            app:tint="@color/white" />
 
     <ImageView
         android:id="@+id/imageView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY"
         android:layoutDirection="rtl"
+        android:scaleType="fitXY"
 
         android:src="@drawable/startforeground"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,22 +111,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/start"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="65dp"
-        android:transitionName="toNextButton"
-        android:background="@drawable/button_rounded"
-        android:backgroundTint="@color/darkorange"
-        android:backgroundTintMode="screen"
-        android:foreground="@drawable/btn_foreground"
-        android:layoutDirection="rtl"
-        android:padding="20dp"
-        app:srcCompat="@android:drawable/ic_media_play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/cow"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="8dp"
+            android:layoutDirection="rtl"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/catloading" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,7 @@ import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -73,13 +74,16 @@ class MainActivity : AppCompatActivity() {
         setFullScreen()
         setContentView(R.layout.activity_main)
 
+        main_loading.visibility = View.VISIBLE
+        main_parent_frame.visibility = View.INVISIBLE
+
+
         Handler().postDelayed(
             {
-                loading.visibility = View.GONE
-                parent_frame.visibility = View.VISIBLE
-            }, 3000
+                main_loading.visibility = View.GONE
+                main_parent_frame.visibility = View.VISIBLE
+            }, 2500
         )
-
         supportActionBar?.hide()
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = Firebase.analytics
@@ -224,6 +228,7 @@ class MainActivity : AppCompatActivity() {
 
         videosViewModel.saveDownloadStatus(false)
         Log.d("MainActivity", "onStart: ")
+
         super.onStart()
     }
 
@@ -293,10 +298,26 @@ class MainActivity : AppCompatActivity() {
         learn_card_view.isClickable = true
         story_card_view.isClickable = true
 
+        main_loading.visibility = View.VISIBLE
+        main_parent_frame.visibility = View.GONE
+
+        Handler().postDelayed(
+            {
+                main_loading.visibility = View.GONE
+                main_parent_frame.visibility = View.VISIBLE
+            }, 2500
+        )
+
         super.onResume()
     }
 
     private fun initMainActivityAnimation() {
+
+    }
+
+    override fun onBackPressed() {
+        showLoading = true
+        super.onBackPressed()
 
     }
 

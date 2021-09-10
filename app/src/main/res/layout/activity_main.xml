@@ -8,19 +8,23 @@
     android:background="@drawable/main_background"
     tools:context=".MainActivity">
 
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content"
+
+    <include layout="@layout/loading"
+        android:id="@+id/main_loading"
+
+
         />
 
 
+
+
+
     <FrameLayout
-        android:id="@+id/parent_frame"
+        android:id="@+id/main_parent_frame"
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="match_parent">
+
         <FrameLayout
             android:id="@+id/main_FrameLayout"
             android:layout_width="match_parent"

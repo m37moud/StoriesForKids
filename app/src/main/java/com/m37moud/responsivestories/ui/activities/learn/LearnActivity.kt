@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.Toast
@@ -20,6 +21,7 @@ import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.activity_learn.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_story.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 
 class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
@@ -47,7 +49,20 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             startService()
         }
 
+        Constants.initBackgroundColor(parent_learn_frame, this@LearnActivity)
 
+
+
+        binding.learnLoading.visibility = View.VISIBLE
+        binding.learnContainerFrame.visibility = View.INVISIBLE
+
+
+        Handler().postDelayed(
+            {
+                binding.learnLoading.visibility = View.GONE
+                binding.learnContainerFrame.visibility = View.VISIBLE
+            }, 2500
+        )
 
         display()
 
@@ -65,8 +80,9 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             finish
         }
 
-        Constants.initBackgroundColor(learn_FrameLayout, this@LearnActivity)
-        learn_scroll.visibility = View.VISIBLE
+        val backgroundColor = parent_learn_frame.background
+        binding.learnFrameLayout.background = backgroundColor
+        binding.learnScroll.visibility = View.VISIBLE
 
     }
 
