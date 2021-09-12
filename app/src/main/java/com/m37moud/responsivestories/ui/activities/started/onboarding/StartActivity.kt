@@ -3,6 +3,8 @@ package com.m37moud.responsivestories.ui.activities.started.onboarding
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -13,6 +15,8 @@ import androidx.core.view.isInvisible
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants.Companion.initBackgroundColor
+import com.m37moud.responsivestories.util.Constants.Companion.showLoading
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 import java.util.*
 
@@ -37,6 +41,7 @@ class StartActivity : AppCompatActivity() {
 
     private var backPressed = 0L
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -45,6 +50,9 @@ class StartActivity : AppCompatActivity() {
         )
         setContentView(R.layout.activity_start)
 
+//        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
+//            videosViewModel.backOnline = it
+//        })
         start.setOnClickListener {
             start.isClickable = false
             val intent = Intent(this@StartActivity, MainActivity::class.java)
@@ -53,7 +61,17 @@ class StartActivity : AppCompatActivity() {
                 this,
                 android.util.Pair.create(start, "toNextButton")
             )
-            startActivity(intent, activityOption.toBundle())
+
+//            start_loading.visibility = View.VISIBLE
+//            start_parent_frame.visibility = View.GONE
+            showLoading = true
+            startActivity(intent)
+
+//            Handler().postDelayed(
+//                {
+//
+//                }, 2500
+//            )
 
 //            finish()
         }
@@ -87,14 +105,55 @@ class StartActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+
+        if(showLoading){
+            main_loading.visibility = View.VISIBLE
+            start_parent_frame.visibility = View.INVISIBLE
+
+            Handler().postDelayed(
+                {
+                    main_loading.visibility = View.INVISIBLE
+                    start_parent_frame.visibility = View.VISIBLE
+                    showLoading = false
+
+                }, 2500
+            )
+
+        }
+        super.onResume()
+        Log.d("onResume", "onResume: $showLoading")
         start.isClickable = true
 
-        super.onResume()
+//        start_loading.visibility = View.VISIBLE
+//        start_parent_frame.visibility = View.INVISIBLE
+
+
+
+
+    }
+
+
+    override fun onPause() {
+        Log.d("onResume", "onPause: $showLoading")
+
+
+
+//        start_loading.visibility = View.VISIBLE
+//        start_parent_frame.visibility = View.INVISIBLE
+        super.onPause()
+    }
+
+    override fun onStop() {
+        showLoading = false
+
+        super.onStop()
     }
 
 
     override fun onStart() {
         start.isClickable = true
+        main_loading.visibility = View.GONE
+        start_parent_frame.visibility = View.VISIBLE
         super.onStart()
     }
 

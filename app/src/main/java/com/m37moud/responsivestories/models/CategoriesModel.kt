@@ -15,7 +15,11 @@ class CategoriesModel() : Parcelable {
         categoryImage = parcel.readString()
     }
 
-
+    constructor(categoryId: String?, categoryName: String?, categoryImage: String?) : this(){
+        this.categoryId = categoryId
+        this.categoryName = categoryName
+        this.categoryImage = categoryImage
+    }
 
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

@@ -5,23 +5,31 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
 import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.util.Constants.Companion.DEFAULT_DIET_TYPE
 import com.m37moud.responsivestories.util.Constants.Companion.DEFAULT_MEAL_TYPE
+import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
+import kotlinx.android.synthetic.main.categories_bottom_sheet.*
 import kotlinx.android.synthetic.main.categories_bottom_sheet.view.*
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     private lateinit var videosViewModel: VideosViewModel
+    private lateinit var mainViewModel: MainViewModel
 
 
     private var mealTypeChip = DEFAULT_MEAL_TYPE
@@ -29,9 +37,14 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     private var dietTypeChip = DEFAULT_DIET_TYPE
     private var dietTypeChipId = 0
 
+    private lateinit var listCategory: ArrayList<CategoriesModel>
+    private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         videosViewModel = ViewModelProvider(requireActivity()).get(VideosViewModel::class.java)
+        listCategory = ArrayList()
     }
 
     override fun onCreateView(
@@ -41,13 +54,14 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         // Inflate the layout for this fragment
         val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
 //        val data = arguments?.getParcelableArrayList("myListCategory")
+        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
         val data =
             arguments?.getParcelableArrayList<CategoriesModel>("myListCategory") as ArrayList<CategoriesModel>
-        Log.d("CategoriesBottomSheet", "onCreateView: " + data)
+        Log.d("CategoriesBottomSheet", "initChip: " + data)
+//        readCategoriesFromDatabase()
 
-        if (data != null) {
-            initChip(data, mView.categories_chipGroub)
-        }
+        initChip(data, mView.categories_chipGroub)
 
 
 //        recipesViewModel.readMealAndDietType.asLiveData().observe(viewLifecycleOwner) { value ->
@@ -112,20 +126,34 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
+        Log.d("initChip", "initChip: called" )
+
         if (list is ArrayList<CategoriesModel>) {
-            if (list != null) {
+            if (list.isNotEmpty()) {
+                Log.d("initChip", "initChip: true" )
+
                 repeat(list.size) {
                     val model = list[it]
                     val chip = Chip(requireContext())
+                    Log.d("initChip", "initChip: ${model.categoryName}" )
+
                     chip.text = model.categoryName
-                    chip.setTextAppearance(R.style.customChipStyle)
+//                    chip.setTextAppearance(R.style.CustomChipStyle)
                     chipGroup.addView(chip)
                 }
+            }
+            else
+            {
+                Log.d("initChip", "initChip: false" )
+
             }
         }
 
 
     }
+
+
+
 
 
 }

@@ -10,6 +10,9 @@ import java.util.*
 class Constants {
     companion object {
 
+         var showLoading = false
+
+
         val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabets")
 
         const val RESOURCE = "android.resource://com.m37moud.responsivestories/drawable/"
@@ -35,6 +38,7 @@ class Constants {
 
         const val PREFERENCES_BACK_ONLINE = "backOnline"
         const val PREFERENCES_DOWNLOAD_STATUS = "downloadStatus"
+        const val PREFERENCES_LOADING_STATUS = "loadingStatus"
 
         const val PREFERENCES_NAME = "story_preferences"
 
@@ -61,6 +65,8 @@ class Constants {
 //             val color: Int = generator.getRandomColor()
 //             frame.background = color
         }
+
+
 
     }
 }

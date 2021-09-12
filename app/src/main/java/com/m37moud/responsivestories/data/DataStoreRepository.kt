@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_DOWNLOAD_STATUS
+import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_LOADING_STATUS
 import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_NAME
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -25,6 +26,7 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
 
         val backOnline = preferencesKey<Boolean>(PREFERENCES_BACK_ONLINE)
         val downloadStatus = preferencesKey<Boolean>(PREFERENCES_DOWNLOAD_STATUS)
+        val loadingStatus = preferencesKey<Boolean>(PREFERENCES_LOADING_STATUS)
 
     }
 
@@ -71,6 +73,27 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
 
         .map { preferences ->
             val downloadStatus = preferences[PreferenceKeys.downloadStatus] ?: false
+            downloadStatus
+        }
+
+
+    suspend fun saveLoadingStatus(loading: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.loadingStatus] = loading
+        }
+    }
+
+    val readLoadingStatus: Flow<Boolean> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+
+        .map { preferences ->
+            val downloadStatus = preferences[PreferenceKeys.loadingStatus] ?: false
             downloadStatus
         }
 }

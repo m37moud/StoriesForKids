@@ -9,21 +9,34 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
+        android:id="@+id/parent_story_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activities.story.StoryActivity">
+
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            >
+
+            <include
+                android:id="@+id/story_loading"
+                layout="@layout/loading" />
+
+        </FrameLayout>
+
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             app:cardCornerRadius="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+
             app:strokeWidth="1dp">
 
             <FrameLayout
@@ -50,7 +63,7 @@
                     android:id="@+id/story_FrameLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:alpha="0.2" />
+                    android:alpha="0.3" />
 
 
             </FrameLayout>
@@ -117,28 +130,28 @@
                     app:layout_constraintEnd_toEndOf="@+id/noNetConnection_img"
                     app:layout_constraintStart_toStartOf="@+id/noNetConnection_img"
                     app:layout_constraintTop_toBottomOf="@+id/noNetConnection_img" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/select_category_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="16dp"
+                    android:focusable="true"
+                    android:src="@drawable/ic_menu"
+
+                    android:transitionName="toNextButton"
+                    app:backgroundTint="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:tint="@color/mediumGray" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/select_category_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:focusable="true"
-            android:transitionName="toNextButton"
-
-            android:src="@drawable/ic_menu"
-            app:backgroundTint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/mediumGray" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 
 </layout>

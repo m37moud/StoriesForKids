@@ -9,72 +9,95 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/parent_learn_frame"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/mediumGray"
         tools:context=".ui.activities.learn.LearnActivity">
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+            >
+
+            <include
+                android:id="@+id/learn_loading"
+                layout="@layout/loading" />
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/learn_container_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/mediumGray">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardView"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/mediumGray"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/strokeColor"
-                app:strokeWidth="1dp">
+                android:background="@color/mediumGray">
 
-                <FrameLayout
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/mediumGray"
+                    app:cardCornerRadius="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-
-                    <com.q42.android.scrollingimageview.ScrollingImageView
-                        android:id="@+id/learn_scroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom"
-                        android:scaleType="fitXY"
-                        android:visibility="gone"
-                        scrolling_image_view:speed="60dp"
-                        scrolling_image_view:source="@drawable/tst1_background"
-                        scrolling_image_view:initialState="started"/>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/strokeColor"
+                    app:strokeWidth="1dp">
 
                     <FrameLayout
-                        android:id="@+id/learn_FrameLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:alpha="0.2" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
 
-                </FrameLayout>
+                        <com.q42.android.scrollingimageview.ScrollingImageView
+                            android:id="@+id/learn_scroll"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            scrolling_image_view:initialState="started"
+                            scrolling_image_view:source="@drawable/tst1_background"
+                            scrolling_image_view:speed="60dp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
+                        <FrameLayout
+                            android:id="@+id/learn_FrameLayout"
 
-                    />
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alpha="0.3" />
 
-                <FrameLayout
+
+
+                    </FrameLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+
+                        />
+
+                    <FrameLayout
                         android:id="@+id/framelayout_container"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -84,62 +107,62 @@
                         android:layout_alignParentBottom="true">
 
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/category_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="360dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="65dp"
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/category_img"
+                            android:layout_width="match_parent"
+                            android:layout_height="360dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="65dp"
 
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:src="@drawable/ic_error_placeholder"
-                        android:visibility="gone" />
-
-
-                    <ImageView
-                        android:id="@+id/img_click"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="bottom|start"
-                        android:layout_margin="10dp"
-                        android:layout_marginBottom="28dp"
-                        android:background="@drawable/button_rounded"
-                        android:backgroundTint="@color/red2"
-                        android:transitionName="toNextButton"
-
-                        android:backgroundTintMode="add"
-                        android:foreground="@drawable/btn_foreground"
-                        app:tint="@color/white"
-                        android:layoutDirection="rtl"
-                        android:src="@drawable/ic_next"
-
-                        />
-
-                </FrameLayout>
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@drawable/ic_error_placeholder"
+                            android:visibility="gone" />
 
 
+                        <ImageView
+                            android:id="@+id/img_click"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="10dp"
+                            android:layout_marginBottom="28dp"
+                            android:background="@drawable/button_rounded"
+                            android:backgroundTint="@color/red2"
+                            android:backgroundTintMode="add"
+
+                            android:foreground="@drawable/btn_foreground"
+                            android:layoutDirection="rtl"
+                            android:src="@drawable/ic_next"
+                            android:transitionName="toNextButton"
+                            app:tint="@color/white"
+
+                            />
+
+                    </FrameLayout>
 
 
-            </com.google.android.material.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <TextView
-            android:id="@+id/cat_txt_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/rounded"
-            android:layoutDirection="rtl"
-            android:padding="10dp"
-            android:text="animal"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="25sp" />
+            <TextView
+                android:id="@+id/cat_txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="40dp"
+                android:background="@drawable/rounded"
+                android:layoutDirection="rtl"
+                android:padding="10dp"
+                android:text="animal"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+        </FrameLayout>
 
 
     </FrameLayout>

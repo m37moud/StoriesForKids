@@ -19,6 +19,7 @@ class VideosViewModel @ViewModelInject constructor(
 
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
     val readShouldDownload = dataStoreRepository.readDownloadStatus.asLiveData()
+    val readShouldLoad = dataStoreRepository.readLoadingStatus.asLiveData()
 
 
 
@@ -26,6 +27,9 @@ class VideosViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveBackOnline(backOnline)
         }
+
+
+
 
 
     fun showNetworkStatus() {
@@ -48,6 +52,9 @@ class VideosViewModel @ViewModelInject constructor(
             dataStoreRepository.saveDownloadStatus(downloadStatus)
         }
 
-
+    fun saveLoadingStatus(loadingStatus: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.saveDownloadStatus(loadingStatus)
+        }
 
 }
