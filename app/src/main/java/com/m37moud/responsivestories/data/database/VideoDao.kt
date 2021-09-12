@@ -15,6 +15,9 @@ interface VideoDao {
     @Query("SELECT * FROM video_table ORDER BY id DESC")
     fun readVideos(): Flow<List<VideoEntity>>
 
+    @Query("SELECT * FROM video_table WHERE videoCategory = :categoryName ORDER BY id DESC")
+    fun readVideosWithCategory(categoryName: String): Flow<List<VideoEntity>>
+
 
     @Query("DELETE FROM video_table WHERE id = :tid")
     suspend fun deleteVideo(tid : String)

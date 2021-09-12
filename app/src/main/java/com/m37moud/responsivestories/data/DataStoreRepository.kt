@@ -11,6 +11,11 @@ import javax.inject.Inject
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import com.m37moud.responsivestories.data.DataStoreRepository.PreferenceKeys.selectedCategoryType
+import com.m37moud.responsivestories.data.DataStoreRepository.PreferenceKeys.selectedCategoryTypeId
+import com.m37moud.responsivestories.util.Constants.Companion.DEFAULT_CATEGORY_TYPE
+import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_CATEGORY_TYPE
+import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_CATEGORY_TYPE_ID
 import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_DOWNLOAD_STATUS
 import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_LOADING_STATUS
 import com.m37moud.responsivestories.util.Constants.Companion.PREFERENCES_NAME
@@ -27,6 +32,9 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
         val backOnline = preferencesKey<Boolean>(PREFERENCES_BACK_ONLINE)
         val downloadStatus = preferencesKey<Boolean>(PREFERENCES_DOWNLOAD_STATUS)
         val loadingStatus = preferencesKey<Boolean>(PREFERENCES_LOADING_STATUS)
+
+        val selectedCategoryType = preferencesKey<String>(PREFERENCES_CATEGORY_TYPE)
+        val selectedCategoryTypeId = preferencesKey<Int>(PREFERENCES_CATEGORY_TYPE_ID)
 
     }
 
@@ -96,4 +104,41 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
             val downloadStatus = preferences[PreferenceKeys.loadingStatus] ?: false
             downloadStatus
         }
+
+    suspend fun saveCategoryType(
+       categoryType: String,
+       categoryTypeId: Int
+
+    ) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.selectedCategoryType] = categoryType
+            preferences[PreferenceKeys.selectedCategoryTypeId] = categoryTypeId
+        }
+    }
+
+    val readCategoryType: Flow<CategoryType> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            val selectedCategoryType = preferences[PreferenceKeys.selectedCategoryType] ?: DEFAULT_CATEGORY_TYPE
+            val selectedCategoryTypeId = preferences[PreferenceKeys.selectedCategoryTypeId] ?: 0
+
+            CategoryType(
+                selectedCategoryType,
+                selectedCategoryTypeId
+
+            )
+        }
 }
+
+
+data class CategoryType(
+    val selectedCategoryType: String,
+    val selectedCategoryTypeId: Int
+
+)

@@ -67,6 +67,13 @@ class MainViewModel @ViewModelInject constructor(
             repository.local.updateVideoComplete(tid, video)
         }
 
+
+    //read all videos where categories
+    fun readVideosWithCategory(categoryName: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.readVideosWithCategory(categoryName)
+        }
+
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
     var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<CategoriesModel>>> =

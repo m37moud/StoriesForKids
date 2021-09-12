@@ -43,8 +43,11 @@ class Constants {
         const val PREFERENCES_NAME = "story_preferences"
 
 
-        const val DEFAULT_MEAL_TYPE = ""
-        const val DEFAULT_DIET_TYPE = ""
+        const val PREFERENCES_CATEGORY_TYPE = "categoryType"
+        const val PREFERENCES_CATEGORY_TYPE_ID = "categoryTypeId"
+
+
+        const val DEFAULT_CATEGORY_TYPE = "All"
 
 
         fun getRandomColor(): Int {

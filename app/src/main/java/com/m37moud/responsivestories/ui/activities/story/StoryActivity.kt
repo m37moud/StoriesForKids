@@ -39,6 +39,8 @@ import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_story.*
+import kotlinx.android.synthetic.main.categories_bottom_sheet.*
+import kotlinx.android.synthetic.main.categories_bottom_sheet.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -159,6 +161,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     binding.selectCategoryFab.isClickable = true
                 val bottomSheetFragment = CategoriesBottomSheet()
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+                    bottomSheetFragment.apply_btn.isPressed
                 val bundle = Bundle()
                 bundle.putParcelableArrayList("myListCategory", listCategory)
                 bottomSheetFragment.arguments = bundle
@@ -168,7 +171,6 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //            binding.selectCategoryFab.isClickable = false
                 }
 
-//            startActivity(Intent(requireContext(), AddVideoActivity::class.java))
         }
 //        Constants.initBackgroundColor(story_FrameLayout, this@StoryActivity)
         val backgroundColor = parent_story_frame.background
@@ -393,9 +395,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
     }
 
-    //5/8 work
     private fun readDatabase() {
-//        counter = 0
         Log.d("mah readDatabase", "readDatabase called!")
         hideLoading()
         lifecycleScope.launch {
@@ -406,7 +406,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     Log.d("mah readDatabase", "if statement true")
 
                     listReadDatabase = database as ArrayList
-//room change
+                    //room change
                     val adapterReadDatabase = DownloadedVideoAdapter(
                         this@StoryActivity
                     )

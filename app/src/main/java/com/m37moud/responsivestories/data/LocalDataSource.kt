@@ -13,6 +13,9 @@ class LocalDataSource @Inject constructor(
     fun readVideos(): Flow<List<VideoEntity>> {
         return videosDao.readVideos()
     }
+ fun readVideosWithCategory(categoryName: String): Flow<List<VideoEntity>> {
+        return videosDao.readVideosWithCategory(categoryName)
+    }
 
     suspend fun insertVideos(videoEntity: VideoEntity) {
         videosDao.insertVideos(videoEntity)

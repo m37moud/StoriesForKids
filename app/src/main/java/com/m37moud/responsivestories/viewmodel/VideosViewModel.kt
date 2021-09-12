@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.m37moud.responsivestories.data.DataStoreRepository
+import com.m37moud.responsivestories.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -17,9 +18,13 @@ class VideosViewModel @ViewModelInject constructor(
     var networkStatus = false
     var backOnline = false
 
+
+    private var categoryType = Constants.DEFAULT_CATEGORY_TYPE
+
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
     val readShouldDownload = dataStoreRepository.readDownloadStatus.asLiveData()
     val readShouldLoad = dataStoreRepository.readLoadingStatus.asLiveData()
+    val readCategoriesType = dataStoreRepository.readCategoryType.asLiveData()
 
 
 
@@ -55,6 +60,12 @@ class VideosViewModel @ViewModelInject constructor(
     fun saveLoadingStatus(loadingStatus: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveDownloadStatus(loadingStatus)
+        }
+
+
+    fun saveCategoryType(mealType: String, mealTypeId: Int) =
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.saveCategoryType(mealType, mealTypeId)
         }
 
 }

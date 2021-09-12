@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var videosViewModel: VideosViewModel
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 // Log and toast
                 val msg = getString(R.string.msg_token_fmt, token)
                 Log.d(TAG, msg)
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             } else {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
             }
@@ -153,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("subscribe", "faild ")
                 }
 
-                Toast.makeText(baseContext, "msg", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "subscribeToTopic is Successful", Toast.LENGTH_SHORT).show()
             }
         MobileAds.initialize(this)
         MobileAds.setRequestConfiguration(
@@ -174,7 +175,6 @@ class MainActivity : AppCompatActivity() {
 
 
         //init background
-//        Constants.initBackgroundColor(main_FrameLayout, this@MainActivity)
         main_scroll.visibility = View.VISIBLE
 
     }
