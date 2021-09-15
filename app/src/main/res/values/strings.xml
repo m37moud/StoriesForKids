@@ -48,5 +48,7 @@
     <string name="msg_token_fmt" translatable="false">FCM registration Token: %s</string>
     <string name="apply">apply</string>
     <string name="finish">Finish</string>
+    <string name="all_categories">all categories</string>
+    <string name="all">all</string>
 
 </resources>

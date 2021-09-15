@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -155,27 +156,42 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 //
 
-            binding.selectCategoryFab.setOnClickListener {
-                if (listCategory.isNotEmpty()) {
-                    Log.d("selectCategoryFab", "selectCategoryFab: $listCategory")
-                    binding.selectCategoryFab.isClickable = true
+        binding.selectCategoryFab.setOnClickListener {
+            if (listCategory.isNotEmpty()) {
+                Log.d("selectCategoryFab", "selectCategoryFab: $listCategory")
+                binding.selectCategoryFab.isClickable = true
                 val bottomSheetFragment = CategoriesBottomSheet()
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-                    bottomSheetFragment.apply_btn.isPressed
+//                bottomSheetFragment.apply_btn.isPressed
                 val bundle = Bundle()
                 bundle.putParcelableArrayList("myListCategory", listCategory)
                 bottomSheetFragment.arguments = bundle
-            } else
-                {
-                    Toast.makeText(this@StoryActivity, "try to fetch Categories", Toast.LENGTH_SHORT).show()
+
+                val category = bottomSheetFragment.arguments?.getString("chipCategory")
+                Log.d("selectCategoryFab", "selectCategoryFab: $category")
+
+                category?.let { it1 -> readVideosWithCategories(it1) }
+
+//                bottomSheetFragment.apply_btn.setOnClickListener {
+//                    val category = bottomSheetFragment.arguments?.getString("chipCategory")
+//                    category?.let { it1 -> readVideosWithCategories(it1) }
+//
+//                     bottomSheetFragment.dismiss()
+//                }
+            } else {
+                Toast.makeText(this@StoryActivity, "try to fetch Categories", Toast.LENGTH_SHORT)
+                    .show()
 //            binding.selectCategoryFab.isClickable = false
-                }
+            }
 
         }
 //        Constants.initBackgroundColor(story_FrameLayout, this@StoryActivity)
         val backgroundColor = parent_story_frame.background
         binding.storyFrameLayout.background = backgroundColor
         binding.storyScroll.visibility = View.VISIBLE
+
+        binding.selectCategoryFab.background = backgroundColor
+
 
     }
 
@@ -394,6 +410,44 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
     }
+
+    private fun readVideosWithCategories(categories: String) {
+        Log.d("mah readVideosWithCategories", "readVideosWithCategories called! $categories")
+
+        if (!TextUtils.isEmpty(categories)) {
+            hideLoading()
+            lifecycleScope.launch {
+
+                mainViewModel.readVideosWithCategory(categories)
+                    .observe(this@StoryActivity, Observer { database ->
+                        if (database.isNotEmpty()) {
+
+                            Log.d("mah readVideosWithCategories", "if statement true")
+
+                            listReadDatabase = database as ArrayList
+                            //room change
+                            val adapterReadDatabase = DownloadedVideoAdapter(
+                                this@StoryActivity
+                            )
+                            adapterReadDatabase.setData(listReadDatabase)
+                            binding.rcStory.adapter = adapterReadDatabase
+                            Log.d(
+                                "mah readVideosWithCategories",
+                                "list is " + listReadDatabase.toString()
+                            )
+
+                        } else {
+                            Log.d("mah readVideosWithCategories", "if statement is false ...")
+//                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+                            mainViewModel.readVideos.removeObservers(this@StoryActivity)
+                        }
+                    })
+            }
+        }
+
+
+    }
+
 
     private fun readDatabase() {
         Log.d("mah readDatabase", "readDatabase called!")
@@ -884,7 +938,6 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             Log.d("readDatabase saveVideoData", "isert all videos !" + size)
 
 
-
         }
 
     }
@@ -900,7 +953,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //                    listCategory = database as ArrayList<CategoriesModel>
                     listCategoriesReadDatabase = database as ArrayList
                     listCategoriesReadDatabase.forEach {
-                        val categoryModel = CategoriesModel(it.categoryId , it.categoryName , it.categoryImage)
+                        val categoryModel =
+                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
 
                         listCategory.add(categoryModel)
 
@@ -917,6 +971,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             })
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         downloadTracker.removeListener(this)

@@ -144,7 +144,7 @@
                     app:backgroundTint="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:tint="@color/mediumGray" />
+                    app:tint="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

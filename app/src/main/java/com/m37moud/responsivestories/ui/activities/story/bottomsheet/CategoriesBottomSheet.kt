@@ -1,5 +1,6 @@
 package com.m37moud.responsivestories.ui.activities.story.bottomsheet
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -55,13 +56,13 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         Log.d("CategoriesBottomSheet", "initChip: " + data)
 
         initChip(data, mView.categories_chipGroub)
-//        videosViewModel.readCategoriesType.observe(viewLifecycleOwner){
-//                value ->
-//            Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
-//
-//            categoryChip = value.selectedMealType
-//            updateChip(value.selectedMealTypeId, mView.categories_chipGroub)
-//        }
+        videosViewModel.readCategoriesType.observe(viewLifecycleOwner){
+                value ->
+            Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
+
+            categoryChip = value.selectedCategoryType
+            updateChip(value.selectedCategoryTypeId, mView.categories_chipGroub)
+        }
 
         videosViewModel.readCategoriesType.observe(viewLifecycleOwner) { value ->
             Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
@@ -141,6 +142,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         }
 
 
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        arguments?.putString("chipCategory" , categoryChip)
     }
 
 

@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="all categories"
+        android:text="@string/all_categories"
         android:textColor="@color/dark"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -41,7 +41,6 @@
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/categories_chipGroub"
-                style="@style/CustomChipStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:checkedChip="@+id/main_course_chip"
@@ -55,7 +54,7 @@
                     style="@style/CustomChipStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="all" />
+                    android:text="@string/all" />
 
 
             </com.google.android.material.chip.ChipGroup>

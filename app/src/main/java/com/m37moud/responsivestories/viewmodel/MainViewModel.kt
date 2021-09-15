@@ -28,6 +28,16 @@ class MainViewModel @ViewModelInject constructor(
     val readVideos: LiveData<List<VideoEntity>> =
         repository.local.readVideos().asLiveData()
 
+//    var readVideosCategories : MutableLiveData<NetworkResult<ArrayList<VideoEntity>>> = MutableLiveData()
+//        repository.local.readVideos().asLiveData()
+
+
+    //read all videos where categories from DB
+    fun readVideosWithCategory(categoryName: String): LiveData<List<VideoEntity>> {
+        return repository.local.readVideosWithCategory(categoryName).asLiveData()
+
+
+    }
 
     fun insertVideos(videoEntity: VideoEntity) =
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,12 +78,6 @@ class MainViewModel @ViewModelInject constructor(
         }
 
 
-    //read all videos where categories
-    fun readVideosWithCategory(categoryName: String) =
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.local.readVideosWithCategory(categoryName)
-        }
-
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
     var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<CategoriesModel>>> =
@@ -82,6 +86,7 @@ class MainViewModel @ViewModelInject constructor(
     fun getVideos() = viewModelScope.launch {
         loadVideosFromFirebase()
     }
+
     fun getCategories() = viewModelScope.launch {
         loadCategoriesFromFirebase()
     }
@@ -172,7 +177,8 @@ class MainViewModel @ViewModelInject constructor(
                             ds.let {
 
                                 //get data as model
-                                val modelCAtegory: CategoriesModel? = ds.getValue(CategoriesModel::class.java)
+                                val modelCAtegory: CategoriesModel? =
+                                    ds.getValue(CategoriesModel::class.java)
                                 //add to array list
                                 if (modelCAtegory != null) {
 
