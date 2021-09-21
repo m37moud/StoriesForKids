@@ -119,9 +119,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         )
         ///
         initRecyclerView()
+
         videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
             videosViewModel.backOnline = it
         })
+
+
 
 
         lifecycleScope.launchWhenStarted {
@@ -132,7 +135,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     videosViewModel.networkStatus = status
                     videosViewModel.showNetworkStatus()
                     //read database
-                    readDatabase()
+                    videosViewModel.readBottomSheetExitStatus.observe(this@StoryActivity, Observer {exitStatus ->
+                        Log.d("bottomSheetExit", exitStatus.toString())
+                        if(exitStatus){
+                            readVideosWithCategories(videosViewModel.applyQuery())
+                        }else{
+                            readDatabase()
+                        }
+                    })
                 }
         }
         ///
@@ -152,6 +162,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         dataSourceFactory = buildDataSourceFactory()!!
 
+        //from database
         readCategoriesFromDatabase()
 
 //
@@ -170,7 +181,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 val category = bottomSheetFragment.arguments?.getString("chipCategory")
                 Log.d("selectCategoryFab", "selectCategoryFab: $category")
 
-                category?.let { it1 -> readVideosWithCategories(it1) }
+//                category?.let { it1 -> readVideosWithCategories(it1) }
 
 //                bottomSheetFragment.apply_btn.setOnClickListener {
 //                    val category = bottomSheetFragment.arguments?.getString("chipCategory")
@@ -200,6 +211,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         super.onStart()
         //check if is there new videos **
         downloadTracker.addListener(this)
+        videosViewModel.saveExitStatus(false)
+
 
 //        firstCheck()
     }
@@ -975,6 +988,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     override fun onDestroy() {
         super.onDestroy()
         downloadTracker.removeListener(this)
+        videosViewModel.saveExitStatus(false)
         //whe app end download status = false
         _binding = null
     }

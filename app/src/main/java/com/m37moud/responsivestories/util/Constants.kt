@@ -39,6 +39,10 @@ class Constants {
         const val PREFERENCES_BACK_ONLINE = "backOnline"
         const val PREFERENCES_DOWNLOAD_STATUS = "downloadStatus"
         const val PREFERENCES_LOADING_STATUS = "loadingStatus"
+        const val PREFERENCES_ExitBottom_STATUS = "exit"
+
+
+
 
         const val PREFERENCES_NAME = "story_preferences"
 
@@ -47,7 +51,7 @@ class Constants {
         const val PREFERENCES_CATEGORY_TYPE_ID = "categoryTypeId"
 
 
-        const val DEFAULT_CATEGORY_TYPE = "All"
+        const val DEFAULT_CATEGORY_TYPE = ""
 
 
         fun getRandomColor(): Int {

@@ -9,14 +9,17 @@ import androidx.lifecycle.viewModelScope
 import com.m37moud.responsivestories.data.DataStoreRepository
 import com.m37moud.responsivestories.util.Constants
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class VideosViewModel @ViewModelInject constructor(
     application: Application,
     private val dataStoreRepository: DataStoreRepository
-) : AndroidViewModel(application){
+) : AndroidViewModel(application) {
     var networkStatus = false
     var backOnline = false
+    var exitStatus = false
+
 
 
     private var categoryType = Constants.DEFAULT_CATEGORY_TYPE
@@ -24,17 +27,16 @@ class VideosViewModel @ViewModelInject constructor(
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
     val readShouldDownload = dataStoreRepository.readDownloadStatus.asLiveData()
     val readShouldLoad = dataStoreRepository.readLoadingStatus.asLiveData()
-    val readCategoriesType = dataStoreRepository.readCategoryType.asLiveData()
+    val readBottomSheetExitStatus = dataStoreRepository.readExitStatus.asLiveData()
 
+
+    val readCategoriesType = dataStoreRepository.readCategoryType
 
 
     private fun saveBackOnline(backOnline: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveBackOnline(backOnline)
         }
-
-
-
 
 
     fun showNetworkStatus() {
@@ -52,7 +54,7 @@ class VideosViewModel @ViewModelInject constructor(
 
     //download status
 
-     fun saveDownloadStatus(downloadStatus: Boolean) =
+    fun saveDownloadStatus(downloadStatus: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveDownloadStatus(downloadStatus)
         }
@@ -67,5 +69,22 @@ class VideosViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveCategoryType(mealType, mealTypeId)
         }
+
+    fun saveExitStatus(exit: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.saveExitStatus(exit)
+        }
+
+
+    fun applyQuery(): String {
+        viewModelScope.launch {
+            readCategoriesType.collect { value ->
+                categoryType = value.selectedCategoryType
+
+            }
+        }
+
+        return categoryType
+    }
 
 }

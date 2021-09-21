@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
@@ -56,27 +54,25 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         Log.d("CategoriesBottomSheet", "initChip: " + data)
 
         initChip(data, mView.categories_chipGroub)
-        videosViewModel.readCategoriesType.observe(viewLifecycleOwner){
-                value ->
-            Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
 
-            categoryChip = value.selectedCategoryType
-            updateChip(value.selectedCategoryTypeId, mView.categories_chipGroub)
-        }
-
-        videosViewModel.readCategoriesType.observe(viewLifecycleOwner) { value ->
+        videosViewModel.readCategoriesType.asLiveData().observe(viewLifecycleOwner) { value ->
             Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
 
             categoryChip = value.selectedCategoryType
             updateChip(value.selectedCategoryTypeId, mView.categories_chipGroub)
         }
 //
-        mView.categories_chipGroub.setOnCheckedChangeListener { group, selectedChipId ->
-            val chip = group.findViewById<Chip>(selectedChipId)
-            val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
-            categoryChip = selectedCategoryType
-            categoryChipId = selectedChipId
-        }
+//        mView.categories_chipGroub.setOnCheckedChangeListener { group, selectedChipId ->
+//            val chip = group.findViewById<Chip>(selectedChipId)
+//            val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
+//            categoryChip = selectedCategoryType
+//            categoryChipId = selectedChipId
+//
+//            Log.d(
+//                "mah RecipesBottomSheet",
+//                "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
+//            )
+//        }
 //
         mView.apply_btn.setOnClickListener {
             Log.d(
@@ -88,7 +84,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
                 categoryChipId
 
             )
-            mainViewModel.readVideosWithCategory(categoryChip)
+
+            videosViewModel.saveExitStatus(true)
+
+//            arguments?.putString("chipCategory" , categoryChip)
+
+//            mainViewModel.readVideosWithCategory(categoryChip)
             this.dismiss()
 //            //do search
 //            recipesViewModel.saveSearch(true)
@@ -134,6 +135,18 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
                     chip.text = model.categoryName
 //                    chip.setTextAppearance(R.style.CustomChipStyle)
                     chipGroup.addView(chip)
+
+                }
+                chipGroup.setOnCheckedChangeListener { group, selectedChipId ->
+                    val chip = group.findViewById<Chip>(selectedChipId)
+                    val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
+                    categoryChip = selectedCategoryType
+                    categoryChipId = selectedChipId
+
+                    Log.d(
+                        "mah RecipesBottomSheet",
+                        "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
+                    )
                 }
             } else {
                 Log.d("initChip", "initChip: false")
