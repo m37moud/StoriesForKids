@@ -2,6 +2,9 @@ package com.m37moud.responsivestories.ui.activities.story
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -101,6 +104,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         roomList = ArrayList()
         listCategory = ArrayList()
 
+        videosViewModel.saveExitStatus(false)
+
         binding.lifecycleOwner = this
 
         Constants.initBackgroundColor(parent_story_frame, this@StoryActivity)
@@ -197,11 +202,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         }
 //        Constants.initBackgroundColor(story_FrameLayout, this@StoryActivity)
-        val backgroundColor = parent_story_frame.background
+        val backgroundColor = parent_story_frame.background as ColorDrawable
         binding.storyFrameLayout.background = backgroundColor
         binding.storyScroll.visibility = View.VISIBLE
 
-        binding.selectCategoryFab.background = backgroundColor
+//        binding.selectCategoryFab.background = backgroundColor
+//        binding.selectCategoryFab.backgroundTintList = ColorStateList.valueOf(backgroundColor.color)
 
 
     }
@@ -211,7 +217,6 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         super.onStart()
         //check if is there new videos **
         downloadTracker.addListener(this)
-        videosViewModel.saveExitStatus(false)
 
 
 //        firstCheck()
@@ -427,7 +432,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun readVideosWithCategories(categories: String) {
         Log.d("mah readVideosWithCategories", "readVideosWithCategories called! $categories")
 
-        if (!TextUtils.isEmpty(categories)) {
+
             hideLoading()
             lifecycleScope.launch {
 
@@ -456,7 +461,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                         }
                     })
             }
-        }
+
 
 
     }
@@ -985,6 +990,10 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+    }
     override fun onDestroy() {
         super.onDestroy()
         downloadTracker.removeListener(this)

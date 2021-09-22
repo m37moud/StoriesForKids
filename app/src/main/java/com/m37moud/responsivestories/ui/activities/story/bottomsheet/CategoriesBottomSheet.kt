@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
@@ -62,31 +63,42 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
             updateChip(value.selectedCategoryTypeId, mView.categories_chipGroub)
         }
 //
-//        mView.categories_chipGroub.setOnCheckedChangeListener { group, selectedChipId ->
-//            val chip = group.findViewById<Chip>(selectedChipId)
-//            val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
-//            categoryChip = selectedCategoryType
-//            categoryChipId = selectedChipId
-//
-//            Log.d(
-//                "mah RecipesBottomSheet",
-//                "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
-//            )
-//        }
+        mView.categories_chipGroub.setOnCheckedChangeListener { group, selectedChipId ->
+            val chip = group.findViewById<Chip>(selectedChipId)
+            val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
+            categoryChip = selectedCategoryType
+
+            if (selectedCategoryType == "all") {
+                categoryChip = DEFAULT_CATEGORY_TYPE
+            }
+
+            categoryChipId = selectedChipId
+
+            Log.d(
+                "mah RecipesBottomSheet",
+                "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
+            )
+        }
 //
         mView.apply_btn.setOnClickListener {
             Log.d(
                 "mah RecipesBottomSheet",
                 "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
             )
+
             videosViewModel.saveCategoryType(
                 categoryChip,
                 categoryChipId
 
             )
 
-            videosViewModel.saveExitStatus(true)
+            if(categoryChip == ""){
+                videosViewModel.saveExitStatus(false)
+            }else {
 
+
+                videosViewModel.saveExitStatus(true)
+            }
 //            arguments?.putString("chipCategory" , categoryChip)
 
 //            mainViewModel.readVideosWithCategory(categoryChip)
@@ -110,11 +122,13 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun updateChip(chipId: Int, chipGroup: ChipGroup) {
+        Log.d("updateChip", "updateChip: called")
+
         if (chipId != 0) {
             try {
                 chipGroup.findViewById<Chip>(chipId).isChecked = true
             } catch (e: Exception) {
-                Log.d("RecipesBottomSheet", e.message.toString())
+                Log.d("updateChip", e.message.toString())
             }
         }
     }
@@ -131,22 +145,28 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
                     val model = list[it]
                     val chip = Chip(requireContext())
                     Log.d("initChip", "initChip: ${model.categoryName}")
+                    chip.isClickable = true
+                    chip.isCheckable = true
+                    chip.id = model.categoryId!!.toInt()
 
                     chip.text = model.categoryName
+                    val drawable = ChipDrawable.createFromAttributes(
+                        requireContext(),
+                        null,
+                        0,
+                        R.style.CustomChipStyle
+                    )
+                        chip.setOnClickListener {
+                            chip.setTextColor(resources.getColor(R.color.white))
+                        }
+                    chip.setChipDrawable(drawable)
+                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
+                        chip.setTextColor(resources.getColor(R.color.white))
+                        Log.i("checkedChipIds","${buttonView.id} $isChecked")
+                    }
 //                    chip.setTextAppearance(R.style.CustomChipStyle)
                     chipGroup.addView(chip)
 
-                }
-                chipGroup.setOnCheckedChangeListener { group, selectedChipId ->
-                    val chip = group.findViewById<Chip>(selectedChipId)
-                    val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
-                    categoryChip = selectedCategoryType
-                    categoryChipId = selectedChipId
-
-                    Log.d(
-                        "mah RecipesBottomSheet",
-                        "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
-                    )
                 }
             } else {
                 Log.d("initChip", "initChip: false")
@@ -160,7 +180,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
 
-        arguments?.putString("chipCategory" , categoryChip)
+        arguments?.putString("chipCategory", categoryChip)
     }
 
 

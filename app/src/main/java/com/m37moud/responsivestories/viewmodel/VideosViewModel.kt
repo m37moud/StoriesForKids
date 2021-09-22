@@ -21,7 +21,6 @@ class VideosViewModel @ViewModelInject constructor(
     var exitStatus = false
 
 
-
     private var categoryType = Constants.DEFAULT_CATEGORY_TYPE
 
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
@@ -79,7 +78,11 @@ class VideosViewModel @ViewModelInject constructor(
     fun applyQuery(): String {
         viewModelScope.launch {
             readCategoriesType.collect { value ->
-                categoryType = value.selectedCategoryType
+
+                categoryType = if (value.selectedCategoryType == "all") {
+                    ""
+                } else
+                    value.selectedCategoryType
 
             }
         }
