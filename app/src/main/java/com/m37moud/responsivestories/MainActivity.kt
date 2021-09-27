@@ -23,6 +23,9 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
@@ -36,6 +39,13 @@ const val TOPIC = "/topics/myTopic2"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val linearLayoutAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.zoom_in
+        )
+    }
 
 
     //fab button menu
@@ -88,6 +98,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = Firebase.analytics
+
+
+        //set animation
+        initMainActivityAnimation(learn_main_linearLayout,learn_main_txt,learn_main_img , 3000)
+        initMainActivityAnimation(story_main_linearLayout,story_main_txt,story_main_img , 3500)
 
         //fab menu
         open_menu_fab.setOnClickListener { onAddButtonClicked() }
@@ -154,7 +169,8 @@ class MainActivity : AppCompatActivity() {
                     Log.d("subscribe", "faild ")
                 }
 
-                Toast.makeText(baseContext, "subscribeToTopic is Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "subscribeToTopic is Successful", Toast.LENGTH_SHORT)
+                    .show()
             }
         MobileAds.initialize(this)
         MobileAds.setRequestConfiguration(
@@ -311,9 +327,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    private fun initMainActivityAnimation() {
-
-    }
 
     override fun onBackPressed() {
         showLoading = true
@@ -327,6 +340,28 @@ class MainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+    }
+
+    private fun initMainActivityAnimation(
+        layout: LinearLayout,
+        textView: TextView,
+        imageView: ImageView,
+        delay: Long
+    ) {
+        layout.animate().apply {
+            startDelay = delay
+            layout.startAnimation(linearLayoutAnim)
+
+        }.withEndAction {
+            imageView.animate().apply {
+                startDelay = 300
+                        translationX(-1f)
+
+                imageView.visibility = View.INVISIBLE
+            }
+        }
+
+
     }
 
 
