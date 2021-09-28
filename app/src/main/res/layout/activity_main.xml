@@ -21,6 +21,8 @@
 
     <FrameLayout
         android:id="@+id/main_parent_frame"
+        android:clipChildren="false"
+
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="match_parent">
@@ -49,6 +51,7 @@
 
         <LinearLayout
             android:id="@+id/story_card_view"
+            android:clipChildren="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -58,6 +61,8 @@
 
             <LinearLayout
                 android:id="@+id/story_main_linearLayout"
+                android:clipChildren="false"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_img_rounded"
@@ -96,6 +101,8 @@
 
         <LinearLayout
             android:id="@+id/learn_card_view"
+            android:clipChildren="false"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -105,6 +112,8 @@
 
             <LinearLayout
                 android:id="@+id/learn_main_linearLayout"
+                android:clipChildren="false"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/main_img_rounded"

@@ -1,7 +1,24 @@
 package com.m37moud.responsivestories
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -13,27 +30,13 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.m37moud.responsivestories.util.FirebaseService
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Handler
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
-import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
+import com.m37moud.responsivestories.util.FirebaseService
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_start.*
 
 const val TOPIC = "/topics/myTopic2"
 
@@ -101,8 +104,8 @@ class MainActivity : AppCompatActivity() {
 
 
         //set animation
-        initMainActivityAnimation(learn_main_linearLayout,learn_main_txt,learn_main_img , 3000)
-        initMainActivityAnimation(story_main_linearLayout,story_main_txt,story_main_img , 3500)
+        initMainActivityAnimation(learn_main_linearLayout, learn_main_txt, learn_main_img, 3000)
+        initMainActivityAnimation(story_main_linearLayout, story_main_txt, story_main_img, 3500)
 
         //fab menu
         open_menu_fab.setOnClickListener { onAddButtonClicked() }
@@ -348,17 +351,52 @@ class MainActivity : AppCompatActivity() {
         imageView: ImageView,
         delay: Long
     ) {
+
+//        val translateAnimation =
+//            ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 800f)
+//        translateAnimation.repeatCount = 0
+//        translateAnimation.startDelay = delay
+//        translateAnimation.repeatMode = ValueAnimator.REVERSE
+//////        translateAnimation.start()
+////
+////
+//
+//        val pvhX: PropertyValuesHolder = PropertyValuesHolder.ofFloat(View.SCALE_X, 2f)
+//        val pvhY: PropertyValuesHolder = PropertyValuesHolder.ofFloat(View.SCALE_Y, 2f)
+//        val scaleAnimation: ObjectAnimator =
+//            ObjectAnimator.ofPropertyValuesHolder(layout, pvhX, pvhY)
+////        scaleAnimation.repeatCount = 1
+////        translateAnimation.startDelay = 300
+//
+//        scaleAnimation.repeatMode = ValueAnimator.REVERSE
+//
+//
+//        val setAnimation = AnimatorSet()
+//        setAnimation.play(scaleAnimation).after(translateAnimation)
+//        setAnimation.start()
+
         layout.animate().apply {
             startDelay = delay
             layout.startAnimation(linearLayoutAnim)
+//            translationXBy(0f)
+//            repeat(0,action = ValueAnimator.REVERSE)
+//            translationXBy(0f)
+
+            translationZ(1f)
+            interpolator = LinearInterpolator()
 
         }.withEndAction {
-            imageView.animate().apply {
-                startDelay = 300
-                        translationX(-1f)
 
-                imageView.visibility = View.INVISIBLE
-            }
+            imageView.animate().apply {
+
+                startDelay = 300
+
+                translationX(-100f)
+
+//                interpolator = LinearInterpolator()
+
+//                imageView.visibility = View.INVISIBLE
+            }.start()
         }
 
 
