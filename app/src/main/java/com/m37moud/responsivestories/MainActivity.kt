@@ -448,7 +448,7 @@ class MainActivity : AppCompatActivity() {
         layout.animate().apply {
 //            startDelay = 200
             layoutAnim.duration = 300
-            layoutAnim.startOffset = delay + 500
+            layoutAnim.startOffset = delay + 1000
             layout.startAnimation(layoutAnim)
 
         }
@@ -456,7 +456,7 @@ class MainActivity : AppCompatActivity() {
 
 //            buttonsAnim.startOffset = delay
             buttonsAnim.duration = 500
-//            img_main_home.startAnimation(buttonsAnim)
+            img_main_home.startAnimation(buttonsAnim)
             img_main_setting.startAnimation(buttonsAnim)
             grassAnim.duration = 500
             grassAnim.startOffset = delay + 300
@@ -465,19 +465,19 @@ class MainActivity : AppCompatActivity() {
             .withEndAction {
 
                 imageView.animate().apply {
-                    imgAnim.duration = 500
-                    imgAnim.startOffset = delay + 2000
+                    imgAnim.duration = 1000
+                    imgAnim.startOffset = delay + 4000
                     imageView.startAnimation(imgAnim)
 
                 }.withEndAction {
                     textView.animate().apply {
-                        txtAnim.duration = 500
-                        txtAnim.startOffset = delay + 2100
+                        txtAnim.duration = 1000
+                        txtAnim.startOffset = delay + 4100
                         textView.startAnimation(txtAnim)
 
                     }.withEndAction {
 
-                        txtAndImgInfiniteAnim.startOffset = delay + 1200
+                        txtAndImgInfiniteAnim.startOffset = delay + 4300
                         imageView.startAnimation(txtAndImgInfiniteAnim)
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
