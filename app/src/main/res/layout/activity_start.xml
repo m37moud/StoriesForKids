@@ -102,7 +102,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/main_grass"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:scaleType="fitXY"

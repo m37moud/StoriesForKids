@@ -1,9 +1,5 @@
 package com.m37moud.responsivestories
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
-import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -15,7 +11,6 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -43,10 +38,66 @@ const val TOPIC = "/topics/myTopic2"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val linearLayoutAnim: Animation by lazy {
+    private val grassAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_bottom_anim
+        )
+    }
+
+    private val buttonsAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
             R.anim.zoom_in
+        )
+    }
+
+
+    private val learnLinearLayoutAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.zoom_in
+        )
+    }
+
+    private val learnTxtAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_right_anim
+        )
+    }
+    private val learnImgAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_right_anim
+        )
+    }
+
+
+    private val storyLinearLayoutAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.zoom_in
+        )
+    }
+
+    private val storyTxtAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_right_anim
+        )
+    }
+    private val storyImgAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_right_anim
+        )
+    }
+
+    private val txtAndImgInfiniteAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.main_infinit_anim
         )
     }
 
@@ -104,8 +155,24 @@ class MainActivity : AppCompatActivity() {
 
 
         //set animation
-        initMainActivityAnimation(learn_main_linearLayout, learn_main_txt, learn_main_img, 3000)
-        initMainActivityAnimation(story_main_linearLayout, story_main_txt, story_main_img, 3500)
+        initMainActivityAnimation(
+            learn_main_linearLayout,
+            learn_main_txt,
+            learn_main_img,
+            learnLinearLayoutAnim,
+            learnTxtAnim,
+            learnImgAnim,
+            400
+        )
+        initMainActivityAnimation(
+            story_main_linearLayout,
+            story_main_txt,
+            story_main_img,
+            storyLinearLayoutAnim,
+            storyTxtAnim,
+            storyImgAnim,
+            500
+        )
 
         //fab menu
         open_menu_fab.setOnClickListener { onAddButtonClicked() }
@@ -349,6 +416,9 @@ class MainActivity : AppCompatActivity() {
         layout: LinearLayout,
         textView: TextView,
         imageView: ImageView,
+        layoutAnim: Animation,
+        txtAnim: Animation,
+        imgAnim: Animation,
         delay: Long
     ) {
 
@@ -376,28 +446,44 @@ class MainActivity : AppCompatActivity() {
 //        setAnimation.start()
 
         layout.animate().apply {
-            startDelay = delay
-            layout.startAnimation(linearLayoutAnim)
-//            translationXBy(0f)
-//            repeat(0,action = ValueAnimator.REVERSE)
-//            translationXBy(0f)
+//            startDelay = 200
+            layoutAnim.duration = 300
+            layoutAnim.startOffset = delay + 500
+            layout.startAnimation(layoutAnim)
 
-            translationZ(1f)
-            interpolator = LinearInterpolator()
-
-        }.withEndAction {
-
-            imageView.animate().apply {
-
-                startDelay = 300
-
-                translationX(-100f)
-
-//                interpolator = LinearInterpolator()
-
-//                imageView.visibility = View.INVISIBLE
-            }.start()
         }
+            .withStartAction {
+
+//            buttonsAnim.startOffset = delay
+            buttonsAnim.duration = 500
+//            img_main_home.startAnimation(buttonsAnim)
+            img_main_setting.startAnimation(buttonsAnim)
+            grassAnim.duration = 500
+            grassAnim.startOffset = delay + 300
+            main_grass.startAnimation(grassAnim)
+        }
+            .withEndAction {
+
+                imageView.animate().apply {
+                    imgAnim.duration = 500
+                    imgAnim.startOffset = delay + 2000
+                    imageView.startAnimation(imgAnim)
+
+                }.withEndAction {
+                    textView.animate().apply {
+                        txtAnim.duration = 500
+                        txtAnim.startOffset = delay + 2100
+                        textView.startAnimation(txtAnim)
+
+                    }.withEndAction {
+
+                        txtAndImgInfiniteAnim.startOffset = delay + 1200
+                        imageView.startAnimation(txtAndImgInfiniteAnim)
+                        textView.startAnimation(txtAndImgInfiniteAnim)
+
+                    }.start()
+                }.start()
+            }.start()
 
 
     }
