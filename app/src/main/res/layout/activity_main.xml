@@ -67,8 +67,8 @@
                     android:id="@+id/story_main_img"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-
                     android:src="@drawable/ic_videos"
+                    android:visibility="invisible"
                     app:tint="@color/darkGray"
                     tools:layout_editor_absoluteX="192dp"
                     tools:layout_editor_absoluteY="149dp" />
@@ -89,7 +89,8 @@
                 android:text="@string/story"
                 android:textColor="@color/white"
                 android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -119,6 +120,8 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:src="@drawable/ic_videos"
+                    android:visibility="invisible"
+
                     app:tint="@color/darkGray"
                     tools:layout_editor_absoluteX="192dp"
                     tools:layout_editor_absoluteY="149dp" />
@@ -140,7 +143,8 @@
                 android:text="@string/learn"
                 android:textColor="@color/white"
                 android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -165,6 +169,7 @@
                 android:backgroundTintMode="add"
                 android:foreground="@drawable/btn_foreground"
                 android:onClick="homeMainButton"
+                android:visibility="invisible"
                 android:padding="15dp"
                 app:srcCompat="@drawable/ic_home"
                 app:tint="@color/white"
@@ -186,6 +191,7 @@
                 android:foregroundTintMode="screen"
                 android:onClick="replayMainButton"
                 android:padding="15dp"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/ic_settings"
                 app:tint="@color/white" />
 
@@ -197,14 +203,14 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:layout_gravity="bottom"
+            android:visibility="invisible"
             android:scaleType="fitXY"
             android:src="@drawable/maingrass" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-           >
+            android:layout_gravity="bottom|start">
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

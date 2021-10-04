@@ -41,14 +41,14 @@ class MainActivity : AppCompatActivity() {
     private val grassAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
-            R.anim.from_bottom_anim
+            R.anim.splash_bottom_animation
         )
     }
 
     private val buttonsAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
-            R.anim.zoom_in
+            R.anim.splash_top_animation
         )
     }
 
@@ -147,6 +147,25 @@ class MainActivity : AppCompatActivity() {
             {
                 main_loading.visibility = View.GONE
                 main_parent_frame.visibility = View.VISIBLE
+                //set animation
+                initMainActivityAnimation(
+                    learn_main_linearLayout,
+                    learn_main_txt,
+                    learn_main_img,
+                    learnLinearLayoutAnim,
+                    learnTxtAnim,
+                    learnImgAnim,
+                    500
+                )
+                initMainActivityAnimation(
+                    story_main_linearLayout,
+                    story_main_txt,
+                    story_main_img,
+                    storyLinearLayoutAnim,
+                    storyTxtAnim,
+                    storyImgAnim,
+                    700
+                )
             }, 2500
         )
         supportActionBar?.hide()
@@ -154,25 +173,7 @@ class MainActivity : AppCompatActivity() {
         firebaseAnalytics = Firebase.analytics
 
 
-        //set animation
-        initMainActivityAnimation(
-            learn_main_linearLayout,
-            learn_main_txt,
-            learn_main_img,
-            learnLinearLayoutAnim,
-            learnTxtAnim,
-            learnImgAnim,
-            400
-        )
-        initMainActivityAnimation(
-            story_main_linearLayout,
-            story_main_txt,
-            story_main_img,
-            storyLinearLayoutAnim,
-            storyTxtAnim,
-            storyImgAnim,
-            500
-        )
+
 
         //fab menu
         open_menu_fab.setOnClickListener { onAddButtonClicked() }
@@ -446,38 +447,66 @@ class MainActivity : AppCompatActivity() {
 //        setAnimation.start()
 
         layout.animate().apply {
-//            startDelay = 200
-            layoutAnim.duration = 300
-            layoutAnim.startOffset = delay + 1000
+            startDelay = 1000
+            layoutAnim.duration = 500
+            Toast.makeText(this@MainActivity, "layoutAnim", Toast.LENGTH_SHORT).show()
+            layoutAnim.startOffset = delay
+
             layout.startAnimation(layoutAnim)
 
         }
             .withStartAction {
+                Toast.makeText(this@MainActivity, "start", Toast.LENGTH_SHORT).show()
+
+                img_main_home.visibility = View.VISIBLE
+                img_main_setting.visibility = View.VISIBLE
 
 //            buttonsAnim.startOffset = delay
-            buttonsAnim.duration = 500
-            img_main_home.startAnimation(buttonsAnim)
-            img_main_setting.startAnimation(buttonsAnim)
-            grassAnim.duration = 500
-            grassAnim.startOffset = delay + 300
-            main_grass.startAnimation(grassAnim)
-        }
+                buttonsAnim.duration = 300
+                img_main_home.startAnimation(buttonsAnim)
+                img_main_setting.startAnimation(buttonsAnim)
+
+                grassAnim.startOffset = 300
+                grassAnim.duration = 300
+                main_grass.visibility = View.VISIBLE
+
+                main_grass.startAnimation(grassAnim)
+            }
             .withEndAction {
 
                 imageView.animate().apply {
-                    imgAnim.duration = 1000
-                    imgAnim.startOffset = delay + 4000
+                    imageView.visibility = View.VISIBLE
+                    startDelay = 400
+                    Toast.makeText(this@MainActivity, "imgAnim", Toast.LENGTH_SHORT).show()
+                    imgAnim.startOffset = 300
+
+//                    imgAnim.duration = 300
                     imageView.startAnimation(imgAnim)
 
+
                 }.withEndAction {
+
                     textView.animate().apply {
-                        txtAnim.duration = 1000
-                        txtAnim.startOffset = delay + 4100
+                        textView.visibility = View.VISIBLE
+
+                        startDelay = 200
+
+                        Toast.makeText(this@MainActivity, "txtAnim", Toast.LENGTH_SHORT).show()
+
+//                        txtAnim.duration = 300
+                        txtAnim.startOffset = 300
                         textView.startAnimation(txtAnim)
 
                     }.withEndAction {
 
-                        txtAndImgInfiniteAnim.startOffset = delay + 4300
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "txtAnim for infinity ",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        txtAndImgInfiniteAnim.startOffset = delay + 3500
                         imageView.startAnimation(txtAndImgInfiniteAnim)
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
