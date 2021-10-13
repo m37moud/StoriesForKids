@@ -5,20 +5,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isInvisible
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.util.Constants.Companion.initBackgroundColor
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
-import java.util.*
 
 
 class StartActivity : AppCompatActivity() {
@@ -53,6 +54,15 @@ class StartActivity : AppCompatActivity() {
 //        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
 //            videosViewModel.backOnline = it
 //        })
+        start.animate().duration = 200
+        start.setOnTouchListener { view , arg1 ->
+            if (arg1.action == MotionEvent.ACTION_DOWN) {
+                start.animate().setInterpolator(DecelerateInterpolator()).scaleX(.7f).scaleY(.7f)
+            } else if (arg1.action == MotionEvent.ACTION_UP) {
+                start.animate().setInterpolator(OvershootInterpolator(10f)).scaleX(1f).scaleY(1f)
+            }
+            false
+        }
         start.setOnClickListener {
             start.isClickable = false
             val intent = Intent(this@StartActivity, MainActivity::class.java)
@@ -106,7 +116,7 @@ class StartActivity : AppCompatActivity() {
 
     override fun onResume() {
 
-        if(showLoading){
+        if (showLoading) {
             main_loading.visibility = View.VISIBLE
             start_parent_frame.visibility = View.INVISIBLE
 
@@ -128,14 +138,11 @@ class StartActivity : AppCompatActivity() {
 //        start_parent_frame.visibility = View.INVISIBLE
 
 
-
-
     }
 
 
     override fun onPause() {
         Log.d("onResume", "onPause: $showLoading")
-
 
 
 //        start_loading.visibility = View.VISIBLE

@@ -1,5 +1,6 @@
 package com.m37moud.responsivestories
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -38,10 +39,25 @@ const val TOPIC = "/topics/myTopic2"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private var animInvoked: Int = 0
+    private var isAnimFinish = false
+    private var isResumeAnim = false
+
+    private var isStory = false
+    private var isLearn = false
+    private var isFinish = false
+
     private val grassAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
             R.anim.splash_bottom_animation
+        )
+    }
+
+    private val exitGrassAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.exit_to_top
         )
     }
 
@@ -52,11 +68,25 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private val exitButtonsAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.to_bottom
+        )
+    }
+
 
     private val learnLinearLayoutAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
             R.anim.zoom_in
+        )
+    }
+
+    private val learnLinearLayoutAnimZoomOut: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.zoom_out
         )
     }
 
@@ -142,6 +172,7 @@ class MainActivity : AppCompatActivity() {
         main_loading.visibility = View.VISIBLE
         main_parent_frame.visibility = View.INVISIBLE
 
+        animInvoked = 0
 
         Handler().postDelayed(
             {
@@ -173,8 +204,6 @@ class MainActivity : AppCompatActivity() {
         firebaseAnalytics = Firebase.analytics
 
 
-
-
         //fab menu
         open_menu_fab.setOnClickListener { onAddButtonClicked() }
 
@@ -185,16 +214,29 @@ class MainActivity : AppCompatActivity() {
 
         //start story activity
         story_card_view.setOnClickListener {
-            startActivity(Intent(this@MainActivity, StoryActivity::class.java))
-            story_card_view.isClickable = false
+
+            exitMainActivityAnimation(true, false, false)
+//            Handler().postDelayed(
+//                {
+//                    if (isAnimFinish) {
+//                        startActivity(Intent(this@MainActivity, StoryActivity::class.java))
+//                        story_card_view.isClickable = false
+//                    }
+//                }, 2500
+//
+//            )
+
 //            finish()
         }
 
         learn_card_view.setOnClickListener {
-            startActivity(
-                Intent(this@MainActivity, LearnActivity::class.java)
-            )
-            learn_card_view.isClickable = false
+            exitMainActivityAnimation(isStory = false, isLearn = true, isFinish = false)
+//            if (isAnimFinish) {
+//                startActivity(
+//                    Intent(this@MainActivity, LearnActivity::class.java)
+//                )
+//                learn_card_view.isClickable = false
+//            }
 //            finish()
         }
 
@@ -382,26 +424,62 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        learn_card_view.isClickable = true
-        story_card_view.isClickable = true
+        animInvoked = 0
+//        learn_main_linearLayout.visibility = View.INVISIBLE
+//        story_main_linearLayout.visibility = View.INVISIBLE
+//        story_main_img.visibility = View.INVISIBLE
+//        learn_main_img.visibility = View.INVISIBLE
+        img_main_home.visibility = View.INVISIBLE
+        img_main_setting.visibility = View.INVISIBLE
+//        learn_main_txt.visibility = View.INVISIBLE
+//        story_main_txt.visibility = View.INVISIBLE
 
-        main_loading.visibility = View.VISIBLE
-        main_parent_frame.visibility = View.GONE
 
-        Handler().postDelayed(
-            {
-                main_loading.visibility = View.GONE
-                main_parent_frame.visibility = View.VISIBLE
-            }, 2500
-        )
+        if (isResumeAnim) {
 
+            learn_card_view.isClickable = true
+            story_card_view.isClickable = true
+            main_loading.visibility = View.VISIBLE
+            main_parent_frame.visibility = View.INVISIBLE
+//
+
+            Handler().postDelayed(
+                {
+                    main_loading.visibility = View.GONE
+                    main_parent_frame.visibility = View.VISIBLE
+
+                    initMainActivityAnimation(
+                        learn_main_linearLayout,
+                        learn_main_txt,
+                        learn_main_img,
+                        learnLinearLayoutAnim,
+                        learnTxtAnim,
+                        learnImgAnim,
+                        500
+                    )
+                    initMainActivityAnimation(
+                        story_main_linearLayout,
+                        story_main_txt,
+                        story_main_img,
+                        storyLinearLayoutAnim,
+                        storyTxtAnim,
+                        storyImgAnim,
+                        700
+                    )
+
+                }, 2500
+            )
+
+        }
         super.onResume()
+
     }
 
 
     override fun onBackPressed() {
         showLoading = true
-        super.onBackPressed()
+        exitMainActivityAnimation(false, false, true)
+
 
     }
 
@@ -411,6 +489,11 @@ class MainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+    }
+
+    override fun onPause() {
+        isResumeAnim = true
+        super.onPause()
     }
 
     private fun initMainActivityAnimation(
@@ -446,41 +529,72 @@ class MainActivity : AppCompatActivity() {
 //        setAnimation.play(scaleAnimation).after(translateAnimation)
 //        setAnimation.start()
 
-        layout.animate().apply {
-            startDelay = 1000
-            layoutAnim.duration = 500
-            Toast.makeText(this@MainActivity, "layoutAnim", Toast.LENGTH_SHORT).show()
-            layoutAnim.startOffset = delay
+        if (animInvoked == 0) {
+            open_menu_fab.apply {
+//                visibility = View.VISIBLE
+//                isClickable = true
+                alpha = 0f
+                scaleX = 0f
+                scaleY = 0f
 
-            layout.startAnimation(layoutAnim)
+                animate().apply {
 
-        }
-            .withStartAction {
-                Toast.makeText(this@MainActivity, "start", Toast.LENGTH_SHORT).show()
+                    startDelay = 1000
+                    open_menu_fab.visibility = View.VISIBLE
+                    alphaBy(1f)
+                    scaleXBy(1f)
+                    scaleYBy(1f)
 
-                img_main_home.visibility = View.VISIBLE
-                img_main_setting.visibility = View.VISIBLE
+                }.withEndAction {
 
-//            buttonsAnim.startOffset = delay
-                buttonsAnim.duration = 300
-                img_main_home.startAnimation(buttonsAnim)
-                img_main_setting.startAnimation(buttonsAnim)
+//                    Toast.makeText(this@MainActivity, "start", Toast.LENGTH_SHORT).show()
 
-                grassAnim.startOffset = 300
-                grassAnim.duration = 300
-                main_grass.visibility = View.VISIBLE
+                    img_main_home.apply {
 
-                main_grass.startAnimation(grassAnim)
+                        visibility = View.VISIBLE
+                        img_main_setting.visibility = View.VISIBLE
+
+                        animate().apply {
+                            startDelay = 300
+                            buttonsAnim.duration = 300
+                            startAnimation(buttonsAnim)
+                            img_main_setting.startAnimation(buttonsAnim)
+
+                        }.withEndAction {
+                            main_grass.apply {
+                                visibility = View.VISIBLE
+                                animate().apply {
+                                    startDelay = 150
+//                            grassAnim.startOffset = 300
+                                    grassAnim.duration = 300
+                                    startAnimation(grassAnim)
+                                    animInvoked++
+                                }
+                            }
+                        }.start()
+                    }
+
+                }.start()
             }
-            .withEndAction {
+        }
 
+        layout.apply {
+            visibility = View.VISIBLE
+            animate().apply {
+                startDelay = 1200
+                layoutAnim.duration = 300
+//                Toast.makeText(this@MainActivity, "layoutAnim", Toast.LENGTH_SHORT).show()
+                layoutAnim.startOffset = delay
+                layout.startAnimation(layoutAnim)
+
+            }.withEndAction {
                 imageView.animate().apply {
                     imageView.visibility = View.VISIBLE
-                    startDelay = 400
-                    Toast.makeText(this@MainActivity, "imgAnim", Toast.LENGTH_SHORT).show()
-                    imgAnim.startOffset = 300
+                    startDelay = 300
+//                    Toast.makeText(this@MainActivity, "imgAnim", Toast.LENGTH_SHORT).show()
 
-//                    imgAnim.duration = 300
+                    imgAnim.startOffset = delay - 200
+                    imgAnim.duration = 300
                     imageView.startAnimation(imgAnim)
 
 
@@ -491,29 +605,121 @@ class MainActivity : AppCompatActivity() {
 
                         startDelay = 200
 
-                        Toast.makeText(this@MainActivity, "txtAnim", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this@MainActivity, "txtAnim", Toast.LENGTH_SHORT).show()
 
-//                        txtAnim.duration = 300
-                        txtAnim.startOffset = 300
+                        txtAnim.duration = 300
+                        imgAnim.startOffset = delay - 200
                         textView.startAnimation(txtAnim)
 
                     }.withEndAction {
 
 
-                        Toast.makeText(
-                            this@MainActivity,
-                            "txtAnim for infinity ",
-                            Toast.LENGTH_SHORT
-                        ).show()
+//                        Toast.makeText(
+//                            this@MainActivity,
+//                            "txtAnim for infinity ",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
 
-                        txtAndImgInfiniteAnim.startOffset = delay + 3500
+                        txtAndImgInfiniteAnim.startOffset = delay + 3000
                         imageView.startAnimation(txtAndImgInfiniteAnim)
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
                     }.start()
                 }.start()
             }.start()
+        }
 
+
+    }
+
+
+    private fun exitMainActivityAnimation(
+        isStory: Boolean,
+        isLearn: Boolean,
+        isFinish: Boolean
+    ) {
+        if (animInvoked == 1) {
+
+            img_main_home.apply {
+
+                animate().apply {
+//                            startDelay = 100
+                    exitButtonsAnim.duration = 300
+                    startAnimation(exitButtonsAnim)
+                    img_main_setting.startAnimation(exitButtonsAnim)
+
+                }.withEndAction {
+                    main_grass.apply {
+                        animate().apply {
+//                                    startDelay = 100
+//                            grassAnim.startOffset = 300
+                            exitGrassAnim.duration = 300
+//                            exitGrassAnim.fillAfter = false
+                            startAnimation(exitGrassAnim)
+                            animInvoked--
+                        }.withEndAction {
+                            learn_main_linearLayout.animate().apply {
+                                learnLinearLayoutAnimZoomOut.duration = 300
+                                learn_main_linearLayout.startAnimation(
+                                    learnLinearLayoutAnimZoomOut
+                                )
+                                story_main_linearLayout.startAnimation(
+                                    learnLinearLayoutAnimZoomOut
+                                )
+                                learn_main_img.startAnimation(learnLinearLayoutAnimZoomOut)
+                                story_main_img.startAnimation(learnLinearLayoutAnimZoomOut)
+                                learn_main_txt.startAnimation(
+                                    learnLinearLayoutAnimZoomOut
+                                )
+                                story_main_txt.startAnimation(
+                                    learnLinearLayoutAnimZoomOut
+                                )
+                                open_menu_fab.startAnimation(learnLinearLayoutAnimZoomOut)
+
+
+                            }.withEndAction {
+                                when {
+                                    isStory -> startActivity(
+                                        Intent(
+                                            this@MainActivity,
+                                            StoryActivity::class.java
+                                        )
+                                    )
+
+                                    isLearn -> startActivity(
+                                        Intent(
+                                            this@MainActivity,
+                                            LearnActivity::class.java
+                                        )
+                                    )
+                                    isFinish -> super.onBackPressed()
+                                }
+
+
+
+                                isResumeAnim = true
+                                isAnimFinish = true
+
+                            }.start()
+
+
+                        }.start()
+                    }
+                }.start()
+            }
+
+
+        }
+
+
+    }
+
+
+
+//    override fun touchAnim(v : View){
+//        if(v.findViewById(img_main_setting)){
+//
+//        }
 
     }
 

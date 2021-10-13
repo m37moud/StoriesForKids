@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.VideoModel
@@ -54,6 +55,7 @@ class VideoAdapter(
 
 //        holder.vidImg.load(url)
         val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
             .placeholder(R.drawable.ic_error_placeholder)
         if(TextUtils.isEmpty(thumb)){
             Glide.with(context)
