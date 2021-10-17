@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
 import android.view.Surface
@@ -30,6 +31,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.util.Constants
+import kotlinx.android.synthetic.main.activity_learn.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
@@ -63,9 +67,27 @@ class EnteredLearenActivity : AppCompatActivity() {
 ////        changeOrientation()
 
         setContentView(R.layout.activity_entered_learen)
+//init random background
+        Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearenActivity)
+
 
         //InterstitialAd
         loadAd()
+        entered_learn_loading.visibility = View.VISIBLE
+        entered_learn_parent_frame.visibility = View.INVISIBLE
+
+        Handler().postDelayed(
+            {
+                entered_learn_loading.visibility = View.GONE
+                entered_learn_parent_frame.visibility = View.VISIBLE
+                //set animation
+
+            }, 2500
+        )
+
+
+        img_replay.setOnTouchListener(Constants.Listeners.onTouch)
+        img_home.setOnTouchListener(Constants.Listeners.onTouch)
 //        if (mRewardedAd == null) {
 ////            changeOrientation()
 //        }
@@ -287,7 +309,10 @@ class EnteredLearenActivity : AppCompatActivity() {
             }
 
         }
-
+        val backgroundColor = entered_learn_parent.background
+//        entered_learn_parent.alpha = 0.3f
+        entered_learn_parent_frame.background = backgroundColor
+        entered_learn_scroll.visibility = View.VISIBLE
 
     }
 

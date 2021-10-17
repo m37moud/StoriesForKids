@@ -7,11 +7,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,12 +30,16 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
+import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
+import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.FirebaseService
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.main_grass
+import kotlinx.android.synthetic.main.activity_start.*
 
 const val TOPIC = "/topics/myTopic2"
 
@@ -212,15 +219,22 @@ class MainActivity : AppCompatActivity() {
         facebook_fab.setOnClickListener { getOpenFacebookIntent() }
         gmail_fab.setOnClickListener { getOpenMailIntent() }
 
+
+//        learn_main_img.setOnTouchListener(Constants.Listeners.onTouch)
+//        story_main_img.setOnTouchListener(Constants.Listeners.onTouch)
+        img_main_home.setOnTouchListener(Constants.Listeners.onTouch)
+        img_main_setting.setOnTouchListener(Constants.Listeners.onTouch)
+
+
         //start story activity
         story_card_view.setOnClickListener {
 
-            exitMainActivityAnimation(true, false, false)
+            exitMainActivityAnimation(isStory = true, isLearn = false, isFinish = false)
 //            Handler().postDelayed(
 //                {
 //                    if (isAnimFinish) {
 //                        startActivity(Intent(this@MainActivity, StoryActivity::class.java))
-//                        story_card_view.isClickable = false
+            story_card_view.isClickable = false
 //                    }
 //                }, 2500
 //
@@ -235,7 +249,7 @@ class MainActivity : AppCompatActivity() {
 //                startActivity(
 //                    Intent(this@MainActivity, LearnActivity::class.java)
 //                )
-//                learn_card_view.isClickable = false
+            learn_card_view.isClickable = false
 //            }
 //            finish()
         }
@@ -356,7 +370,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
 
         videosViewModel.saveDownloadStatus(false)
-        Log.d("MainActivity", "onStart: ")
+        Log.d("MainActivity", "onStart: called")
 
         super.onStart()
     }
@@ -424,16 +438,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        animInvoked = 0
-//        learn_main_linearLayout.visibility = View.INVISIBLE
-//        story_main_linearLayout.visibility = View.INVISIBLE
-//        story_main_img.visibility = View.INVISIBLE
-//        learn_main_img.visibility = View.INVISIBLE
-        img_main_home.visibility = View.INVISIBLE
-        img_main_setting.visibility = View.INVISIBLE
-//        learn_main_txt.visibility = View.INVISIBLE
-//        story_main_txt.visibility = View.INVISIBLE
+        Log.d(TAG, "onResume: called")
 
+        animInvoked = 0
 
         if (isResumeAnim) {
 
@@ -442,7 +449,6 @@ class MainActivity : AppCompatActivity() {
             main_loading.visibility = View.VISIBLE
             main_parent_frame.visibility = View.INVISIBLE
 //
-
             Handler().postDelayed(
                 {
                     main_loading.visibility = View.GONE
@@ -457,6 +463,7 @@ class MainActivity : AppCompatActivity() {
                         learnImgAnim,
                         500
                     )
+
                     initMainActivityAnimation(
                         story_main_linearLayout,
                         story_main_txt,
@@ -478,7 +485,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         showLoading = true
-        exitMainActivityAnimation(false, false, true)
+        exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
+
 
 
     }
@@ -492,7 +500,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        isResumeAnim = true
+        Log.d(TAG, "onPause: called")
+        isResumeAnim = false
+//        initViewToHide()
         super.onPause()
     }
 
@@ -531,8 +541,7 @@ class MainActivity : AppCompatActivity() {
 
         if (animInvoked == 0) {
             open_menu_fab.apply {
-//                visibility = View.VISIBLE
-//                isClickable = true
+                visibility = View.VISIBLE
                 alpha = 0f
                 scaleX = 0f
                 scaleY = 0f
@@ -540,7 +549,6 @@ class MainActivity : AppCompatActivity() {
                 animate().apply {
 
                     startDelay = 1000
-                    open_menu_fab.visibility = View.VISIBLE
                     alphaBy(1f)
                     scaleXBy(1f)
                     scaleYBy(1f)
@@ -568,6 +576,7 @@ class MainActivity : AppCompatActivity() {
 //                            grassAnim.startOffset = 300
                                     grassAnim.duration = 300
                                     startAnimation(grassAnim)
+                                    //we add variable to sure not invoke this method again
                                     animInvoked++
                                 }
                             }
@@ -639,9 +648,14 @@ class MainActivity : AppCompatActivity() {
         isFinish: Boolean
     ) {
         if (animInvoked == 1) {
+            open_menu_fab.animate().apply {
+                duration = 300
+                alphaBy(0f)
+                scaleYBy(0f)
+                scaleXBy(0f)
 
+            }
             img_main_home.apply {
-
                 animate().apply {
 //                            startDelay = 100
                     exitButtonsAnim.duration = 300
@@ -656,72 +670,87 @@ class MainActivity : AppCompatActivity() {
                             exitGrassAnim.duration = 300
 //                            exitGrassAnim.fillAfter = false
                             startAnimation(exitGrassAnim)
+//                            open_menu_fab.startAnimation(exitGrassAnim)
                             animInvoked--
-                        }.withEndAction {
-                            learn_main_linearLayout.animate().apply {
-                                learnLinearLayoutAnimZoomOut.duration = 300
-                                learn_main_linearLayout.startAnimation(
-                                    learnLinearLayoutAnimZoomOut
-                                )
-                                story_main_linearLayout.startAnimation(
-                                    learnLinearLayoutAnimZoomOut
-                                )
-                                learn_main_img.startAnimation(learnLinearLayoutAnimZoomOut)
-                                story_main_img.startAnimation(learnLinearLayoutAnimZoomOut)
-                                learn_main_txt.startAnimation(
-                                    learnLinearLayoutAnimZoomOut
-                                )
-                                story_main_txt.startAnimation(
-                                    learnLinearLayoutAnimZoomOut
-                                )
-                                open_menu_fab.startAnimation(learnLinearLayoutAnimZoomOut)
+                        }
 
-
-                            }.withEndAction {
-                                when {
-                                    isStory -> startActivity(
-                                        Intent(
-                                            this@MainActivity,
-                                            StoryActivity::class.java
-                                        )
-                                    )
-
-                                    isLearn -> startActivity(
-                                        Intent(
-                                            this@MainActivity,
-                                            LearnActivity::class.java
-                                        )
-                                    )
-                                    isFinish -> super.onBackPressed()
-                                }
-
-
-
-                                isResumeAnim = true
-                                isAnimFinish = true
-
-                            }.start()
-
-
-                        }.start()
                     }
                 }.start()
             }
 
-
         }
 
+        learn_main_linearLayout.animate().apply {
+            startDelay = 300
+            learnLinearLayoutAnimZoomOut.duration = 300
+            learn_main_linearLayout.startAnimation(learnLinearLayoutAnimZoomOut)
+            story_main_linearLayout.startAnimation(learnLinearLayoutAnimZoomOut)
+            learn_main_img.startAnimation(learnLinearLayoutAnimZoomOut)
+            story_main_img.startAnimation(learnLinearLayoutAnimZoomOut)
+            learn_main_txt.startAnimation(learnLinearLayoutAnimZoomOut)
+            story_main_txt.startAnimation(learnLinearLayoutAnimZoomOut)
+        }
+            .withEndAction {
+
+                when {
+                    isStory -> {
+                        startActivity(
+                            Intent(
+                                this@MainActivity,
+                                StoryActivity::class.java
+                            )
+                        )
+                        finish()
+                    }
+
+                    isLearn -> {
+                        startActivity(
+                            Intent(
+                                this@MainActivity,
+                                LearnActivity::class.java
+                            )
+                        )
+                        finish()
+                    }
+                    isFinish -> {
+                        startActivity(
+                            Intent(
+                                this@MainActivity,
+                                StartActivity::class.java
+                            )
+                        )
+                        finish()
+
+                        super.onBackPressed()
+                    }
+                }
+
+                isResumeAnim = true
+                isAnimFinish = true
+                initViewToHide()
+
+            }.start()
 
     }
 
+    private fun initViewToHide() {
+        Log.d(TAG, "initViewToHide: called")
+        learn_main_linearLayout.visibility = View.INVISIBLE
+        story_main_linearLayout.visibility = View.INVISIBLE
+        story_main_img.visibility = View.INVISIBLE
+        learn_main_img.visibility = View.INVISIBLE
+        img_main_home.visibility = View.INVISIBLE
+        img_main_setting.visibility = View.INVISIBLE
+        learn_main_txt.visibility = View.INVISIBLE
+        story_main_txt.visibility = View.INVISIBLE
+        open_menu_fab.visibility = View.INVISIBLE
+    }
 
+    override fun onStop() {
+        Log.d(TAG, "onStop: called")
 
-//    override fun touchAnim(v : View){
-//        if(v.findViewById(img_main_setting)){
-//
-//        }
-
-//    }
-
+        super.onStop()
+    }
 
 }
+

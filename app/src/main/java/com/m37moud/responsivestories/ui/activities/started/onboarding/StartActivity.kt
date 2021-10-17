@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
@@ -55,17 +56,14 @@ class StartActivity : AppCompatActivity() {
 //            videosViewModel.backOnline = it
 //        })
         start.animate().duration = 200
-        start.setOnTouchListener { view , arg1 ->
-            if (arg1.action == MotionEvent.ACTION_DOWN) {
-                start.animate().setInterpolator(DecelerateInterpolator()).scaleX(.7f).scaleY(.7f)
-            } else if (arg1.action == MotionEvent.ACTION_UP) {
-                start.animate().setInterpolator(OvershootInterpolator(10f)).scaleX(1f).scaleY(1f)
-            }
-            false
-        }
+
+
+        start.setOnTouchListener(Constants.Listeners.onTouch)
+
         start.setOnClickListener {
             start.isClickable = false
             val intent = Intent(this@StartActivity, MainActivity::class.java)
+
 //           val pair : android.util.Pair =  Pair<View,String>(start , "toNextButton")
             val activityOption = ActivityOptions.makeSceneTransitionAnimation(
                 this,
@@ -76,7 +74,7 @@ class StartActivity : AppCompatActivity() {
 //            start_parent_frame.visibility = View.GONE
             showLoading = true
             startActivity(intent)
-
+            finish()
 //            Handler().postDelayed(
 //                {
 //

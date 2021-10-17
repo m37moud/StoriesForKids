@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.LearnAdapter
 import com.m37moud.responsivestories.databinding.ActivityLearnBinding
@@ -233,6 +234,22 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         startService()
         shouldPlay = false
         super.onResume()
+    }
+
+    override fun onBackPressed() {
+
+        if (!shouldPlay) {
+            stopService()
+        }
+
+        startActivity(
+            Intent(
+                this@LearnActivity,
+                MainActivity::class.java
+            )
+        )
+        finish()
+        super.onBackPressed()
     }
 
 

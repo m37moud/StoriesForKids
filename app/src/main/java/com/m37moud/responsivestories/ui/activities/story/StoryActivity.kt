@@ -2,6 +2,7 @@ package com.m37moud.responsivestories.ui.activities.story
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -27,6 +28,7 @@ import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
+import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
@@ -991,6 +993,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onBackPressed() {
+        startActivity(
+            Intent(
+                this@StoryActivity,
+                        MainActivity::class.java
+            )
+        )
+        finish()
         super.onBackPressed()
 
     }
