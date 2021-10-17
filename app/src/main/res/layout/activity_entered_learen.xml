@@ -9,6 +9,43 @@
     tools:context=".ui.activities.learn.EnteredLearenActivity">
 
 
+    <FrameLayout
+        android:id="@+id/entered_learn_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+
+        <com.q42.android.scrollingimageview.ScrollingImageView
+            android:id="@+id/entered_learn_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:scaleType="fitXY"
+            scrolling_image_view:initialState="started"
+            scrolling_image_view:source="@drawable/tst1_background"
+            scrolling_image_view:speed="60dp" />
+
+        <FrameLayout
+            android:id="@+id/entered_learn_FrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:alpha="0.3" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <include
+            android:id="@+id/entered_learn_loading"
+            layout="@layout/loading" />
+
+    </FrameLayout>
+
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/ad_viewOffline"
@@ -20,97 +57,64 @@
 
         />
 
-    <include
-        android:id="@+id/entered_learn_loading"
-        layout="@layout/loading" />
-
 
     <FrameLayout
+
         android:id="@+id/entered_learn_parent_frame"
         android:layout_width="match_parent"
-        android:alpha="0.5"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
 
-
-        <FrameLayout
-            android:id="@+id/entered_learn_Layout"
+        <RelativeLayout
+            android:id="@+id/utility"
+            android:clipChildren="false"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/img_home"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="60dp"
+                android:background="@drawable/button_rounded"
+                android:backgroundTint="@color/red2"
+                android:backgroundTintMode="screen"
+                android:foreground="@drawable/btn_foreground"
+                android:foregroundTintMode="screen"
+                android:onClick="homeButton"
+                app:srcCompat="@drawable/ic_home"
+                app:tint="@color/white" />
+
+            <ImageView
+                android:id="@+id/img_replay"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/button_rounded"
+                android:backgroundTint="@color/red2"
+                android:backgroundTintMode="screen"
+                android:foreground="@drawable/btn_foreground"
+                android:foregroundTintMode="screen"
+                android:onClick="replayButton"
+                app:srcCompat="@drawable/ic_replay"
+                app:tint="@color/white" />
 
 
-            <com.q42.android.scrollingimageview.ScrollingImageView
-                android:id="@+id/entered_learn_scroll"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:scaleType="fitXY"
-                android:visibility="gone"
-                scrolling_image_view:initialState="started"
-                scrolling_image_view:source="@drawable/tst1_background"
-                scrolling_image_view:speed="60dp" />
-
-            <FrameLayout
-                android:id="@+id/entered_learn_FrameLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0.3" />
-
-        </FrameLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/utility"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/img_home"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="60dp"
-                    android:layout_marginEnd="60dp"
-                    android:background="@drawable/button_rounded"
-                    android:backgroundTint="@color/red2"
-                    android:backgroundTintMode="screen"
-                    android:foreground="@drawable/btn_foreground"
-                    android:foregroundTintMode="screen"
-                    android:onClick="homeButton"
-                    app:srcCompat="@drawable/ic_home"
-                    app:tint="@color/white" />
-
-                <ImageView
-                    android:id="@+id/img_replay"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="top"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="60dp"
-                    android:background="@drawable/button_rounded"
-                    android:backgroundTint="@color/red2"
-                    android:backgroundTintMode="screen"
-                    android:foreground="@drawable/btn_foreground"
-                    android:foregroundTintMode="screen"
-                    android:onClick="replayButton"
-                    app:srcCompat="@drawable/ic_replay"
-                    app:tint="@color/white" />
-
-
-            </RelativeLayout>
-
-
+        </RelativeLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="400dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
             android:layoutDirection="rtl">
 
@@ -120,91 +124,125 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layoutDirection="rtl"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <include layout="@layout/folder_container" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="10dp"
+                    app:strokeColor="@color/yellow"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeWidth="1dp">
+
+                    <include layout="@layout/folder_container" />
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/containerCardContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layoutDirection="rtl"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardContainer"
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardview_Container"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
-                    android:layoutDirection="rtl"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    app:cardCornerRadius="10dp"
+                    app:strokeColor="@color/yellow"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeWidth="1dp">
 
-                    <ImageView
-                        android:id="@+id/img_sound"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="20dp"
-                        app:layout_constraintBottom_toTopOf="@+id/txt_name"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.49"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/bird" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
 
-                    <TextView
-                        android:id="@+id/txt_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="169dp"
-                        android:fontFamily="sans-serif-condensed"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:shadowColor="@color/yellow"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="2"
-                        android:text="bird"
-                        android:textColor="@color/black"
-                        android:textSize="25sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/img_sound"
-                        app:layout_constraintHorizontal_bias="0.501"
-                        app:layout_constraintStart_toStartOf="@+id/img_sound"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.627" />
+                        >
+
+                        <ImageView
+                            android:id="@+id/img_sound"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="20dp"
+                            app:layout_constraintBottom_toTopOf="@+id/txt_name"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.49"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/bird" />
+
+                        <TextView
+                            android:id="@+id/txt_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="169dp"
+                            android:fontFamily="sans-serif-condensed"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:shadowColor="@color/yellow"
+                            android:shadowDx="1"
+                            android:shadowDy="1"
+                            android:shadowRadius="2"
+                            android:text="bird"
+                            android:textColor="@color/black"
+                            android:textSize="25sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/img_sound"
+                            app:layout_constraintHorizontal_bias="0.501"
+                            app:layout_constraintStart_toStartOf="@+id/img_sound"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.627" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
+                </com.google.android.material.card.MaterialCardView>
 
                 <ImageView
                     android:id="@+id/right_img_btn"
                     android:layout_width="30dp"
                     android:layout_height="33dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginEnd="32dp"
                     android:clickable="true"
                     android:focusable="true"
+
                     android:layoutDirection="inherit"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
-                    app:layout_constraintEnd_toStartOf="@+id/cardContainer"
-                    app:layout_constraintTop_toTopOf="@+id/cardContainer"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/cardview_Container"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_next"
                     app:tint="@color/blue" />
 
@@ -212,25 +250,24 @@
                     android:id="@+id/left_img_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="32dp"
                     android:elevation="1dp"
                     android:focusable="true"
+
                     android:layoutDirection="inherit"
                     android:rotation="180"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardContainer"
-                    app:layout_constraintStart_toEndOf="@+id/cardContainer"
-                    app:layout_constraintTop_toTopOf="@+id/cardContainer"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cardview_Container"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_next"
                     app:tint="@color/blue" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
 
     </FrameLayout>

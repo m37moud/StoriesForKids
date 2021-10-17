@@ -36,7 +36,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             app:cardCornerRadius="10dp"
-
             app:strokeWidth="1dp">
 
             <FrameLayout

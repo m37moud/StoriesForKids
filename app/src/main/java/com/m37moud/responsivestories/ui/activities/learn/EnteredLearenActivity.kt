@@ -80,6 +80,8 @@ class EnteredLearenActivity : AppCompatActivity() {
             {
                 entered_learn_loading.visibility = View.GONE
                 entered_learn_parent_frame.visibility = View.VISIBLE
+                entered_learn_Layout.visibility = View.VISIBLE
+
                 //set animation
 
             }, 2500
@@ -311,8 +313,9 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
         val backgroundColor = entered_learn_parent.background
 //        entered_learn_parent.alpha = 0.3f
-        entered_learn_parent_frame.background = backgroundColor
-        entered_learn_scroll.visibility = View.VISIBLE
+        entered_learn_FrameLayout.background = backgroundColor
+
+//        entered_learn_scroll.visibility = View.VISIBLE
 
     }
 

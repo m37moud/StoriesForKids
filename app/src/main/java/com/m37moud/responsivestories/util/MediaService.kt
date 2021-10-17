@@ -5,11 +5,11 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
 import android.util.Log
-
+import java.util.*
 
 
 class MediaService : Service() {
-
+    private  var tracks : Int = 0
     private lateinit var mediaPlayer: MediaPlayer
     override fun onBind(p0: Intent?): IBinder? {
         return null;
@@ -19,7 +19,7 @@ class MediaService : Service() {
 
     override fun onCreate(){
         super.onCreate()
-
+        tracks = Random().nextInt(5)+1
         playBackgroundSound()
     }
 
@@ -47,8 +47,10 @@ class MediaService : Service() {
 
          try {
             mediaPlayer = MediaPlayer()
+//             var tracks = Random().nextInt(6)+1
+             Log.d("TAG", "playBackgroundSound: $tracks ")
 
-            path = "sound/sfx/loop.mp3"
+            path = "sound/sfx/loop$tracks.mp3"
 
             Log.d("soundmd", "play: " + path)
 
@@ -63,6 +65,7 @@ class MediaService : Service() {
             }
             mediaPlayer.prepare()
             mediaPlayer.setVolume(1f, 1f)
+
             mediaPlayer.isLooping = true
 
         } catch (e: Exception) {
