@@ -1,6 +1,8 @@
 package com.m37moud.responsivestories.util
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.util.Log
@@ -9,6 +11,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.R
 import kotlinx.android.synthetic.main.activity_start.*
 import java.util.*
@@ -17,6 +20,7 @@ class Constants {
     companion object {
 
          var showLoading = false
+        var shouldPlay = false
 
 
         val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabets")
@@ -77,6 +81,21 @@ class Constants {
 //
 //             val color: Int = generator.getRandomColor()
 //             frame.background = color
+        }
+
+
+         fun startService(activity : Activity) {
+            val intent = Intent(activity, MediaService::class.java)
+            if (activity != null) {
+                activity?.startService(intent)
+            }
+        }
+
+         fun stopService(activity : Activity) {
+            val intent = Intent(activity, MediaService::class.java)
+            if (activity != null) {
+                activity?.stopService(intent)
+            }
         }
 
         private fun playImgSound(name: String , context :Context) {

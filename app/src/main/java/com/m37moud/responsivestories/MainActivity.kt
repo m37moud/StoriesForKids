@@ -33,6 +33,7 @@ import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.shouldPlay
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.FirebaseService
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
@@ -441,7 +442,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onResume: called")
 
         animInvoked = 0
-
+        Constants.startService(this)
         if (isResumeAnim) {
 
             learn_card_view.isClickable = true
@@ -748,6 +749,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         Log.d(TAG, "onStop: called")
+        if (!shouldPlay) {
+            Constants.stopService(this)
+        }
 
         super.onStop()
     }

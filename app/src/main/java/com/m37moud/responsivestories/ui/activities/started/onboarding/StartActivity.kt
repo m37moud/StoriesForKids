@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.removeLastChar
+import com.m37moud.responsivestories.util.Constants.Companion.shouldPlay
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
@@ -52,6 +54,13 @@ class StartActivity : AppCompatActivity() {
         )
         setContentView(R.layout.activity_start)
 
+
+        //play background music
+        if (!shouldPlay) {
+            shouldPlay = true
+            Constants.startService(this)
+        }
+
 //        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
 //            videosViewModel.backOnline = it
 //        })
@@ -62,6 +71,7 @@ class StartActivity : AppCompatActivity() {
 
         start.setOnClickListener {
             start.isClickable = false
+            shouldPlay = true
             val intent = Intent(this@StartActivity, MainActivity::class.java)
 
 //           val pair : android.util.Pair =  Pair<View,String>(start , "toNextButton")
@@ -113,6 +123,8 @@ class StartActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+      Constants.startService(this)
+        shouldPlay = false
 
         if (showLoading) {
             main_loading.visibility = View.VISIBLE
@@ -151,12 +163,18 @@ class StartActivity : AppCompatActivity() {
     override fun onStop() {
         showLoading = false
 
+        if (!shouldPlay) {
+            Constants.stopService(this)
+        }
+
         super.onStop()
     }
 
 
     override fun onStart() {
         start.isClickable = true
+        shouldPlay = false
+
         main_loading.visibility = View.GONE
         start_parent_frame.visibility = View.VISIBLE
         super.onStart()
@@ -164,6 +182,10 @@ class StartActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (backPressed + 2000 > System.currentTimeMillis()) {
+
+            if (!shouldPlay) {
+                Constants.stopService(this)
+            }
             super.onBackPressed()
 
         } else
