@@ -71,7 +71,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:backgroundTint="@color/yellow"
-                    android:foregroundGravity="center"
                     app:cardCornerRadius="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +95,6 @@
                         android:textColor="@color/white"
                         android:textSize="30sp"
                         android:textStyle="bold"
-
                         />
 
 

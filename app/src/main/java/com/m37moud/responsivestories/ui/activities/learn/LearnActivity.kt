@@ -45,8 +45,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         //start service and play music
-        if (!shouldPlay) {
-            shouldPlay = true
+        shouldPlay = true
+        if (shouldPlay) {
             startService()
         }
 
@@ -237,6 +237,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     }
 
     override fun onBackPressed() {
+        shouldPlay = true
 
         if (!shouldPlay) {
             stopService()

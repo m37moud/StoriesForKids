@@ -177,6 +177,18 @@ class MainActivity : AppCompatActivity() {
         setFullScreen()
         setContentView(R.layout.activity_main)
 
+
+
+        //play background music
+//        shouldPlay = true
+
+        if (!shouldPlay) {
+//            shouldPlay = true
+            Constants.startService(this)
+        }
+
+
+
         main_loading.visibility = View.VISIBLE
         main_parent_frame.visibility = View.INVISIBLE
 
@@ -440,9 +452,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         Log.d(TAG, "onResume: called")
-
         animInvoked = 0
+
         Constants.startService(this)
+        shouldPlay = false
+
         if (isResumeAnim) {
 
             learn_card_view.isClickable = true
@@ -503,6 +517,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         Log.d(TAG, "onPause: called")
         isResumeAnim = false
+        shouldPlay = false
 //        initViewToHide()
         super.onPause()
     }
@@ -728,6 +743,8 @@ class MainActivity : AppCompatActivity() {
 
                 isResumeAnim = true
                 isAnimFinish = true
+                shouldPlay = true
+
                 initViewToHide()
 
             }.start()
@@ -749,6 +766,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         Log.d(TAG, "onStop: called")
+        showLoading = false
         if (!shouldPlay) {
             Constants.stopService(this)
         }

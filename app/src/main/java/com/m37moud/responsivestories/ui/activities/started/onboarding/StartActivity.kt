@@ -56,10 +56,11 @@ class StartActivity : AppCompatActivity() {
 
 
         //play background music
+//        shouldPlay = true
         if (!shouldPlay) {
-            shouldPlay = true
             Constants.startService(this)
         }
+        Log.d("StartActivity", "onCreate: $shouldPlay ")
 
 //        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
 //            videosViewModel.backOnline = it
@@ -125,6 +126,7 @@ class StartActivity : AppCompatActivity() {
     override fun onResume() {
       Constants.startService(this)
         shouldPlay = false
+        Log.d("StartActivity", "onResume: $shouldPlay ")
 
         if (showLoading) {
             main_loading.visibility = View.VISIBLE
@@ -152,8 +154,9 @@ class StartActivity : AppCompatActivity() {
 
 
     override fun onPause() {
-        Log.d("onResume", "onPause: $showLoading")
+        Log.d("StartActivity", "onPause: $shouldPlay ")
 
+        Log.d("StartActivity", "onPause: $showLoading")
 
 //        start_loading.visibility = View.VISIBLE
 //        start_parent_frame.visibility = View.INVISIBLE
@@ -161,11 +164,13 @@ class StartActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        showLoading = false
+//        showLoading = false
+//        shouldPlay = false
 
         if (!shouldPlay) {
             Constants.stopService(this)
         }
+        Log.d("StartActivity", "onStop: $shouldPlay ")
 
         super.onStop()
     }
@@ -174,6 +179,7 @@ class StartActivity : AppCompatActivity() {
     override fun onStart() {
         start.isClickable = true
         shouldPlay = false
+        Log.d("StartActivity", "onStart: $shouldPlay ")
 
         main_loading.visibility = View.GONE
         start_parent_frame.visibility = View.VISIBLE
@@ -183,9 +189,8 @@ class StartActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (backPressed + 2000 > System.currentTimeMillis()) {
 
-            if (!shouldPlay) {
                 Constants.stopService(this)
-            }
+
             super.onBackPressed()
 
         } else
