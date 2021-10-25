@@ -21,11 +21,24 @@ import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.removeLastChar
 import com.m37moud.responsivestories.util.Constants.Companion.shouldPlay
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
+import com.m37moud.responsivestories.util.media.AudioManager
+import com.m37moud.responsivestories.util.media.PodcastEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
+import javax.inject.Inject
 
 
 class StartActivity : AppCompatActivity() {
+
+
+//    @Inject
+//    lateinit var audioManager: AudioManager
+
+    private val audioManager: AudioManager by lazy {
+        EntryPointAccessors.fromApplication (applicationContext,
+            PodcastEntryPoint::class.java).audioManager()
+    }
 
     //bird animation
     private val birdAnim: Animation by lazy {
@@ -56,10 +69,13 @@ class StartActivity : AppCompatActivity() {
 
 
         //play background music
+
+        this.audioManager.getAudioService()?.playMusic()
+
 //        shouldPlay = true
-        if (!shouldPlay) {
-            Constants.startService(this)
-        }
+//        if (!shouldPlay) {
+//            Constants.startService(this)
+//        }
         Log.d("StartActivity", "onCreate: $shouldPlay ")
 
 //        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
@@ -124,8 +140,10 @@ class StartActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-      Constants.startService(this)
-        shouldPlay = false
+//      Constants.startService(this)
+//        shouldPlay = false
+
+
         Log.d("StartActivity", "onResume: $shouldPlay ")
 
         if (showLoading) {
@@ -167,9 +185,11 @@ class StartActivity : AppCompatActivity() {
 //        showLoading = false
 //        shouldPlay = false
 
-        if (!shouldPlay) {
-            Constants.stopService(this)
-        }
+//        if (!shouldPlay) {
+//            Constants.stopService(this)
+//        }
+
+
         Log.d("StartActivity", "onStop: $shouldPlay ")
 
         super.onStop()
@@ -178,8 +198,9 @@ class StartActivity : AppCompatActivity() {
 
     override fun onStart() {
         start.isClickable = true
-        shouldPlay = false
-        Log.d("StartActivity", "onStart: $shouldPlay ")
+
+//        shouldPlay = false
+//        Log.d("StartActivity", "onStart: $shouldPlay ")
 
         main_loading.visibility = View.GONE
         start_parent_frame.visibility = View.VISIBLE
