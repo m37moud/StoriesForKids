@@ -116,6 +116,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     fun playMusic(){
+        Log.d("soundmd", "playMusic: " )
        mediaPlayer?.let {
        it.start()
        }
