@@ -23,15 +23,16 @@ import com.m37moud.responsivestories.util.Constants.Companion.shouldPlay
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.util.media.PodcastEntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class StartActivity : AppCompatActivity() {
 
-
+//
 //    @Inject
 //    lateinit var audioManager: AudioManager
 

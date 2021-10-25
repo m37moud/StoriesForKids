@@ -108,7 +108,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
                 )
                 descriptor.close()
             }
-            mediaPlayer?.prepare()
+//            mediaPlayer?.prepare()
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -116,8 +116,10 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     fun playMusic(){
-        Log.d("soundmd", "playMusic: " )
+        Log.d("audio", "playMusic: " )
        mediaPlayer?.let {
+           it.prepare()
+
        it.start()
        }
     }
