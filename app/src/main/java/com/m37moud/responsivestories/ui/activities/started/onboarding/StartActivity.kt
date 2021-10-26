@@ -5,26 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
-import com.m37moud.responsivestories.util.Constants.Companion.removeLastChar
-import com.m37moud.responsivestories.util.Constants.Companion.shouldPlay
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.media.AudioManager
-import com.m37moud.responsivestories.util.media.PodcastEntryPoint
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 import javax.inject.Inject
@@ -32,14 +24,15 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class StartActivity : AppCompatActivity() {
 
-//
-//    @Inject
-//    lateinit var audioManager: AudioManager
 
-    private val audioManager: AudioManager by lazy {
-        EntryPointAccessors.fromApplication (applicationContext,
-            PodcastEntryPoint::class.java).audioManager()
-    }
+    @Inject
+    lateinit var audioManager: AudioManager
+    private var shouldPlay = false
+
+//    private val audioManager: AudioManager by lazy {
+//        EntryPointAccessors.fromApplication (applicationContext,
+//            PodcastEntryPoint::class.java).audioManager()
+//    }
 
     //bird animation
     private val birdAnim: Animation by lazy {
@@ -70,8 +63,8 @@ class StartActivity : AppCompatActivity() {
 
 
         //play background music
-
         this.audioManager.getAudioService()?.playMusic()
+
 
 //        shouldPlay = true
 //        if (!shouldPlay) {
@@ -89,7 +82,7 @@ class StartActivity : AppCompatActivity() {
 
         start.setOnClickListener {
             start.isClickable = false
-            shouldPlay = true
+            this.shouldPlay = true
             val intent = Intent(this@StartActivity, MainActivity::class.java)
 
 //           val pair : android.util.Pair =  Pair<View,String>(start , "toNextButton")
@@ -143,6 +136,7 @@ class StartActivity : AppCompatActivity() {
     override fun onResume() {
 //      Constants.startService(this)
 //        shouldPlay = false
+        this.audioManager.getAudioService()?.resumeMusic()
 
 
         Log.d("StartActivity", "onResume: $shouldPlay ")
@@ -185,13 +179,15 @@ class StartActivity : AppCompatActivity() {
     override fun onStop() {
 //        showLoading = false
 //        shouldPlay = false
-
-//        if (!shouldPlay) {
-//            Constants.stopService(this)
-//        }
-
-
         Log.d("StartActivity", "onStop: $shouldPlay ")
+
+        if (!this.shouldPlay) {
+//            Constants.stopService(this)
+        this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+
+
 
         super.onStop()
     }
@@ -214,6 +210,8 @@ class StartActivity : AppCompatActivity() {
                 Constants.stopService(this)
 
             super.onBackPressed()
+            super.onDestroy()
+
 
         } else
             Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
@@ -221,6 +219,10 @@ class StartActivity : AppCompatActivity() {
 
         backPressed = System.currentTimeMillis()
     }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//    }
 }
 
 

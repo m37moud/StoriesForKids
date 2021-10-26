@@ -32,13 +32,16 @@ import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.media.AudioManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_learn.*
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 
-
+@AndroidEntryPoint
 class EnteredLearenActivity : AppCompatActivity() {
 
     private var shouldPlay = false
@@ -47,6 +50,8 @@ class EnteredLearenActivity : AppCompatActivity() {
     private lateinit var list: ArrayList<String>
 
 
+    @Inject
+    lateinit var audioManager: AudioManager
     //ads
 
     private var mRewardedAd: RewardedAd? = null
@@ -65,6 +70,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setFullScreen()
 ////        changeOrientation()
+        this.audioManager.getAudioService()?.playMusic()
 
         setContentView(R.layout.activity_entered_learen)
 //init random background
@@ -807,19 +813,22 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         showAds()
-        startService()
+//        startService()
+
+        this.audioManager.getAudioService()?.resumeMusic()
+
     }
 
 
     override fun onBackPressed() {
         super.onBackPressed()
 
-//        shouldPlay = true
+        shouldPlay = true
 //
 //        startService()
         Log.d("loadAd", "back pressed")
 //        changeOrientation()
-        stopService()
+//        stopService()
     }
 
     override fun finish() {
@@ -894,7 +903,9 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         if (!shouldPlay) {
-            stopService()
+//            stopService()
+            this.audioManager.getAudioService()?.pauseMusic()
+
         }
         Log.d("loadAd", "onStop")
 

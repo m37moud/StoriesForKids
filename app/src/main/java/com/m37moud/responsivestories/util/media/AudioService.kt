@@ -16,7 +16,7 @@ import javax.inject.Inject
 class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListener {
     private var path: String? = ""
     private var tracks: Int = 0
-    private  var mediaPlayer : MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer? = null
     private val binder = AudioBinder()
     private var lengthPostition = 0
 
@@ -27,11 +27,16 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
 
     override fun onBind(p0: Intent?): IBinder? {
+        Log.d("audio", "onBind: ")
         return binder
     }
 
     override fun onUnbind(intent: Intent): Boolean {
         return false
+    }
+
+    override fun onRebind(intent: Intent?) {
+        super.onRebind(intent)
     }
 
     override fun onCreate() {
@@ -44,6 +49,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         super.onStartCommand(intent, flags, startId)
 //        mediaPlayer?.prepare()
 //        mediaPlayer?.start()
+        playMusic()
         return START_STICKY
     }
 
@@ -82,9 +88,10 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         return false
     }
 
-    private fun createPlayer()  {
+    private fun createPlayer() {
 
         try {
+
             mediaPlayer = MediaPlayer()
             mediaPlayer?.setOnErrorListener(this)
 
@@ -92,12 +99,12 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
                 mediaPlayer?.isLooping = true
                 mediaPlayer?.setVolume(1f, 1f)
             }
-              tracks = Random().nextInt(5)+1
-            Log.d("TAG", "playBackgroundSound: $tracks ")
+            tracks = Random().nextInt(5) + 1
+            Log.d("audio", "playBackgroundSound: $tracks ")
 
-            path = "sound/sfx/loop$tracks.mp3"
+            path = "sound/sfx/loop/loop$tracks.mp3"
 
-            Log.d("soundmd", "play: " + path)
+            Log.d("audio", "play: " + path)
 
             val descriptor = assets?.openFd(path!!)
             if (descriptor != null) {
@@ -108,40 +115,52 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
                 )
                 descriptor.close()
             }
-//            mediaPlayer?.prepare()
+            mediaPlayer?.prepare()
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun playMusic(){
-        Log.d("audio", "playMusic: " )
-       mediaPlayer?.let {
-           it.prepare()
+    fun playMusic() {
+        Log.d("audio", "playMusic: ")
+        mediaPlayer?.let {
+//           it.prepare()
 
-       it.start()
-       }
+            if (!it.isPlaying)
+                it.start()
+        }
     }
 
 
-    fun pauseMusic (){
-        if(mediaPlayer!!.isPlaying){
-                mediaPlayer?.pause()
+    fun pauseMusic() {
+        if (mediaPlayer!!.isPlaying && mediaPlayer != null) {
+            mediaPlayer?.pause()
             lengthPostition = mediaPlayer!!.currentPosition
         }
     }
 
-    fun resumeMusic(){
-        if(!mediaPlayer!!.isPlaying ){
-            mediaPlayer!!.seekTo(lengthPostition)
-            mediaPlayer!!.start()
+    fun resumeMusic() {
+        try {
+            if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
+                mediaPlayer!!.seekTo(lengthPostition)
+                mediaPlayer!!.start()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    fun stopMusic(){
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
+    fun stopMusic() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer!!.isPlaying) {
+                mediaPlayer?.stop()
+
+            }
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+
     }
+
 }

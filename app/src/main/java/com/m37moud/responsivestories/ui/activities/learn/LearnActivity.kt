@@ -20,11 +20,14 @@ import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import com.m37moud.responsivestories.util.MediaService
+import com.m37moud.responsivestories.util.media.AudioManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_learn.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_story.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
-
+import javax.inject.Inject
+@AndroidEntryPoint
 class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
     private var _binding: ActivityLearnBinding ? = null
@@ -32,6 +35,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     private val mAdapter: LearnAdapter by lazy { LearnAdapter(this@LearnActivity, this) }
     private var category: LearnModel? = null
 
+    @Inject
+    lateinit var audioManager: AudioManager
 
     private var shouldPlay = false
     private var categoryPosition = 0
@@ -45,10 +50,12 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         //start service and play music
-        shouldPlay = true
-        if (shouldPlay) {
-            startService()
-        }
+        this.audioManager.getAudioService()?.playMusic()
+
+//        shouldPlay = true
+//        if (shouldPlay) {
+//            startService()
+//        }
 
         Constants.initBackgroundColor(parent_learn_frame, this@LearnActivity)
 
@@ -78,7 +85,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             intent.putExtra("selectedCategory", url)
             shouldPlay = true
             startActivity(intent)
-            finish
+            finish()
         }
 
         val backgroundColor = parent_learn_frame.background
@@ -219,20 +226,23 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     override fun onStop() {
         super.onStop()
         if (!shouldPlay) {
-            stopService()
+            this.audioManager.getAudioService()?.pauseMusic()
+
         }
 
     }
 
     override fun onStart() {
-        startService()
-        shouldPlay = false
+//        startService()
+//        shouldPlay = false
         super.onStart()
     }
 
     override fun onResume() {
-        startService()
-        shouldPlay = false
+//        startService()
+        this.audioManager.getAudioService()?.resumeMusic()
+
+//        shouldPlay = false
         super.onResume()
     }
 

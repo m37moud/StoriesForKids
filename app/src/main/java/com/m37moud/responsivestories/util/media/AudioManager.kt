@@ -28,6 +28,7 @@ class AudioManager @Inject constructor(
 
             val binder = service as AudioService.AudioBinder
             audioService = binder.getService()
+
             Log.d("audio", "audioService:  $audioService")
 
             bound = true
@@ -39,30 +40,44 @@ class AudioManager @Inject constructor(
     }
 
 
-
     fun getAudioService(): AudioService? {
         Log.d("audio", "getAudioService: ")
 
-//        return if (this.bound) {
-//            Log.d("audio", "if true: ")
-//
-//            this.audioService
-//        } else {
-//            Log.d("audio", "if false: ")
-//
-//            null
-//        }
+        return if (this.bound) {
+            Log.d("audio", "if true: ")
 
-       return this.audioService
+            this.audioService
+        } else {
+            Log.d("audio", "if false: ")
+
+            null
+        }
+
+//       return this.audioService
+    }
+
+    fun doBindService() {
+        Intent(context, AudioService::class.java).also { intent ->
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+        Log.d("audio", "doBindService: ")
+    }
+
+    fun doUnbindService() {
+
+        if (bound) {
+            context.unbindService(connection)
+            bound = false
+        }
     }
 
     init {
 
-        Intent(context, AudioService::class.java).also { intent ->
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-        Log.d("audio", "init: $connection")
+        val intent = Intent(context, AudioService::class.java)
+        context.startService(intent)
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
+        Log.d("audio", "doBindService: ")
     }
 
 }

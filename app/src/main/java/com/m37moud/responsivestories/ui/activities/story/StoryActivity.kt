@@ -40,6 +40,7 @@ import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.ui.activities.story.bottomsheet.CategoriesBottomSheet
 import com.m37moud.responsivestories.util.*
 import com.m37moud.responsivestories.util.Constants.Companion.getRandomColor
+import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +52,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 
@@ -80,6 +82,11 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private lateinit var listReadDatabase: ArrayList<VideoEntity>
     private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
 
+    private var shouldPlay = false
+
+    @Inject
+    lateinit var audioManager: AudioManager
+
 
     //    private var savedRecipeId = 0
     private var savedRecipeId = ""
@@ -99,6 +106,9 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+        this.audioManager.getAudioService()?.playMusic()
+
         mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
         videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
 
@@ -142,14 +152,16 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     videosViewModel.networkStatus = status
                     videosViewModel.showNetworkStatus()
                     //read database
-                    videosViewModel.readBottomSheetExitStatus.observe(this@StoryActivity, Observer {exitStatus ->
-                        Log.d("bottomSheetExit", exitStatus.toString())
-                        if(exitStatus){
-                            readVideosWithCategories(videosViewModel.applyQuery())
-                        }else{
-                            readDatabase()
-                        }
-                    })
+                    videosViewModel.readBottomSheetExitStatus.observe(
+                        this@StoryActivity,
+                        Observer { exitStatus ->
+                            Log.d("bottomSheetExit", exitStatus.toString())
+                            if (exitStatus) {
+                                readVideosWithCategories(videosViewModel.applyQuery())
+                            } else {
+                                readDatabase()
+                            }
+                        })
                 }
         }
         ///
@@ -435,35 +447,34 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         Log.d("mah readVideosWithCategories", "readVideosWithCategories called! $categories")
 
 
-            hideLoading()
-            lifecycleScope.launch {
+        hideLoading()
+        lifecycleScope.launch {
 
-                mainViewModel.readVideosWithCategory(categories)
-                    .observe(this@StoryActivity, Observer { database ->
-                        if (database.isNotEmpty()) {
+            mainViewModel.readVideosWithCategory(categories)
+                .observe(this@StoryActivity, Observer { database ->
+                    if (database.isNotEmpty()) {
 
-                            Log.d("mah readVideosWithCategories", "if statement true")
+                        Log.d("mah readVideosWithCategories", "if statement true")
 
-                            listReadDatabase = database as ArrayList
-                            //room change
-                            val adapterReadDatabase = DownloadedVideoAdapter(
-                                this@StoryActivity
-                            )
-                            adapterReadDatabase.setData(listReadDatabase)
-                            binding.rcStory.adapter = adapterReadDatabase
-                            Log.d(
-                                "mah readVideosWithCategories",
-                                "list is " + listReadDatabase.toString()
-                            )
+                        listReadDatabase = database as ArrayList
+                        //room change
+                        val adapterReadDatabase = DownloadedVideoAdapter(
+                            this@StoryActivity
+                        )
+                        adapterReadDatabase.setData(listReadDatabase)
+                        binding.rcStory.adapter = adapterReadDatabase
+                        Log.d(
+                            "mah readVideosWithCategories",
+                            "list is " + listReadDatabase.toString()
+                        )
 
-                        } else {
-                            Log.d("mah readVideosWithCategories", "if statement is false ...")
+                    } else {
+                        Log.d("mah readVideosWithCategories", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                            mainViewModel.readVideos.removeObservers(this@StoryActivity)
-                        }
-                    })
-            }
-
+                        mainViewModel.readVideos.removeObservers(this@StoryActivity)
+                    }
+                })
+        }
 
 
     }
@@ -993,16 +1004,35 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onBackPressed() {
+        shouldPlay =  true
         startActivity(
             Intent(
                 this@StoryActivity,
-                        MainActivity::class.java
+                MainActivity::class.java
             )
         )
         finish()
         super.onBackPressed()
 
     }
+
+    override fun onStop() {
+
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+
+        super.onStop()
+    }
+
+    override fun onResume() {
+        this.audioManager.getAudioService()?.resumeMusic()
+
+
+        super.onResume()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         downloadTracker.removeListener(this)

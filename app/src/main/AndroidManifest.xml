@@ -23,8 +23,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.activities.started.onboarding.SplashActivity"
-            android:theme="@style/SplashScreenStyle"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:theme="@style/SplashScreenStyle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,24 +33,24 @@
         </activity>
         <activity
             android:name=".ui.activities.started.onboarding.ViewPagerActivity"
-            android:theme="@style/ViewPagerScreenStyle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/ViewPagerScreenStyle" />
 
         <activity
             android:name=".ui.activities.story.StoryActivity"
-            android:theme="@style/StoryScreenStyle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/StoryScreenStyle" />
         <activity
             android:name=".ui.activities.learn.LearnActivity"
-            android:theme="@style/LearnScreenStyle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/LearnScreenStyle" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activities.started.onboarding.StartActivity"
-            android:theme="@style/StartScreenStyle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/StartScreenStyle" />
 
         <activity
             android:name=".ui.activities.learn.EnteredLearenActivity"
@@ -59,21 +59,17 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
-            android:name=".HomeActivity"
-            android:configChanges="orientation|screenSize|layoutDirection"
-            android:label="@string/title_activity_home"
-            android:theme="@style/HomePageStyle" />
-        <activity android:name=".ui.activities.story.OfflinePlayerActivity"
-            android:screenOrientation="landscape"
-            />
+            android:name=".ui.activities.story.OfflinePlayerActivity"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activities.story.OnlinePlayerActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|layoutDirection" />
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:screenOrientation="landscape" />
 
         <service
-            android:name=".util.MediaService"
+            android:name=".util.media.AudioService"
             android:enabled="true" />
+
         <service
             android:name=".util.DemoDownloadService"
             android:exported="false">

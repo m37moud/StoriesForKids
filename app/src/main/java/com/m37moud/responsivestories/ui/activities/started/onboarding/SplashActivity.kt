@@ -11,9 +11,17 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.util.media.AudioManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
+
+
+    @Inject
+    lateinit var audioManager: AudioManager
 
     private val txtTopAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -44,6 +52,9 @@ class SplashActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+        this.audioManager.getAudioService()?.playMusic()
+
 
         // Adding the handler to after the a task after some delay.
         // It is deprecated in the API level 30.

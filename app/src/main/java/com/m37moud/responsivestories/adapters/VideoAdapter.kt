@@ -18,6 +18,9 @@ import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.ui.activities.story.OnlinePlayerActivity
 import com.m37moud.responsivestories.util.VideosDiffUtil
+import com.m37moud.responsivestories.util.media.AudioManager
+import com.m37moud.responsivestories.util.media.PodcastEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import java.util.*
 
 
@@ -26,6 +29,12 @@ class VideoAdapter(
 //    var vidList: ArrayList<VideoModel>
 ) : RecyclerView.Adapter<VideoAdapter.HolderVideo>() {
 
+    private val audioManager: AudioManager by lazy {
+        EntryPointAccessors.fromApplication(
+            context,
+            PodcastEntryPoint::class.java
+        ).audioManager()
+    }
     var vidList = emptyList<VideoModel>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderVideo {
         val view = LayoutInflater.from(context).inflate(R.layout.row_video, parent, false)
@@ -57,12 +66,12 @@ class VideoAdapter(
         val requestOptions = RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.DATA)
             .placeholder(R.drawable.ic_error_placeholder)
-        if(TextUtils.isEmpty(thumb)){
+        if (TextUtils.isEmpty(thumb)) {
             Glide.with(context)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(url).into(holder.vidImg)
-        }else{
+        } else {
             Glide.with(context)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
@@ -79,6 +88,8 @@ class VideoAdapter(
             val intent = Intent(it.context, OnlinePlayerActivity::class.java)
             intent.putExtra("videoUri", url)
             context.startActivity(intent)
+            this.audioManager.getAudioService()?.pauseMusic()
+
 
         }
 

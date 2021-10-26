@@ -17,6 +17,9 @@ import com.m37moud.responsivestories.ui.activities.story.OfflinePlayerActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.util.VideosDiffUtil
+import com.m37moud.responsivestories.util.media.AudioManager
+import com.m37moud.responsivestories.util.media.PodcastEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -25,6 +28,11 @@ class DownloadedVideoAdapter(
 ) : RecyclerView.Adapter<DownloadedVideoAdapter.HolderVideo>() {
 //room changed3/8
     var vidList = emptyList<VideoEntity>()
+
+    private val audioManager: AudioManager by lazy {
+        EntryPointAccessors.fromApplication (context,
+            PodcastEntryPoint::class.java).audioManager()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderVideo {
         val view = LayoutInflater.from(context).inflate(R.layout.row_video, parent, false)
         return HolderVideo(
@@ -74,6 +82,7 @@ class DownloadedVideoAdapter(
             val intent = Intent(it.context, OfflinePlayerActivity::class.java)
             intent.putExtra("videoUri", url)
             context.startActivity(intent)
+            this.audioManager.getAudioService()?.pauseMusic()
 
         }
 

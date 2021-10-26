@@ -33,14 +33,15 @@ import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
-import com.m37moud.responsivestories.util.Constants.Companion.shouldPlay
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.FirebaseService
+import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.main_grass
 import kotlinx.android.synthetic.main.activity_start.*
+import javax.inject.Inject
 
 const val TOPIC = "/topics/myTopic2"
 
@@ -50,10 +51,17 @@ class MainActivity : AppCompatActivity() {
     private var animInvoked: Int = 0
     private var isAnimFinish = false
     private var isResumeAnim = false
+    private var shouldPlay = false
+
 
     private var isStory = false
     private var isLearn = false
     private var isFinish = false
+
+
+    @Inject
+    lateinit var audioManager: AudioManager
+
 
     private val grassAnim: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -181,11 +189,13 @@ class MainActivity : AppCompatActivity() {
 
         //play background music
 //        shouldPlay = true
+        this.audioManager.getAudioService()?.playMusic()
 
-        if (!shouldPlay) {
+
+//        if (!shouldPlay) {
 //            shouldPlay = true
-            Constants.startService(this)
-        }
+//            Constants.startService(this)
+//        }
 
 
 
@@ -382,6 +392,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
 
+
         videosViewModel.saveDownloadStatus(false)
         Log.d("MainActivity", "onStart: called")
 
@@ -453,8 +464,9 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         Log.d(TAG, "onResume: called")
         animInvoked = 0
+        this.audioManager.getAudioService()?.resumeMusic()
 
-        Constants.startService(this)
+//        Constants.startService(this)
         shouldPlay = false
 
         if (isResumeAnim) {
@@ -768,7 +780,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onStop: called")
         showLoading = false
         if (!shouldPlay) {
-            Constants.stopService(this)
+            this.audioManager.getAudioService()?.pauseMusic()
+//            Constants.stopService(this)
         }
 
         super.onStop()
