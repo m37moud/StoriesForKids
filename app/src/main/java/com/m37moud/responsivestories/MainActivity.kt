@@ -467,7 +467,7 @@ class MainActivity : AppCompatActivity() {
         this.audioManager.getAudioService()?.resumeMusic()
 
 //        Constants.startService(this)
-        shouldPlay = false
+//        shouldPlay = false
 
         if (isResumeAnim) {
 
@@ -512,9 +512,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         showLoading = true
+//        this.shouldPlay = true
+
         exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
-
-
 
     }
 
@@ -529,7 +529,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         Log.d(TAG, "onPause: called")
         isResumeAnim = false
-        shouldPlay = false
+//        shouldPlay = false
 //        initViewToHide()
         super.onPause()
     }
@@ -675,6 +675,8 @@ class MainActivity : AppCompatActivity() {
         isLearn: Boolean,
         isFinish: Boolean
     ) {
+        this.shouldPlay = true
+
         if (animInvoked == 1) {
             open_menu_fab.animate().apply {
                 duration = 300
@@ -755,7 +757,6 @@ class MainActivity : AppCompatActivity() {
 
                 isResumeAnim = true
                 isAnimFinish = true
-                shouldPlay = true
 
                 initViewToHide()
 

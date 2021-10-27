@@ -823,7 +823,7 @@ class EnteredLearenActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
-        shouldPlay = true
+//        shouldPlay = false
 //
 //        startService()
         Log.d("loadAd", "back pressed")
@@ -911,18 +911,6 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
-    private fun startService() {
-        val intent = Intent(this, MediaService::class.java)
-
-        startService(intent)
-
-    }
-
-    private fun stopService() {
-        val intent = Intent(this, MediaService::class.java)
-
-        stopService(intent)
-    }
 
     fun homeButton(view: View) {
 
@@ -947,6 +935,8 @@ class EnteredLearenActivity : AppCompatActivity() {
                         // don't show the ad a second time.
                         mRewardedAd = null
                         shouldPlay = true
+
+
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -967,7 +957,14 @@ class EnteredLearenActivity : AppCompatActivity() {
                     Log.d("loadAd", "User earned the reward.")
                 }
             })
-
+            
+//            startActivity(
+//                Intent(
+//                    this@EnteredLearenActivity,
+//                    LearnActivity::class.java
+//                )
+//            )
+//            finish()
             super.finish()
         } else {
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()

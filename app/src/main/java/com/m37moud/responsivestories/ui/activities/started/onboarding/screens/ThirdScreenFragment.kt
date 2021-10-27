@@ -10,10 +10,18 @@ import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
+import com.m37moud.responsivestories.util.media.AudioManager
+import com.m37moud.responsivestories.util.media.PodcastEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 import kotlinx.android.synthetic.main.fragment_third_screen.view.*
 
 class ThirdScreenFragment : Fragment() {
+    private val audioManager: AudioManager by lazy {
+        EntryPointAccessors.fromApplication (context,
+            PodcastEntryPoint::class.java).audioManager()
+    }
+    private var shouldPlay = false
 
 
     override fun onCreateView(
@@ -25,6 +33,8 @@ class ThirdScreenFragment : Fragment() {
 
 
         val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
+        this.audioManager.getAudioService()?.playMusic()
+
         view.finish.setOnClickListener {
 //            findNavController().navigate(R.id.action_viewPagerFragment_to_storyFragment2)
             startActivity(Intent(requireContext(), StartActivity::class.java))
@@ -45,6 +55,23 @@ class ThirdScreenFragment : Fragment() {
         val editor = sharedPref.edit()
         editor.putBoolean("Finished", true)
         editor.apply()
+    }
+
+    override fun onStop() {
+
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+
+        super.onStop()
+    }
+
+    override fun onResume() {
+        this.audioManager.getAudioService()?.resumeMusic()
+
+
+        super.onResume()
     }
 
 }

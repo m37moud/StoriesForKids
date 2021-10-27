@@ -23,6 +23,10 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var audioManager: AudioManager
 
+
+    private var shouldPlay = false
+
+
     private val txtTopAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
@@ -66,6 +70,7 @@ class SplashActivity : AppCompatActivity() {
                 // If user is not logged in or logout manually then user will  be redirected to the Login screen as usual.
 
                 // Get the current logged in user id
+                shouldPlay = true
                 if(onBoardingFinished()) {
                     // Launch dashboard screen.
                     startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
@@ -110,5 +115,20 @@ class SplashActivity : AppCompatActivity() {
     private fun onBoardingFinished(): Boolean{
         val sharedPref = this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         return sharedPref.getBoolean("Finished", false)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+    }
+
+    override fun onResume() {
+        this.audioManager.getAudioService()?.resumeMusic()
+
+
+        super.onResume()
     }
 }

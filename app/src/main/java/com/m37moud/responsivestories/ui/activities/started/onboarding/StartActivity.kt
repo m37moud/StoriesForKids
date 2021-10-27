@@ -210,7 +210,6 @@ class StartActivity : AppCompatActivity() {
                 Constants.stopService(this)
 
             super.onBackPressed()
-            super.onDestroy()
 
 
         } else
@@ -220,9 +219,12 @@ class StartActivity : AppCompatActivity() {
         backPressed = System.currentTimeMillis()
     }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-//    }
+    override fun onDestroy() {
+        super.onDestroy()
+        this.audioManager.getAudioService()?.stopMusic()
+
+
+    }
 }
 
 

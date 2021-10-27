@@ -134,6 +134,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
 
     fun pauseMusic() {
+        Log.d("audio", "pauseMusic: ")
+
         if (mediaPlayer!!.isPlaying && mediaPlayer != null) {
             mediaPlayer?.pause()
             lengthPostition = mediaPlayer!!.currentPosition
@@ -141,6 +143,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     fun resumeMusic() {
+        Log.d("audio", "resumeMusic: ")
+
         try {
             if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
                 mediaPlayer!!.seekTo(lengthPostition)
@@ -152,6 +156,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     fun stopMusic() {
+        Log.d("audio", "stopMusic: ")
+
         if (mediaPlayer != null) {
             if (mediaPlayer!!.isPlaying) {
                 mediaPlayer?.stop()

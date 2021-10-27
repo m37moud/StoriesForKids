@@ -85,7 +85,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             intent.putExtra("selectedCategory", url)
             shouldPlay = true
             startActivity(intent)
-            finish()
+            finish
         }
 
         val backgroundColor = parent_learn_frame.background
@@ -225,7 +225,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
     override fun onStop() {
         super.onStop()
-        if (!shouldPlay) {
+        if (!this.shouldPlay) {
             this.audioManager.getAudioService()?.pauseMusic()
 
         }
@@ -247,7 +247,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     }
 
     override fun onBackPressed() {
-        shouldPlay = true
+        this.shouldPlay = true
 
         if (!shouldPlay) {
             stopService()
