@@ -8,40 +8,40 @@
     android:orientation="vertical">
 
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_title"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/ic_error_placeholder" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_title"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/ic_error_placeholder" />
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/main_background_txt"
+        android:backgroundTint="@color/mediumGray"
+        android:foreground="@drawable/main_forground_txt"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:shadowColor="@color/black"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
 
-        <TextView
-            android:id="@+id/txt_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/main_background_txt"
-            android:backgroundTint="@color/mediumGray"
-            android:foreground="@drawable/main_forground_txt"
-            android:paddingLeft="35dp"
-            android:paddingRight="35dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="6dp"
-            android:shadowColor="@color/black"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="2"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-
-            />
-
+        />
 
 
 </LinearLayout>

@@ -5,7 +5,11 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.TransitionManager
 import coil.load
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.LearnModel
@@ -22,17 +26,23 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
 
     private var learnTitle = emptyList<LearnModel>()
 
+
     interface ItemClickListener {
         fun onItemClick(position: Int)
     }
 
     inner class LearnViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        var container: LinearLayout = itemView.findViewById(R.id.category_learn_container)
+        var vidImg: ImageView = itemView.findViewById(R.id.img_title)
+        var vidtitle: TextView = itemView.findViewById(R.id.txt_title)
+
         init {
             itemView.setOnClickListener {
                 mItemClickListener.onItemClick(adapterPosition)
             }
         }
+
 
     }
 
@@ -61,6 +71,21 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
             error(R.drawable.ic_error_placeholder)
         }
         holder.itemView.txt_title.text = learnCategory.title
+
+
+        holder.vidImg.setOnClickListener {
+
+            var visible = false
+            TransitionManager.beginDelayedTransition(holder.container)
+            visible = !visible
+
+            holder.vidtitle.visibility = if (visible)
+                View.VISIBLE
+            else
+                View.GONE
+
+
+        }
     }
 
     //    val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabet")

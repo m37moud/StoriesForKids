@@ -17,7 +17,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     private var path: String? = ""
     private var tracks: Int = 0
     private var mediaPlayer: MediaPlayer? = null
-    private val binder = AudioBinder()
+
     private var lengthPostition = 0
 
 
@@ -25,6 +25,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         fun getService(): AudioService = this@AudioService
     }
 
+ private val binder = AudioBinder()
 
     override fun onBind(p0: Intent?): IBinder? {
         Log.d("audio", "onBind: ")

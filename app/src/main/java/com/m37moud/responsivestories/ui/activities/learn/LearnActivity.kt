@@ -78,12 +78,12 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
 
         binding.imgClick.setOnClickListener {
+            this.shouldPlay = true
             val intent = Intent(this@LearnActivity, EnteredLearenActivity::class.java)
 
             //get image name from Constans list
             val url = Constants.img[categoryPosition]
             intent.putExtra("selectedCategory", url)
-            shouldPlay = true
             startActivity(intent)
             finish()
         }
@@ -202,30 +202,32 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
 
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            setFullScreen()
-            Toast.makeText(this@LearnActivity, "landscape", Toast.LENGTH_SHORT).show()
-            category_img.visibility = View.GONE
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            category_img.visibility = View.VISIBLE
-            Toast.makeText(this@LearnActivity, "portrait", Toast.LENGTH_SHORT).show()
-
-        }
-    }
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+////            setFullScreen()
+//            Toast.makeText(this@LearnActivity, "landscape", Toast.LENGTH_SHORT).show()
+//            category_img.visibility = View.GONE
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            category_img.visibility = View.VISIBLE
+//            Toast.makeText(this@LearnActivity, "portrait", Toast.LENGTH_SHORT).show()
+//
+//        }
+//    }
 
 
     override fun onDestroy() {
-        stopService()
+//        stopService()
         super.onDestroy()
     }
 
 
     override fun onStop() {
         super.onStop()
-        if (!shouldPlay) {
+        Log.d("LearnActivity", "onStop: shouldPlay =${this.shouldPlay}")
+
+        if (!this.shouldPlay) {
             this.audioManager.getAudioService()?.pauseMusic()
 
         }
@@ -247,11 +249,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     }
 
     override fun onBackPressed() {
-        shouldPlay = true
+        this.shouldPlay = true
 
-        if (!shouldPlay) {
-            stopService()
-        }
 
         startActivity(
             Intent(

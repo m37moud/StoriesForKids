@@ -675,6 +675,8 @@ class MainActivity : AppCompatActivity() {
         isLearn: Boolean,
         isFinish: Boolean
     ) {
+        this.shouldPlay = true
+
         if (animInvoked == 1) {
             open_menu_fab.animate().apply {
                 duration = 300
@@ -755,7 +757,6 @@ class MainActivity : AppCompatActivity() {
 
                 isResumeAnim = true
                 isAnimFinish = true
-                shouldPlay = true
 
                 initViewToHide()
 
