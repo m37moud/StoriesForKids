@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_third_screen.*
 import kotlinx.android.synthetic.main.fragment_third_screen.view.*
 
 class ThirdScreenFragment : Fragment() {
+
     private val audioManager: AudioManager by lazy {
         EntryPointAccessors.fromApplication (context,
             PodcastEntryPoint::class.java).audioManager()
@@ -36,6 +37,8 @@ class ThirdScreenFragment : Fragment() {
         this.audioManager.getAudioService()?.playMusic()
 
         view.finish.setOnClickListener {
+            shouldPlay = true
+
 //            findNavController().navigate(R.id.action_viewPagerFragment_to_storyFragment2)
             startActivity(Intent(requireContext(), StartActivity::class.java))
 
@@ -59,12 +62,13 @@ class ThirdScreenFragment : Fragment() {
 
     override fun onStop() {
 
+
+
+        super.onStop()
         if (!shouldPlay) {
             this.audioManager.getAudioService()?.pauseMusic()
 
         }
-
-        super.onStop()
     }
 
     override fun onResume() {

@@ -49,7 +49,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         super.onStartCommand(intent, flags, startId)
 //        mediaPlayer?.prepare()
 //        mediaPlayer?.start()
-        playMusic()
+//        playMusic()
         return START_STICKY
     }
 
@@ -124,31 +124,45 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
     fun playMusic() {
         Log.d("audio", "playMusic: ")
-        mediaPlayer?.let {
+        Log.d("audio", "pauseMusic: ")
+        try {
+            mediaPlayer?.let {
 //           it.prepare()
 
-            if (!it.isPlaying)
-                it.start()
+                if (!it.isPlaying)
+                    it.start()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+
     }
 
 
     fun pauseMusic() {
         Log.d("audio", "pauseMusic: ")
-
-        if (mediaPlayer!!.isPlaying && mediaPlayer != null) {
-            mediaPlayer?.pause()
-            lengthPostition = mediaPlayer!!.currentPosition
+        try {
+            if (mediaPlayer != null) {
+                if (mediaPlayer!!.isPlaying) {
+                    mediaPlayer?.pause()
+                    lengthPostition = mediaPlayer!!.currentPosition
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+
     }
 
     fun resumeMusic() {
         Log.d("audio", "resumeMusic: ")
 
         try {
-            if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
-                mediaPlayer!!.seekTo(lengthPostition)
-                mediaPlayer!!.start()
+            if (mediaPlayer != null) {
+                if (!mediaPlayer!!.isPlaying) {
+                    mediaPlayer!!.seekTo(lengthPostition)
+                    mediaPlayer!!.start()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -157,15 +171,20 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
     fun stopMusic() {
         Log.d("audio", "stopMusic: ")
+        Log.d("audio", "pauseMusic: ")
+        try {
+            if (mediaPlayer != null) {
+                if (mediaPlayer!!.isPlaying) {
+                    mediaPlayer?.stop()
 
-        if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying) {
-                mediaPlayer?.stop()
-
+                }
+                mediaPlayer?.release()
+                mediaPlayer = null
             }
-            mediaPlayer?.release()
-            mediaPlayer = null
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+
 
     }
 

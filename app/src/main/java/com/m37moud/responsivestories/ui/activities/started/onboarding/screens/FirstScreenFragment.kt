@@ -31,6 +31,7 @@ class FirstScreenFragment : Fragment() {
         this.audioManager.getAudioService()?.playMusic()
 
         view.next.setOnClickListener {
+            shouldPlay = true
             viewPager?.currentItem = 1
             requireActivity().finish()
 
