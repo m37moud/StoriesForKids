@@ -1,16 +1,14 @@
 package com.m37moud.responsivestories
 
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
@@ -41,6 +39,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.main_grass
 import kotlinx.android.synthetic.main.activity_start.*
+import kotlinx.android.synthetic.main.layout_exit_app.view.*
+import kotlinx.android.synthetic.main.layout_settings_app.view.*
 import javax.inject.Inject
 
 const val TOPIC = "/topics/myTopic2"
@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     private var isAnimFinish = false
     private var isResumeAnim = false
     private var shouldPlay = false
+    private var shouldAllowBack = false
 
 
     private var isStory = false
@@ -186,10 +187,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
         //play background music
 //        shouldPlay = true
-        this.audioManager.getAudioService()?.playMusic()
+//        this.audioManager.getAudioService()?.playMusic()
 
 
 //        if (!shouldPlay) {
@@ -197,6 +197,7 @@ class MainActivity : AppCompatActivity() {
 //            Constants.startService(this)
 //        }
 
+        Log.d("MainActivity", "onCreate: called $shouldPlay")
 
 
         main_loading.visibility = View.VISIBLE
@@ -251,13 +252,12 @@ class MainActivity : AppCompatActivity() {
 
         //start story activity
         story_card_view.setOnClickListener {
-
-            exitMainActivityAnimation(isStory = true, isLearn = false, isFinish = false)
+            if (shouldAllowBack)
+                exitMainActivityAnimation(isStory = true, isLearn = false, isFinish = false)
 //            Handler().postDelayed(
 //                {
 //                    if (isAnimFinish) {
 //                        startActivity(Intent(this@MainActivity, StoryActivity::class.java))
-            story_card_view.isClickable = false
 //                    }
 //                }, 2500
 //
@@ -267,12 +267,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         learn_card_view.setOnClickListener {
-            exitMainActivityAnimation(isStory = false, isLearn = true, isFinish = false)
+            if (shouldAllowBack)
+                exitMainActivityAnimation(isStory = false, isLearn = true, isFinish = false)
 //            if (isAnimFinish) {
 //                startActivity(
 //                    Intent(this@MainActivity, LearnActivity::class.java)
 //                )
-            learn_card_view.isClickable = false
+
 //            }
 //            finish()
         }
@@ -392,9 +393,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
 
+        this.audioManager.getAudioService()?.playMusic()
 
         videosViewModel.saveDownloadStatus(false)
-        Log.d("MainActivity", "onStart: called")
+        Log.d("MainActivity", "onStart: called $shouldPlay")
 
         super.onStart()
     }
@@ -406,8 +408,22 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    fun replayMainButton(view: View) {}
-    fun homeMainButton(view: View) {}
+    fun settingMainButton(view: View) {
+        showSettingDialog()
+
+    }
+    fun homeMainButton(view: View) {
+        shouldPlay = true
+
+        startActivity(
+            Intent(
+                this@MainActivity,
+                StartActivity::class.java
+            )
+        )
+        finish()
+
+    }
 
     private fun getOpenFacebookIntent(): Intent? = try {
 //        context.getPackageManager().getPackageInfo("com.facebook.katana", 0)
@@ -514,7 +530,8 @@ class MainActivity : AppCompatActivity() {
         showLoading = true
 //        this.shouldPlay = true
 
-        exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
+        if (shouldAllowBack)
+            exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
 
     }
 
@@ -527,7 +544,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        Log.d(TAG, "onPause: called")
+//        Log.d(TAG, "onPause: called")
+        Log.d("MainActivity", "onPause: called $shouldPlay")
+
         isResumeAnim = false
 //        shouldPlay = false
 //        initViewToHide()
@@ -543,7 +562,9 @@ class MainActivity : AppCompatActivity() {
         imgAnim: Animation,
         delay: Long
     ) {
-
+        shouldAllowBack = false
+        learn_card_view.isClickable = false
+        story_card_view.isClickable = false
 //        val translateAnimation =
 //            ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 800f)
 //        translateAnimation.repeatCount = 0
@@ -661,6 +682,10 @@ class MainActivity : AppCompatActivity() {
                         imageView.startAnimation(txtAndImgInfiniteAnim)
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
+                        shouldAllowBack = true
+                        learn_card_view.isClickable = true
+                        story_card_view.isClickable = true
+
                     }.start()
                 }.start()
             }.start()
@@ -675,6 +700,9 @@ class MainActivity : AppCompatActivity() {
         isLearn: Boolean,
         isFinish: Boolean
     ) {
+        shouldAllowBack = false
+        learn_card_view.isClickable = false
+        story_card_view.isClickable = false
         this.shouldPlay = true
 
         if (animInvoked == 1) {
@@ -721,6 +749,8 @@ class MainActivity : AppCompatActivity() {
             story_main_txt.startAnimation(learnLinearLayoutAnimZoomOut)
         }
             .withEndAction {
+                shouldAllowBack = true
+
 
                 when {
                     isStory -> {
@@ -750,15 +780,17 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         finish()
-
                         super.onBackPressed()
                     }
                 }
 
                 isResumeAnim = true
                 isAnimFinish = true
+                shouldAllowBack = true
 
                 initViewToHide()
+                learn_card_view.isClickable = true
+                story_card_view.isClickable = true
 
             }.start()
 
@@ -778,7 +810,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        Log.d(TAG, "onStop: called")
+//        Log.d(TAG, "onStop: called")
+        Log.d("MainActivity", "onPause: called $shouldPlay")
+
         showLoading = false
         if (!shouldPlay) {
             this.audioManager.getAudioService()?.pauseMusic()
@@ -787,6 +821,40 @@ class MainActivity : AppCompatActivity() {
 
         super.onStop()
     }
+
+    private fun showSettingDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        val itemView = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
+
+        builder.setView(itemView)
+        val settingsDialog = builder.create()
+        settingsDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+//        settingsDialog.setCancelable(false)
+//        settingsDialog.setCanceledOnTouchOutside(false)
+        itemView.previous_sound_setting.setOnClickListener {
+
+        }
+
+        itemView.play_sound_setting.setOnClickListener {
+            this.audioManager.getAudioService()?.playMusic()
+            itemView.play_sound_setting.visibility = View.INVISIBLE
+            itemView.pause_sound_setting.visibility = View.VISIBLE
+
+        }
+        itemView.pause_sound_setting.setOnClickListener {
+            this.audioManager.getAudioService()?.pauseMusic()
+            itemView.play_sound_setting.visibility = View.VISIBLE
+            itemView.pause_sound_setting.visibility = View.INVISIBLE
+
+        }
+        itemView.next_sound_setting.setOnClickListener {
+        }
+        settingsDialog.show()
+
+    }
+
 
 }
 

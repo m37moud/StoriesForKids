@@ -191,7 +191,7 @@
                 android:backgroundTintMode="add"
                 android:foreground="@drawable/btn_foreground"
                 android:foregroundTintMode="screen"
-                android:onClick="replayMainButton"
+                android:onClick="settingMainButton"
                 android:padding="15dp"
                 android:visibility="invisible"
                 app:srcCompat="@drawable/ic_settings"

@@ -1,10 +1,12 @@
 package com.m37moud.responsivestories.ui.activities.started.onboarding
 
 import android.app.ActivityOptions
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -19,6 +21,7 @@ import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
+import kotlinx.android.synthetic.main.layout_exit_app.view.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,6 +31,7 @@ class StartActivity : AppCompatActivity() {
     @Inject
     lateinit var audioManager: AudioManager
     private var shouldPlay = false
+    private var shouldAllowBack = false
 
 //    private val audioManager: AudioManager by lazy {
 //        EntryPointAccessors.fromApplication (applicationContext,
@@ -63,7 +67,7 @@ class StartActivity : AppCompatActivity() {
 
 
         //play background music
-        this.audioManager.getAudioService()?.playMusic()
+//        this.audioManager.getAudioService()?.playMusic()
 
 
 //        shouldPlay = true
@@ -147,6 +151,7 @@ class StartActivity : AppCompatActivity() {
 
             Handler().postDelayed(
                 {
+                    shouldAllowBack = true
                     main_loading.visibility = View.INVISIBLE
                     start_parent_frame.visibility = View.VISIBLE
                     showLoading = false
@@ -171,6 +176,12 @@ class StartActivity : AppCompatActivity() {
 
         Log.d("StartActivity", "onPause: $showLoading")
 
+        if (!this.shouldPlay) {
+//            Constants.stopService(this)
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+
 //        start_loading.visibility = View.VISIBLE
 //        start_parent_frame.visibility = View.INVISIBLE
         super.onPause()
@@ -181,12 +192,11 @@ class StartActivity : AppCompatActivity() {
 //        shouldPlay = false
         Log.d("StartActivity", "onStop: $shouldPlay ")
 
-        if (!this.shouldPlay) {
-//            Constants.stopService(this)
-        this.audioManager.getAudioService()?.pauseMusic()
-
-        }
-
+//        if (!this.shouldPlay) {
+////            Constants.stopService(this)
+//        this.audioManager.getAudioService()?.pauseMusic()
+//
+//        }
 
 
         super.onStop()
@@ -195,9 +205,11 @@ class StartActivity : AppCompatActivity() {
 
     override fun onStart() {
         start.isClickable = true
+        shouldAllowBack = true
 
 //        shouldPlay = false
 //        Log.d("StartActivity", "onStart: $shouldPlay ")
+        this.audioManager.getAudioService()?.playMusic()
 
         main_loading.visibility = View.GONE
         start_parent_frame.visibility = View.VISIBLE
@@ -205,24 +217,48 @@ class StartActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (backPressed + 2000 > System.currentTimeMillis()) {
-
-                Constants.stopService(this)
-
-            super.onBackPressed()
+        if (shouldAllowBack) {
+            if (backPressed + 2000 > System.currentTimeMillis()) {
 
 
-        } else
-            Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
-                .show()
+                showExitDialog()
 
-        backPressed = System.currentTimeMillis()
+            } else
+//                Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
+//                    .show()
+
+            backPressed = System.currentTimeMillis()
+        }
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        this.audioManager.getAudioService()?.stopMusic()
+        Log.d("StartActivity", "onDestroy: $shouldPlay ")
 
+        super.onDestroy()
+//        this.audioManager.getAudioService()?.stopMusic()
+
+
+    }
+
+    private fun showExitDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        val itemView = LayoutInflater.from(this).inflate(R.layout.layout_exit_app, null)
+
+        builder.setView(itemView)
+        val updateDialog = builder.create()
+        updateDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        updateDialog.setCancelable(false)
+        updateDialog.setCanceledOnTouchOutside(false)
+        itemView.exit_app.setOnClickListener {
+            super.onBackPressed()
+            super.onDestroy()
+        }
+
+        itemView.cancel_exit_app.setOnClickListener {
+            updateDialog.dismiss()
+        }
+        updateDialog.show()
 
     }
 }

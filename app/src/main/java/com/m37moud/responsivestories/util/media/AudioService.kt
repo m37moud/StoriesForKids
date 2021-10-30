@@ -129,7 +129,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
             mediaPlayer?.let {
 //           it.prepare()
 
-                if (!it.isPlaying)
+//                if (!it.isPlaying)
                     it.start()
             }
         } catch (e: Exception) {
@@ -142,12 +142,12 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     fun pauseMusic() {
         Log.d("audio", "pauseMusic: ")
         try {
-            if (mediaPlayer != null) {
-                if (mediaPlayer!!.isPlaying) {
+//            if (mediaPlayer != null) {
+                if (mediaPlayer!!.isPlaying && mediaPlayer != null) {
                     mediaPlayer?.pause()
                     lengthPostition = mediaPlayer!!.currentPosition
                 }
-            }
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -158,12 +158,12 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         Log.d("audio", "resumeMusic: ")
 
         try {
-            if (mediaPlayer != null) {
-                if (!mediaPlayer!!.isPlaying) {
+//            if (mediaPlayer != null) {
+                if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
                     mediaPlayer!!.seekTo(lengthPostition)
                     mediaPlayer!!.start()
                 }
-            }
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

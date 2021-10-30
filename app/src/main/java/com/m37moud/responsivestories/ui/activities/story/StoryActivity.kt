@@ -83,6 +83,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
 
     private var shouldPlay = false
+    private var shouldAllowBack = false
 
     @Inject
     lateinit var audioManager: AudioManager
@@ -130,6 +131,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         Handler().postDelayed(
             {
+                shouldAllowBack = true
                 binding.storyLoading.visibility = View.GONE
                 binding.cardView.visibility = View.VISIBLE
             }, 2500
@@ -1004,15 +1006,17 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onBackPressed() {
-        shouldPlay =  true
-        startActivity(
-            Intent(
-                this@StoryActivity,
-                MainActivity::class.java
+        shouldPlay = true
+        if (shouldAllowBack) {
+            startActivity(
+                Intent(
+                    this@StoryActivity,
+                    MainActivity::class.java
+                )
             )
-        )
-        finish()
-        super.onBackPressed()
+            finish()
+            super.onBackPressed()
+        }
 
     }
 

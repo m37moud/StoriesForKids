@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/previous_sound_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:backgroundTint="@android:color/transparent"
+            android:rotation="180"
+
+            android:src="@android:drawable/ic_media_next"
+            android:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/play_sound_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_toStartOf="@+id/next_sound_setting"
+            android:layout_toEndOf="@+id/previous_sound_setting"
+            android:layout_toRightOf="@+id/previous_sound_setting"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@android:drawable/ic_media_play"
+            android:tint="@color/white"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/pause_sound_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/next_sound_setting"
+
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_toStartOf="@+id/next_sound_setting"
+            android:layout_toEndOf="@+id/previous_sound_setting"
+            android:layout_toRightOf="@+id/previous_sound_setting"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@android:drawable/ic_media_pause"
+            android:tint="@color/white"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/next_sound_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@android:drawable/ic_media_next"
+
+            android:tint="@color/white"
+
+
+            />
+    </RelativeLayout>
+
+</LinearLayout>

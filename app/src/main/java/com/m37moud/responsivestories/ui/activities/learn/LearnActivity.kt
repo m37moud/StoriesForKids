@@ -27,10 +27,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_story.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
-    private var _binding: ActivityLearnBinding ? = null
+    private var _binding: ActivityLearnBinding? = null
     private val binding get() = _binding!!
     private val mAdapter: LearnAdapter by lazy { LearnAdapter(this@LearnActivity, this) }
     private var category: LearnModel? = null
@@ -39,6 +40,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     lateinit var audioManager: AudioManager
 
     private var shouldPlay = false
+    private var shouldAllowBack = false
+
     private var categoryPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +71,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         Handler().postDelayed(
             {
                 binding.learnLoading.visibility = View.GONE
+                shouldAllowBack = true
                 binding.learnContainerFrame.visibility = View.VISIBLE
             }, 2500
         )
@@ -93,7 +97,6 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         binding.learnScroll.visibility = View.VISIBLE
 
     }
-
 
 
     private fun setupRecyclerView() {
@@ -200,8 +203,6 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     }
 
 
-
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // Checks the orientation of the screen
@@ -248,19 +249,23 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
     override fun onBackPressed() {
         this.shouldPlay = true
+//
+//        if (!shouldPlay) {
+//            stopService()
+//        }
+        if (shouldAllowBack) {
+            startActivity(
+                Intent(
+                    this@LearnActivity,
+                    MainActivity::class.java
+                )
+            )
+            finish()
 
-        if (!shouldPlay) {
-            stopService()
+            super.onBackPressed()
         }
 
-        startActivity(
-            Intent(
-                this@LearnActivity,
-                MainActivity::class.java
-            )
-        )
-        finish()
-        super.onBackPressed()
+
     }
 
 

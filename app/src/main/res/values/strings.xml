@@ -50,5 +50,8 @@
     <string name="finish">Finish</string>
     <string name="all_categories">all categories</string>
     <string name="all">all</string>
+    <string name="are_you_sure_to_exit">Are you sure to Exit</string>
+    <string name="exit_app">Exit</string>
+    <string name="cancel">Rate</string>
 
 </resources>

@@ -28,4 +28,9 @@
     <string name="english">انجليزى</string>
     <string name="apply">تطبيق</string>
     <string name="finish">انهاء</string>
+    <string name="are_you_sure_to_exit">هل متاكد من انك تريد الخروج</string>
+    <string name="all_categories">"كل الكتالوجات "</string>
+    <string name="exit_app">خروج</string>
+    <string name="all">الكل</string>
+    <string name="cancel">تقييم</string>
 </resources>

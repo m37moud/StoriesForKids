@@ -45,6 +45,8 @@ const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 class EnteredLearenActivity : AppCompatActivity() {
 
     private var shouldPlay = false
+    private var shouldAllowBack = false
+
     private var category: String? = null
     private var counter: Int = 0
     private lateinit var list: ArrayList<String>
@@ -84,6 +86,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         Handler().postDelayed(
             {
+                shouldAllowBack = true
                 entered_learn_loading.visibility = View.GONE
                 entered_learn_parent_frame.visibility = View.VISIBLE
                 entered_learn_Layout.visibility = View.VISIBLE
@@ -732,17 +735,17 @@ class EnteredLearenActivity : AppCompatActivity() {
         Log.d("loadAd", "changeOrientation: called")
 //        shouldPlay = false
 //        stopService()
-        if (mAdIsLoading && mRewardedAd != null ) {
+        if (mAdIsLoading && mRewardedAd != null) {
 
-        val display = (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay
-        val orientation = display.orientation
+            val display = (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay
+            val orientation = display.orientation
 
             shouldPlay = false
             if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
             }
-        }else{
+        } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         }
@@ -755,9 +758,9 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             .build()
 
-        ad_viewOffline.adListener = object : AdListener(){
+        ad_viewOffline.adListener = object : AdListener() {
             override fun onAdLoaded() {
-           ad_viewOffline.visibility = View.VISIBLE
+                ad_viewOffline.visibility = View.VISIBLE
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -770,7 +773,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     }
-    private fun hideAds(){
+
+    private fun hideAds() {
         ad_viewOffline.pause()
         ad_viewOffline.visibility = View.GONE
     }
@@ -821,7 +825,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        if (shouldAllowBack)
+            super.onBackPressed()
 
 //        shouldPlay = false
 //
@@ -882,12 +887,12 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     }
+
     override fun onPause() {
         hideAds()
         super.onPause()
 
     }
-
 
 
     override fun onDestroy() {
@@ -957,7 +962,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                     Log.d("loadAd", "User earned the reward.")
                 }
             })
-            
+
 //            startActivity(
 //                Intent(
 //                    this@EnteredLearenActivity,

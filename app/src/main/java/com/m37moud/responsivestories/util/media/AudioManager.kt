@@ -73,9 +73,11 @@ class AudioManager @Inject constructor(
 
     init {
 
-        val intent = Intent(context, AudioService::class.java)
-        context.startService(intent)
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+//        val intent =
+        Intent(context, AudioService::class.java).also { intent ->
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+//        context.startService(intent)
 
         Log.d("audio", "doBindService: ")
     }

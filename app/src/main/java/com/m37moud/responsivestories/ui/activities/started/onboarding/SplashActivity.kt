@@ -70,7 +70,7 @@ class SplashActivity : AppCompatActivity() {
                 // If user is not logged in or logout manually then user will  be redirected to the Login screen as usual.
 
                 // Get the current logged in user id
-//                shouldPlay = true
+                shouldPlay = true
                 if(onBoardingFinished()) {
                     // Launch dashboard screen.
                     startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
@@ -117,18 +117,25 @@ class SplashActivity : AppCompatActivity() {
         return sharedPref.getBoolean("Finished", false)
     }
 //
-//    override fun onStop() {
-//        super.onStop()
-//        if (!shouldPlay) {
-//            this.audioManager.getAudioService()?.pauseMusic()
-//
-//        }
-//    }
-//
-//    override fun onResume() {
-//        this.audioManager.getAudioService()?.resumeMusic()
-//
-//
-//        super.onResume()
-//    }
+
+    override fun onStart() {
+        super.onStart()
+        this.audioManager.getAudioService()?.playMusic()
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+    }
+
+    override fun onResume() {
+        this.audioManager.getAudioService()?.resumeMusic()
+
+
+        super.onResume()
+    }
 }
