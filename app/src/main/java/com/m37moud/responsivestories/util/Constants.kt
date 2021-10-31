@@ -20,6 +20,9 @@ class Constants {
     companion object {
 
          var showLoading = false
+         var activateSetting = false
+         var disableNextSound = false
+         var disablePreviousSound = false
 
 
         val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabets")

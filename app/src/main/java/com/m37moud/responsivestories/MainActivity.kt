@@ -1,6 +1,5 @@
 package com.m37moud.responsivestories
 
-import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -11,13 +10,9 @@ import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -31,15 +26,13 @@ import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.FirebaseService
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.main_grass
-import kotlinx.android.synthetic.main.activity_start.*
-import kotlinx.android.synthetic.main.layout_exit_app.view.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
 import javax.inject.Inject
 
@@ -392,8 +385,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-
-        this.audioManager.getAudioService()?.playMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
         videosViewModel.saveDownloadStatus(false)
         Log.d("MainActivity", "onStart: called $shouldPlay")
@@ -412,6 +405,7 @@ class MainActivity : AppCompatActivity() {
         showSettingDialog()
 
     }
+
     fun homeMainButton(view: View) {
         shouldPlay = true
 
@@ -480,7 +474,9 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         Log.d(TAG, "onResume: called")
         animInvoked = 0
-        this.audioManager.getAudioService()?.resumeMusic()
+
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
 //        Constants.startService(this)
 //        shouldPlay = false
@@ -565,6 +561,10 @@ class MainActivity : AppCompatActivity() {
         shouldAllowBack = false
         learn_card_view.isClickable = false
         story_card_view.isClickable = false
+        img_main_setting.isClickable = false
+        img_main_home.isClickable = false
+        open_menu_fab.isClickable = false
+
 //        val translateAnimation =
 //            ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 800f)
 //        translateAnimation.repeatCount = 0
@@ -685,6 +685,9 @@ class MainActivity : AppCompatActivity() {
                         shouldAllowBack = true
                         learn_card_view.isClickable = true
                         story_card_view.isClickable = true
+                        img_main_setting.isClickable = true
+                        img_main_home.isClickable = true
+                        open_menu_fab.isClickable = true
 
                     }.start()
                 }.start()
@@ -703,6 +706,11 @@ class MainActivity : AppCompatActivity() {
         shouldAllowBack = false
         learn_card_view.isClickable = false
         story_card_view.isClickable = false
+        img_main_setting.isClickable = false
+        img_main_home.isClickable = false
+        open_menu_fab.isClickable = false
+
+
         this.shouldPlay = true
 
         if (animInvoked == 1) {
@@ -791,6 +799,9 @@ class MainActivity : AppCompatActivity() {
                 initViewToHide()
                 learn_card_view.isClickable = true
                 story_card_view.isClickable = true
+                img_main_setting.isClickable = true
+                img_main_home.isClickable = true
+                open_menu_fab.isClickable = true
 
             }.start()
 
@@ -827,29 +838,69 @@ class MainActivity : AppCompatActivity() {
 
         val itemView = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
 
+        if(activateSetting){
+
+            itemView.play_sound_setting.visibility = View.VISIBLE
+            itemView.pause_sound_setting.visibility = View.INVISIBLE
+        }else{
+            itemView.play_sound_setting.visibility = View.INVISIBLE
+            itemView.pause_sound_setting.visibility = View.VISIBLE
+        }
+
+
+
+//        val popUp = PopupWindow(
+//            itemView, LinearLayout.LayoutParams.WRAP_CONTENT,
+//            LinearLayout.LayoutParams.WRAP_CONTENT, false
+//        )
+//        popUp.isTouchable = true
+//        popUp.isFocusable = true
+//        popUp.isOutsideTouchable = true
+//        popUp.showAsDropDown(img_main_setting)
+
         builder.setView(itemView)
         val settingsDialog = builder.create()
         settingsDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val window = settingsDialog.window
+        window?.setGravity(Gravity.CENTER)
+        window?.attributes?.windowAnimations = R.style.DalogAnimation
 
 //        settingsDialog.setCancelable(false)
 //        settingsDialog.setCanceledOnTouchOutside(false)
         itemView.previous_sound_setting.setOnClickListener {
+//            if(itemView.play_sound_setting.isVisible)
+                itemView.play_sound_setting.visibility = View.INVISIBLE
+            itemView.pause_sound_setting.visibility = View.VISIBLE
+
+
+            this.audioManager.getAudioService()?.previousMusic()
 
         }
 
         itemView.play_sound_setting.setOnClickListener {
+            Constants.activateSetting = false
+
             this.audioManager.getAudioService()?.playMusic()
             itemView.play_sound_setting.visibility = View.INVISIBLE
             itemView.pause_sound_setting.visibility = View.VISIBLE
 
         }
+
         itemView.pause_sound_setting.setOnClickListener {
+            Constants.activateSetting = true
+
             this.audioManager.getAudioService()?.pauseMusic()
             itemView.play_sound_setting.visibility = View.VISIBLE
             itemView.pause_sound_setting.visibility = View.INVISIBLE
 
         }
+
         itemView.next_sound_setting.setOnClickListener {
+
+            itemView.play_sound_setting.visibility = View.INVISIBLE
+            itemView.pause_sound_setting.visibility = View.VISIBLE
+            this.audioManager.getAudioService()?.nextMusic()
+
         }
         settingsDialog.show()
 

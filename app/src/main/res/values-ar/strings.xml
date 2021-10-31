@@ -33,4 +33,6 @@
     <string name="exit_app">خروج</string>
     <string name="all">الكل</string>
     <string name="cancel">تقييم</string>
+    <string name="share_app_with_your_friend">شارك التطبيق مع اصدقائك</string>
+    <string name="if_you_like_app_you_can_pay_cup_of_coffee_for_me">لو عجبك البرنامج ممكن تعزمنى على كوب قهوه</string>
 </resources>

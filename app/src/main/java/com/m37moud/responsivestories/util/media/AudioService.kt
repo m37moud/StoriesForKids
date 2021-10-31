@@ -5,9 +5,17 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
+import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import com.m37moud.responsivestories.util.Constants.Companion.disableNextSound
+import com.m37moud.responsivestories.util.Constants.Companion.disablePreviousSound
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_entered_learen.*
+import kotlinx.android.synthetic.main.folder_container.*
+import java.io.File
+import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
@@ -42,6 +50,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     override fun onCreate() {
         super.onCreate()
         // Create the player when the service is created
+        tracks = Random().nextInt(5) + 1
+
         createPlayer()
     }
 
@@ -94,15 +104,19 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
             mediaPlayer = MediaPlayer()
             mediaPlayer?.setOnErrorListener(this)
+            mediaPlayer?.setOnCompletionListener {
+
+                nextMusic()
+            }
 
             if (mediaPlayer != null) {
-                mediaPlayer?.isLooping = true
+                mediaPlayer?.isLooping = false
                 mediaPlayer?.setVolume(1f, 1f)
             }
-            tracks = Random().nextInt(5) + 1
             Log.d("audio", "playBackgroundSound: $tracks ")
 
             path = "sound/sfx/loop/loop$tracks.mp3"
+//            path = "sound/sfx/loop/loop"
 
             Log.d("audio", "play: " + path)
 
@@ -130,7 +144,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 //           it.prepare()
 
 //                if (!it.isPlaying)
-                    it.start()
+                it.start()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -141,15 +155,17 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
     fun pauseMusic() {
         Log.d("audio", "pauseMusic: ")
-        try {
-//            if (mediaPlayer != null) {
+        if (mediaPlayer != null) {
+
+            try {
                 if (mediaPlayer!!.isPlaying && mediaPlayer != null) {
                     mediaPlayer?.pause()
                     lengthPostition = mediaPlayer!!.currentPosition
                 }
-//            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }
@@ -159,17 +175,73 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
         try {
 //            if (mediaPlayer != null) {
-                if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
-                    mediaPlayer!!.seekTo(lengthPostition)
-                    mediaPlayer!!.start()
-                }
+            if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
+                mediaPlayer!!.seekTo(lengthPostition)
+                mediaPlayer!!.start()
+            }
 //            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun stopMusic() {
+
+    fun nextMusic() {
+        Log.d("audio", "nextMusic: ")
+
+        if (tracks < 6) {
+            tracks++
+
+        }
+        if (tracks == 6) {
+            disableNextSound = true
+            tracks = 0
+        }
+
+        try {
+            if (mediaPlayer != null) {
+                stopMusic()
+            }
+
+            if (mediaPlayer == null) {
+                createPlayer()
+                playMusic()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    fun previousMusic() {
+        if (tracks > 0)
+            tracks--
+
+        if (tracks == 0) {
+            disablePreviousSound = true
+            tracks = 6
+
+        }
+
+
+
+        Log.d("audio", "previousMusic: ")
+
+        try {
+            if (mediaPlayer != null) {
+                stopMusic()
+            }
+
+            if (mediaPlayer == null) {
+                createPlayer()
+                playMusic()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun stopMusic() {
         Log.d("audio", "stopMusic: ")
         Log.d("audio", "pauseMusic: ")
         try {
@@ -186,6 +258,38 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         }
 
 
+    }
+
+    fun checkTrack(): Boolean {
+        if (tracks == 6) return disableNextSound
+        if (tracks == 0) return disablePreviousSound
+
+        return false
+    }
+
+
+    fun getAllFilesInAssetByExtension(
+        path: String?,
+        extension: String?
+    ): Array<String>? {
+        try {
+            val files = path?.let { this.assets.list(it) }
+            if (TextUtils.isEmpty(extension)) {
+                return files
+            }
+            val filesWithExtension: MutableList<String> =
+                ArrayList()
+            for (file in files!!) {
+                if (file.endsWith(extension!!)) {
+                    filesWithExtension.add(file)
+                }
+            }
+            return filesWithExtension.toTypedArray()
+        } catch (e: IOException) {
+            // TODO Auto-generated catch block
+            e.printStackTrace()
+        }
+        return null
     }
 
 }

@@ -107,8 +107,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-
-        this.audioManager.getAudioService()?.playMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
         mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
         videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
@@ -1031,7 +1031,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onResume() {
-        this.audioManager.getAudioService()?.resumeMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
 
         super.onResume()

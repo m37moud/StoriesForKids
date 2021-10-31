@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -140,7 +142,8 @@ class StartActivity : AppCompatActivity() {
     override fun onResume() {
 //      Constants.startService(this)
 //        shouldPlay = false
-        this.audioManager.getAudioService()?.resumeMusic()
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
 
         Log.d("StartActivity", "onResume: $shouldPlay ")
@@ -209,7 +212,8 @@ class StartActivity : AppCompatActivity() {
 
 //        shouldPlay = false
 //        Log.d("StartActivity", "onStart: $shouldPlay ")
-        this.audioManager.getAudioService()?.playMusic()
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
         main_loading.visibility = View.GONE
         start_parent_frame.visibility = View.VISIBLE
@@ -218,16 +222,17 @@ class StartActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (shouldAllowBack) {
-            if (backPressed + 2000 > System.currentTimeMillis()) {
-
-
-                showExitDialog()
-
-            } else
-//                Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
-//                    .show()
-
-            backPressed = System.currentTimeMillis()
+            showExitDialog()
+//            if (backPressed + 2000 > System.currentTimeMillis()) {
+//
+//
+//                showExitDialog()
+//
+//            } else
+////                Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
+////                    .show()
+//
+//                backPressed = System.currentTimeMillis()
         }
     }
 
@@ -246,19 +251,23 @@ class StartActivity : AppCompatActivity() {
         val itemView = LayoutInflater.from(this).inflate(R.layout.layout_exit_app, null)
 
         builder.setView(itemView)
-        val updateDialog = builder.create()
-        updateDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        updateDialog.setCancelable(false)
-        updateDialog.setCanceledOnTouchOutside(false)
+        val exitDialog = builder.create()
+        exitDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val window = exitDialog.window
+        window?.setGravity(Gravity.CENTER)
+        window?.attributes?.windowAnimations = R.style.DalogAnimation
+
+        exitDialog.setCancelable(false)
+        exitDialog.setCanceledOnTouchOutside(false)
         itemView.exit_app.setOnClickListener {
             super.onBackPressed()
             super.onDestroy()
         }
 
         itemView.cancel_exit_app.setOnClickListener {
-            updateDialog.dismiss()
+            exitDialog.dismiss()
         }
-        updateDialog.show()
+        exitDialog.show()
 
     }
 }

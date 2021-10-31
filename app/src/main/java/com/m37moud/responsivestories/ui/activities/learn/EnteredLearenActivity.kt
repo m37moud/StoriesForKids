@@ -72,12 +72,15 @@ class EnteredLearenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setFullScreen()
 ////        changeOrientation()
-        this.audioManager.getAudioService()?.playMusic()
+
 
         setContentView(R.layout.activity_entered_learen)
+
 //init random background
         Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearenActivity)
 
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
         //InterstitialAd
         loadAd()
@@ -90,6 +93,8 @@ class EnteredLearenActivity : AppCompatActivity() {
                 entered_learn_loading.visibility = View.GONE
                 entered_learn_parent_frame.visibility = View.VISIBLE
                 entered_learn_Layout.visibility = View.VISIBLE
+                getAssetsFolder()
+
 
                 //set animation
 
@@ -173,8 +178,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
 
 
-
-        getAssetsFolder()
 
 
 
@@ -519,7 +522,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         return false
     }
 
-    //new work from my jop 10/6
     private fun setImage(imgList: ArrayList<String>) {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
@@ -818,8 +820,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         super.onResume()
         showAds()
 //        startService()
-
-        this.audioManager.getAudioService()?.resumeMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
     }
 
