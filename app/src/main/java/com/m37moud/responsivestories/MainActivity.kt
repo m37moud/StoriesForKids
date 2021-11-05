@@ -31,6 +31,7 @@ import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.FirebaseService
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
+import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
@@ -239,36 +240,33 @@ class MainActivity : AppCompatActivity() {
 
 //        learn_main_img.setOnTouchListener(Constants.Listeners.onTouch)
 //        story_main_img.setOnTouchListener(Constants.Listeners.onTouch)
-        img_main_home.setOnTouchListener(Constants.Listeners.onTouch)
-        img_main_setting.setOnTouchListener(Constants.Listeners.onTouch)
+//        img_main_home.setOnTouchListener(Constants.Listeners.onTouch)
+//        img_main_setting.setOnTouchListener(Constants.Listeners.onTouch)
 
 
         //start story activity
-        story_card_view.setOnClickListener {
-            if (shouldAllowBack)
-                exitMainActivityAnimation(isStory = true, isLearn = false, isFinish = false)
-//            Handler().postDelayed(
-//                {
-//                    if (isAnimFinish) {
-//                        startActivity(Intent(this@MainActivity, StoryActivity::class.java))
-//                    }
-//                }, 2500
-//
-//            )
+        story_main_img.setOnClickListener {
+            Constants.clickSound(this)
 
-//            finish()
+            // implements animation uising ElasticAnimation
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    if (shouldAllowBack)
+                        exitMainActivityAnimation(isStory = true, isLearn = false, isFinish = false)
+                }.doAction()
+
+
         }
 
-        learn_card_view.setOnClickListener {
-            if (shouldAllowBack)
-                exitMainActivityAnimation(isStory = false, isLearn = true, isFinish = false)
-//            if (isAnimFinish) {
-//                startActivity(
-//                    Intent(this@MainActivity, LearnActivity::class.java)
-//                )
+        learn_main_img.setOnClickListener {
+            Constants.clickSound(this)
 
-//            }
-//            finish()
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    if (shouldAllowBack)
+                        exitMainActivityAnimation(isStory = false, isLearn = true, isFinish = false)
+                }.doAction()
+
         }
 
 
@@ -340,6 +338,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onAddButtonClicked() {
+        fabButtonSound(clicked)
         setVisibility(clicked)
         setAnimation(clicked)
         setClickable(clicked)
@@ -358,6 +357,16 @@ class MainActivity : AppCompatActivity() {
             youtube_fab.startAnimation(toBottom)
             open_menu_fab.startAnimation(rotateClose)
         }
+    }
+
+    private fun fabButtonSound(clicked :Boolean){
+        if (!clicked) {
+            Constants.fabOpenSound(this)
+        }else{
+            Constants.fabCloseSound(this)
+
+        }
+
     }
 
     private fun setVisibility(clicked: Boolean) {
@@ -402,20 +411,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun settingMainButton(view: View) {
-        showSettingDialog()
+        Constants.clickSound(this)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                showSettingDialog()
+
+            }.doAction()
 
     }
 
     fun homeMainButton(view: View) {
-        shouldPlay = true
+        Constants.clickSound(this)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                shouldPlay = true
 
-        startActivity(
-            Intent(
-                this@MainActivity,
-                StartActivity::class.java
-            )
-        )
-        finish()
+                startActivity(
+                    Intent(
+                        this@MainActivity,
+                        StartActivity::class.java
+                    )
+                )
+                finish()
+            }.doAction()
+
 
     }
 
@@ -590,6 +609,8 @@ class MainActivity : AppCompatActivity() {
 
         if (animInvoked == 0) {
             open_menu_fab.apply {
+
+
                 visibility = View.VISIBLE
                 alpha = 0f
                 scaleX = 0f
@@ -603,6 +624,7 @@ class MainActivity : AppCompatActivity() {
                     scaleYBy(1f)
 
                 }.withEndAction {
+
 
 //                    Toast.makeText(this@MainActivity, "start", Toast.LENGTH_SHORT).show()
 
@@ -645,7 +667,11 @@ class MainActivity : AppCompatActivity() {
                 layoutAnim.startOffset = delay
                 layout.startAnimation(layoutAnim)
 
+//                Constants.buttonAppearSound(this@MainActivity)
+
+
             }.withEndAction {
+
                 imageView.animate().apply {
                     imageView.visibility = View.VISIBLE
                     startDelay = 300
@@ -802,6 +828,8 @@ class MainActivity : AppCompatActivity() {
                 img_main_setting.isClickable = true
                 img_main_home.isClickable = true
                 open_menu_fab.isClickable = true
+                Constants.fabCloseSound(this)
+
 
             }.start()
 

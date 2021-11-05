@@ -1,14 +1,12 @@
 package com.m37moud.responsivestories.ui.activities.learn
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -19,12 +17,10 @@ import com.m37moud.responsivestories.databinding.ActivityLearnBinding
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
-import com.m37moud.responsivestories.util.MediaService
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_learn.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_story.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 import javax.inject.Inject
 
@@ -83,14 +79,20 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
 
         binding.imgClick.setOnClickListener {
-            val intent = Intent(this@LearnActivity, EnteredLearenActivity::class.java)
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
-            //get image name from Constans list
-            val url = Constants.img[categoryPosition]
-            intent.putExtra("selectedCategory", url)
-            shouldPlay = true
-            startActivity(intent)
-            finish
+                    val intent = Intent(this@LearnActivity, EnteredLearnActivity::class.java)
+
+                    //get image name from Constans list
+                    val url = Constants.img[categoryPosition]
+                    intent.putExtra("selectedCategory", url)
+                    shouldPlay = true
+                    startActivity(intent)
+                    finish
+                }.doAction()
+
         }
 
         val backgroundColor = parent_learn_frame.background
@@ -203,24 +205,24 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         return str
     }
 
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            setFullScreen()
-            Toast.makeText(this@LearnActivity, "landscape", Toast.LENGTH_SHORT).show()
-            category_img.visibility = View.GONE
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            category_img.visibility = View.VISIBLE
-            Toast.makeText(this@LearnActivity, "portrait", Toast.LENGTH_SHORT).show()
-
-        }
-    }
+//
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+////            setFullScreen()
+//            Toast.makeText(this@LearnActivity, "landscape", Toast.LENGTH_SHORT).show()
+//            category_img.visibility = View.GONE
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            category_img.visibility = View.VISIBLE
+//            Toast.makeText(this@LearnActivity, "portrait", Toast.LENGTH_SHORT).show()
+//
+//        }
+//    }
 
 
     override fun onDestroy() {
-        stopService()
+//        stopService()
         super.onDestroy()
     }
 
@@ -245,17 +247,20 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.resumeMusic()
 
-//        shouldPlay = false
+        shouldPlay = false
         super.onResume()
     }
 
     override fun onBackPressed() {
+
         this.shouldPlay = true
 //
 //        if (!shouldPlay) {
 //            stopService()
 //        }
         if (shouldAllowBack) {
+            Constants.fabCloseSound(this)
+
             startActivity(
                 Intent(
                     this@LearnActivity,
@@ -271,24 +276,4 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     }
 
 
-    private fun startService() {
-        val intent = Intent(this@LearnActivity, MediaService::class.java)
-        if (this@LearnActivity != null) {
-            this@LearnActivity?.startService(intent)
-        }
-    }
-
-
-    private fun stopService() {
-        val intent = Intent(this@LearnActivity, MediaService::class.java)
-        if (this@LearnActivity != null) {
-            this@LearnActivity?.stopService(intent)
-        }
-    }
-
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        _binding = null
-//    }
 }

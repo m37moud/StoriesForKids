@@ -1,6 +1,5 @@
 package com.m37moud.responsivestories.ui.activities.learn
 
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -21,7 +20,6 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.m37moud.responsivestories.util.MediaService
 import kotlinx.android.synthetic.main.activity_entered_learen.*
 import kotlinx.android.synthetic.main.folder_container.*
 import java.io.File
@@ -33,16 +31,15 @@ import kotlin.properties.Delegates
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_learn.*
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 
 @AndroidEntryPoint
-class EnteredLearenActivity : AppCompatActivity() {
+class EnteredLearnActivity : AppCompatActivity() {
 
     private var shouldPlay = false
     private var shouldAllowBack = false
@@ -77,7 +74,7 @@ class EnteredLearenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_entered_learen)
 
 //init random background
-        Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearenActivity)
+        Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearnActivity)
 
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.playMusic()
@@ -152,12 +149,22 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         }
 
-        txt_name.setOnClickListener {
+        txt_frame_Container.setOnClickListener {
+            Constants.clickSound(this)
+
+
             clicked = false
             if (!isFolder(category!!) && !clicked) {
                 Log.d("txt_name", "showEng: " + clicked.toString())
-                changeLang()
-                showEng = !showEng
+                txt_name.animate().apply {
+                    duration = 300
+                    rotationYBy(360f)
+                    scaleXBy(0f)
+                    scaleYBy(0f)
+                    changeLang()
+                    showEng = !showEng
+                }
+
             }
 
 
@@ -179,9 +186,9 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
 
-
-
         right_img_btn.setOnClickListener {
+            Constants.clickSound(this)
+
 
             if (!isFolder(category!!) && !clicked) {
                 detectLanguage()
@@ -254,6 +261,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
 
         left_img_btn.setOnClickListener {
+            Constants.clickSound(this)
+
 //            showEng = false
 
 
@@ -357,79 +366,93 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
             //init on click listener to arabic container
-            arabic_container.setOnClickListener {
-                val arabicFiles = assets.list(category!!)
-                val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
-                Log.d("getAssetsFolder", "arabic_container: " + imgList.toString())
-                if (imgList.isNotEmpty()) {
-                    imgList.forEach { folders ->
-                        if (folders.toUpperCase(Locale.ROOT) == "AR") {
-                            try {
-                                Log.d(
-                                    "getAssetsFolder", "folders : " +
-                                            folders
-                                )
-                                val path = category!! + File.separator + folders
-                                Log.d(
-                                    "getAssetsFolder", "path: " +
-                                            path
-                                )
-                                val files = assets.list(path)
-                                val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d(
-                                    "getAssetsFolder", "nFiles: " +
-                                            nFiles
-                                )
-                                folder = folders
-                                showEng = false
+            arabic_img.setOnClickListener {
+                Constants.clickSound(this)
+
+                ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                    .setOnFinishListener {
+                        val arabicFiles = assets.list(category!!)
+                        val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
+                        Log.d("getAssetsFolder", "arabic_container: " + imgList.toString())
+                        if (imgList.isNotEmpty()) {
+                            imgList.forEach { folders ->
+                                if (folders.toUpperCase(Locale.ROOT) == "AR") {
+                                    try {
+                                        Log.d(
+                                            "getAssetsFolder", "folders : " +
+                                                    folders
+                                        )
+                                        val path = category!! + File.separator + folders
+                                        Log.d(
+                                            "getAssetsFolder", "path: " +
+                                                    path
+                                        )
+                                        val files = assets.list(path)
+                                        val nFiles: ArrayList<String> = ArrayList(files!!.toList())
+                                        Log.d(
+                                            "getAssetsFolder", "nFiles: " +
+                                                    nFiles
+                                        )
+                                        folder = folders
+                                        showEng = false
 //                                initBtn()
 
-                                setImage(nFiles)
+                                        setImage(nFiles)
 
-                            } catch (e: IOException) {
-                                Toast.makeText(
-                                    this@EnteredLearenActivity,
-                                    " $e",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                Log.d("getAssetsFolder", "setImage: ${e.message}")
+                                    } catch (e: IOException) {
+                                        Toast.makeText(
+                                            this@EnteredLearnActivity,
+                                            " $e",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                        Log.d("getAssetsFolder", "setImage: ${e.message}")
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                }
+                        }
+                    }.doAction()
+
+
 
             }
             //init on click listener to english container
-            english_container.setOnClickListener {
+            english_img.setOnClickListener {
+                Constants.clickSound(this)
 
-                if (imgList.isNotEmpty()) {
-                    imgList.forEach {
-                        if (it == "EN") {
-                            try {
-                                val files = assets.list(category!! + File.separator + it)
-                                val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
-                                folder = it
-                                showEng = true
+                ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                    .setOnFinishListener {
+
+                        if (imgList.isNotEmpty()) {
+                            imgList.forEach {
+                                if (it == "EN") {
+                                    try {
+                                        val files = assets.list(category!! + File.separator + it)
+                                        val nFiles: ArrayList<String> = ArrayList(files!!.toList())
+                                        Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
+                                        folder = it
+                                        showEng = true
 //                                initBtn()
-                                setImage(nFiles)
+                                        setImage(nFiles)
 
-                            } catch (e: IOException) {
-                                Toast.makeText(
-                                    this@EnteredLearenActivity,
-                                    " $e",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                Log.d("getAssetsFolder", "setImage: $e")
+                                    } catch (e: IOException) {
+                                        Toast.makeText(
+                                            this@EnteredLearnActivity,
+                                            " $e",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                        Log.d("getAssetsFolder", "setImage: $e")
+                                    }
+                                }
                             }
+
+
                         }
-                    }
+                    }.doAction()
 
 
-                }
 
 
             }
@@ -548,7 +571,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             val drawable = Drawable.createFromStream(input, null)
 
-            Glide.with(this@EnteredLearenActivity)
+            Glide.with(this@EnteredLearnActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawable)
@@ -570,7 +593,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             }
 
         } catch (e: IOException) {
-            Toast.makeText(this@EnteredLearenActivity, " $e", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@EnteredLearnActivity, " $e", Toast.LENGTH_SHORT).show()
             Log.d("TAG", "setImage: ${e.message}")
         }
 
@@ -686,14 +709,14 @@ class EnteredLearenActivity : AppCompatActivity() {
             val drawableAr = Drawable.createFromStream(srcAr, null)
 
 
-            Glide.with(this@EnteredLearenActivity)
+            Glide.with(this@EnteredLearnActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableAr).into(arabic_img)
 
         } catch (e: IOException) {
             Toast.makeText(
-                this@EnteredLearenActivity,
+                this@EnteredLearnActivity,
                 " $e",
                 Toast.LENGTH_SHORT
             )
@@ -707,14 +730,14 @@ class EnteredLearenActivity : AppCompatActivity() {
             val drawableEn = Drawable.createFromStream(srcEn, null)
 
 
-            Glide.with(this@EnteredLearenActivity)
+            Glide.with(this@EnteredLearnActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableEn).into(english_img)
 
         } catch (e: IOException) {
             Toast.makeText(
-                this@EnteredLearenActivity,
+                this@EnteredLearnActivity,
                 " $e",
                 Toast.LENGTH_SHORT
             )
@@ -753,7 +776,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
     }
 
-    //banner ads        //work from job
     private fun showAds() {
 
         val adRequest = AdRequest.Builder()
@@ -795,7 +817,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                     val error = "domain: ${adError.domain}, code: ${adError.code}, " +
                             "message: ${adError.message}"
                     Toast.makeText(
-                        this@EnteredLearenActivity,
+                        this@EnteredLearnActivity,
                         "onAdFailedToLoad() with error $error",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -920,6 +942,8 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
     fun homeButton(view: View) {
+        Constants.clickSound(this)
+
 
         //show ads
         if (mRewardedAd != null) {
@@ -980,6 +1004,8 @@ class EnteredLearenActivity : AppCompatActivity() {
     }
 
     fun replayButton(view: View) {
+        Constants.clickSound(this)
+
         val name = initName(list[counter], showEng)
         val path = category.plus("Name") + folder + File.separator + name
         playImgSound(path)

@@ -79,7 +79,9 @@ class SplashActivity : AppCompatActivity() {
                     startActivity(Intent(this@SplashActivity, StartActivity::class.java))
 
                 }
-                finish() // Call this when your activity is done and should be closed.
+                // Call this when your activity is done and should be closed.
+
+                finish()
             },
             3000
         ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
@@ -87,11 +89,14 @@ class SplashActivity : AppCompatActivity() {
         splash_txt.startAnimation(txtBottomAnimation)
 //        splash_cow_frame.startAnimation(txtTopAnimation)
         splash_cow_frame.animate().apply {
+
             splash_cow_frame.startAnimation(txtTopAnimation)
         }.withEndAction {
             Log.d("txtTopAnimation", "txtTopAnimation: end")
+
             cow.visibility = View.VISIBLE
             cowRightTranslateAnimation.startOffset = 1000
+
             cow.startAnimation(cowRightTranslateAnimation)
 
         }.start()
@@ -120,7 +125,7 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        this.audioManager.getAudioService()?.playMusic()
+        this.audioManager.doBindService()
 
     }
 

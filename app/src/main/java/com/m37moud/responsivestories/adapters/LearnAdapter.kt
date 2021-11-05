@@ -2,9 +2,13 @@ package com.m37moud.responsivestories.adapters
 
 import android.content.Context
 import android.net.Uri
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.m37moud.responsivestories.R
@@ -13,6 +17,7 @@ import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import kotlinx.android.synthetic.main.category_learn_items.view.*
 import java.util.*
+import java.util.Collections.emptyList
 
 class LearnAdapter constructor(var context: Context, val mItemClickListener: ItemClickListener) :
     RecyclerView.Adapter<LearnAdapter.LearnViewHolder>() {
@@ -27,6 +32,12 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
     }
 
     inner class LearnViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        var learnContainer: LinearLayout = itemView.findViewById(R.id.category_learn_container)
+
+        var learnImg: ImageView = itemView.findViewById(R.id.img_title)
+
+        var learnTitle: TextView = itemView.findViewById(R.id.txt_title)
 
         init {
             itemView.setOnClickListener {
@@ -89,6 +100,14 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
 
     fun getCategoryName(position: Int): LearnModel? {
         return learnTitle[position]
+    }
+
+
+    fun initEnimTouchView(holder: LearnViewHolder) {
+
+
+
+
     }
 
 

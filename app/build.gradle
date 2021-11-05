@@ -159,4 +159,7 @@ dependencies {
 // scrolling BackGround
     implementation 'com.github.Q42:AndroidScrollingImageView:1.3.4'
 
+    //elasticView
+    implementation 'com.github.skydoves:elasticviews:2.1.0'
+
 }

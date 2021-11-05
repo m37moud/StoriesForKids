@@ -86,27 +86,46 @@ class Constants {
         }
 
 
-         fun startService(activity : Activity) {
-            val intent = Intent(activity, MediaService::class.java)
-            if (activity != null) {
-                activity?.startService(intent)
-            }
-        }
 
-         fun stopService(activity : Activity) {
-            val intent = Intent(activity, MediaService::class.java)
-            if (activity != null) {
-                activity?.stopService(intent)
-            }
-        }
-
-        private fun playImgSound(name: String , context :Context) {
+         fun clickSound(context :Context) {
             var path: String?
 
             try {
-                val newName = removeLastChar(name)
+//                val newName = removeLastChar(name)
 
-                path = "sound/" + newName + "ar.mp3"
+                path = "sound/sfx/click.mp3"
+
+                Log.d("soundmd", "play: " + path)
+                val mediaPlayer = MediaPlayer()
+
+                val descriptor = context.assets?.openFd(path)
+                if (descriptor != null) {
+                    mediaPlayer.setDataSource(
+                        descriptor.fileDescriptor,
+                        descriptor.startOffset,
+                        descriptor.length
+                    )
+
+                    descriptor.close()
+                }
+
+                mediaPlayer.prepare()
+                mediaPlayer.setVolume(2f, 2f)
+                mediaPlayer.isLooping = false
+                mediaPlayer.start()
+            } catch (e: Exception) {
+                Log.d("soundmd", "play: " + e)
+                e.printStackTrace()
+            }
+
+        }
+        fun fabOpenSound(context :Context) {
+            var path: String?
+
+            try {
+//                val newName = removeLastChar(name)
+
+                path = "sound/sfx/sw1.mp3"
 
                 Log.d("soundmd", "play: " + path)
                 val mediaPlayer = MediaPlayer()
@@ -124,6 +143,71 @@ class Constants {
 
                 mediaPlayer.prepare()
                 mediaPlayer.setVolume(1f, 1f)
+                mediaPlayer.isLooping = false
+                mediaPlayer.start()
+            } catch (e: Exception) {
+                Log.d("soundmd", "play: " + e)
+                e.printStackTrace()
+            }
+
+        }
+        fun fabCloseSound(context :Context) {
+            var path: String?
+
+            try {
+//                val newName = removeLastChar(name)
+
+                path = "sound/sfx/sw2.mp3"
+
+                Log.d("soundmd", "play: " + path)
+                val mediaPlayer = MediaPlayer()
+
+                val descriptor = context.assets?.openFd(path)
+                if (descriptor != null) {
+                    mediaPlayer.setDataSource(
+                        descriptor.fileDescriptor,
+                        descriptor.startOffset,
+                        descriptor.length
+                    )
+
+                    descriptor.close()
+                }
+
+                mediaPlayer.prepare()
+                mediaPlayer.setVolume(2f, 2f)
+                mediaPlayer.isLooping = false
+                mediaPlayer.start()
+            } catch (e: Exception) {
+                Log.d("soundmd", "play: " + e)
+                e.printStackTrace()
+            }
+
+        }
+
+        fun buttonAppearSound(context :Context) {
+            var path: String?
+
+            try {
+//                val newName = removeLastChar(name)
+
+                path = "sound/sfx/pop2.mp3"
+
+                Log.d("soundmd", "play: " + path)
+                val mediaPlayer = MediaPlayer()
+
+                val descriptor = context.assets?.openFd(path)
+                if (descriptor != null) {
+                    mediaPlayer.setDataSource(
+                        descriptor.fileDescriptor,
+                        descriptor.startOffset,
+                        descriptor.length
+                    )
+
+                    descriptor.close()
+                }
+
+                mediaPlayer.prepare()
+                mediaPlayer.setVolume(2f, 2f)
                 mediaPlayer.isLooping = false
                 mediaPlayer.start()
             } catch (e: Exception) {

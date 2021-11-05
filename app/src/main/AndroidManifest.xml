@@ -53,7 +53,7 @@
             android:theme="@style/StartScreenStyle" />
 
         <activity
-            android:name=".ui.activities.learn.EnteredLearenActivity"
+            android:name=".ui.activities.learn.EnteredLearnActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:label="@string/title_activity_entered_learen"
             android:screenOrientation="landscape"

@@ -27,11 +27,12 @@ import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
 import com.m37moud.responsivestories.util.media.AudioManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
 import javax.inject.Inject
 
 const val AD_InterstitialAd_ID = "ca-app-pub-3940256099942544/1033173712"
-
+@AndroidEntryPoint
 class OfflinePlayerActivity : AppCompatActivity() {
     private lateinit var player: SimpleExoPlayer
     private lateinit var videoUri: Uri
@@ -323,7 +324,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
                                 // Don't forget to set the ad reference to null so you
                                 // don't show the ad a second time.
                                 mInterstitialAd = null
-                                shouldPlay = true
+//                                shouldPlay = true
 
 //                                loadAd()
                             }
@@ -352,6 +353,11 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     override fun finish() {
         //show ads
+        //stop playing sound
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
         if (mInterstitialAd != null) {
             mInterstitialAd?.show(this)
             super.finish()
@@ -372,7 +378,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState?.let {
+        savedInstanceState.let {
             player.seekTo(it.getLong(KEY_POSITION))
 //            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
         }

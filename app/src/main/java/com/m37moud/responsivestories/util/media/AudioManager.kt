@@ -29,12 +29,14 @@ class AudioManager @Inject constructor(
             val binder = service as AudioService.AudioBinder
             audioService = binder.getService()
 
-            Log.d("audio", "audioService:  $audioService")
+            Log.d("audio", "onServiceConnected:  $audioService")
 
             bound = true
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
+            Log.d("audio", "onServiceDisconnected:  $audioService")
+
             bound = false
         }
     }
@@ -79,7 +81,7 @@ class AudioManager @Inject constructor(
         }
 //        context.startService(intent)
 
-        Log.d("audio", "doBindService: ")
+        Log.d("audio", "init: ")
     }
 
 }

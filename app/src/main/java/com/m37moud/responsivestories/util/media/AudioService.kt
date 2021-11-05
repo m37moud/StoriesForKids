@@ -35,20 +35,26 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
 
     override fun onBind(p0: Intent?): IBinder? {
-        Log.d("audio", "onBind: ")
+        Log.d("AudioService", "onBind: ")
         return binder
     }
 
     override fun onUnbind(intent: Intent): Boolean {
+        Log.d("AudioService", "onUnbind: ")
+
         return false
     }
 
     override fun onRebind(intent: Intent?) {
+        Log.d("AudioService", "onRebind: ")
+
         super.onRebind(intent)
     }
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("AudioService", "onCreate: ")
+
         // Create the player when the service is created
         tracks = Random().nextInt(5) + 1
 
@@ -60,10 +66,14 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 //        mediaPlayer?.prepare()
 //        mediaPlayer?.start()
 //        playMusic()
+        Log.d("AudioService", "onStartCommand: ")
+
         return START_STICKY
     }
 
     override fun onDestroy() {
+        Log.d("AudioService", "onDestroy: ")
+
         stopSelf()
         // Don't forget to release Player when the service is destroyed
         releasePlayer()
@@ -71,6 +81,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     private fun releasePlayer() {
+        Log.d("AudioService", "releasePlayer: ")
+
         if (mediaPlayer != null) {
             try {
                 mediaPlayer?.stop()
@@ -99,6 +111,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     private fun createPlayer() {
+        Log.d("AudioService", "createPlayer: ")
 
         try {
 
@@ -111,7 +124,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
             if (mediaPlayer != null) {
                 mediaPlayer?.isLooping = false
-                mediaPlayer?.setVolume(1f, 1f)
+                mediaPlayer?.setVolume(0.5f, 0.5f)
             }
             Log.d("audio", "playBackgroundSound: $tracks ")
 
@@ -137,8 +150,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     fun playMusic() {
-        Log.d("audio", "playMusic: ")
-        Log.d("audio", "pauseMusic: ")
+        Log.d("AudioService", "playMusic: ")
+
         try {
             mediaPlayer?.let {
 //           it.prepare()
@@ -154,7 +167,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
 
     fun pauseMusic() {
-        Log.d("audio", "pauseMusic: ")
+        Log.d("AudioService", "pauseMusic(): ")
+
         if (mediaPlayer != null) {
 
             try {
@@ -171,23 +185,27 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
     }
 
     fun resumeMusic() {
-        Log.d("audio", "resumeMusic: ")
+        Log.d("AudioService", "resumeMusic(): ")
+
 
         try {
-//            if (mediaPlayer != null) {
-            if (!mediaPlayer!!.isPlaying && mediaPlayer != null) {
+            if (mediaPlayer != null) {
+            if (!mediaPlayer!!.isPlaying) {
                 mediaPlayer!!.seekTo(lengthPostition)
                 mediaPlayer!!.start()
             }
-//            }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
+            e.cause
+            e.message
         }
     }
 
 
     fun nextMusic() {
-        Log.d("audio", "nextMusic: ")
+        Log.d("AudioService", "nextMusic(): ")
+
 
         if (tracks < 6) {
             tracks++
@@ -195,7 +213,7 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         }
         if (tracks == 6) {
             disableNextSound = true
-            tracks = 0
+            tracks = 1
         }
 
         try {
@@ -214,6 +232,8 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
 
 
     fun previousMusic() {
+        Log.d("AudioService", "previousMusic(): ")
+
         if (tracks > 0)
             tracks--
 
@@ -222,10 +242,6 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
             tracks = 6
 
         }
-
-
-
-        Log.d("audio", "previousMusic: ")
 
         try {
             if (mediaPlayer != null) {
@@ -241,10 +257,10 @@ class AudioService @Inject constructor() : Service(), MediaPlayer.OnErrorListene
         }
     }
 
-    private fun stopMusic() {
-        Log.d("audio", "stopMusic: ")
-        Log.d("audio", "pauseMusic: ")
-        try {
+     fun stopMusic() {
+         Log.d("AudioService", "stopMusic(): ")
+
+         try {
             if (mediaPlayer != null) {
                 if (mediaPlayer!!.isPlaying) {
                     mediaPlayer?.stop()

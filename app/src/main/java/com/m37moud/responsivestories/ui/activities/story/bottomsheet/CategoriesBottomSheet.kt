@@ -17,6 +17,7 @@ import com.google.android.material.chip.ChipGroup
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
 import com.m37moud.responsivestories.models.CategoriesModel
+import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.DEFAULT_CATEGORY_TYPE
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
@@ -81,6 +82,8 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         }
 //
         mView.apply_btn.setOnClickListener {
+            Constants.clickSound(requireContext())
+
             Log.d(
                 "mah RecipesBottomSheet",
                 "setOnClickListener sucsess!" + categoryChip.toString() + categoryChipId.toString()
@@ -184,6 +187,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
+        Constants.fabCloseSound(requireContext())
         videosViewModel.saveCategoryType(
             "",
             0

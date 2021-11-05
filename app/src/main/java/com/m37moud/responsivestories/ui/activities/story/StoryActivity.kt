@@ -189,6 +189,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //
 
         binding.selectCategoryFab.setOnClickListener {
+            Constants.clickSound(this)
+
             if (listCategory.isNotEmpty()) {
                 Log.d("selectCategoryFab", "selectCategoryFab: $listCategory")
                 binding.selectCategoryFab.isClickable = true
@@ -1008,6 +1010,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     override fun onBackPressed() {
         shouldPlay = true
         if (shouldAllowBack) {
+            Constants.fabCloseSound(this)
             startActivity(
                 Intent(
                     this@StoryActivity,
@@ -1031,6 +1034,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onResume() {
+        shouldPlay = false
+
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.resumeMusic()
 
