@@ -72,19 +72,7 @@ class StartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_start)
 
 
-        //init loading then activity
-        main_loading.visibility = View.VISIBLE
-        start_parent_frame.visibility = View.INVISIBLE
-
-        Handler().postDelayed(
-            {
-                shouldAllowBack = true
-                main_loading.visibility = View.INVISIBLE
-                start_parent_frame.visibility = View.VISIBLE
-                showLoading = false
-
-            }, 2500
-        )
+//
 
 
         //play background music
@@ -184,6 +172,8 @@ class StartActivity : AppCompatActivity() {
                     shouldAllowBack = true
                     main_loading.visibility = View.INVISIBLE
                     start_parent_frame.visibility = View.VISIBLE
+                    start_scroll.start()
+
                     showLoading = false
 
                 }, 2500
@@ -238,8 +228,23 @@ class StartActivity : AppCompatActivity() {
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        main_loading.visibility = View.GONE
-        start_parent_frame.visibility = View.VISIBLE
+
+
+        //init loading then activity
+        main_loading.visibility = View.VISIBLE
+        start_parent_frame.visibility = View.INVISIBLE
+        Handler().postDelayed(
+            {
+                shouldAllowBack = true
+                main_loading.visibility = View.INVISIBLE
+                start_parent_frame.visibility = View.VISIBLE
+                start_scroll.start()
+
+                showLoading = false
+
+            }, 4500
+        )
+
         super.onStart()
     }
 
@@ -260,6 +265,7 @@ class StartActivity : AppCompatActivity() {
 
 
     private fun showExitDialog() {
+        start_scroll.stop()
         fabCloseSound(this)
         shouldPlay = false
         val builder = AlertDialog.Builder(this)
@@ -300,6 +306,8 @@ class StartActivity : AppCompatActivity() {
                     shouldPlay = false
 
                     exitDialog.dismiss()
+                    start_scroll.start()
+
                 }.doAction()
 
 
@@ -318,6 +326,7 @@ class StartActivity : AppCompatActivity() {
 
         }
         exitDialog.show()
+
 
     }
 

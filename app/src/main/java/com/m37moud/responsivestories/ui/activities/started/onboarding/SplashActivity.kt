@@ -46,6 +46,7 @@ class SplashActivity : AppCompatActivity() {
             R.anim.splash_right_translate
         )
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -71,7 +72,7 @@ class SplashActivity : AppCompatActivity() {
 
                 // Get the current logged in user id
                 shouldPlay = true
-                if(onBoardingFinished()) {
+                if (onBoardingFinished()) {
                     // Launch dashboard screen.
                     startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
                 } else {
@@ -83,27 +84,40 @@ class SplashActivity : AppCompatActivity() {
 
                 finish()
             },
-            3000
+            3600
         ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
 
         splash_txt.startAnimation(txtBottomAnimation)
 //        splash_cow_frame.startAnimation(txtTopAnimation)
-        splash_cow_frame.animate().apply {
+
 
             splash_cow_frame.startAnimation(txtTopAnimation)
-        }.withEndAction {
-            Log.d("txtTopAnimation", "txtTopAnimation: end")
+        txtTopAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
 
-            cow.visibility = View.VISIBLE
-            cowRightTranslateAnimation.startOffset = 1000
+            }
 
-            cow.startAnimation(cowRightTranslateAnimation)
+            override fun onAnimationRepeat(p0: Animation?) {
 
-        }.start()
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                bay_face_lottie.apply {
+                    visibility = View.VISIBLE
+                }
+            }
+        })
+
+//        bay_face_lottie.animate().apply {
+//            startDelay = 3500
+//
+//
+//
+//        }.start()
+
+
 
 //        splash_cow_frame.startAnimation(txtTopAnimation.setAnimationListener(object : Animation.AnimationListener))
-
-
 
 
 //        if(txtTopAnimation.hasEnded())
@@ -117,8 +131,9 @@ class SplashActivity : AppCompatActivity() {
     }
 
 
-    private fun onBoardingFinished(): Boolean{
-        val sharedPref = this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+    private fun onBoardingFinished(): Boolean {
+        val sharedPref =
+            this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         return sharedPref.getBoolean("Finished", false)
     }
 //
