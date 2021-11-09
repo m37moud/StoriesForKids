@@ -17,6 +17,7 @@ import com.m37moud.responsivestories.databinding.ActivityLearnBinding
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
+import com.m37moud.responsivestories.util.RemoteConfigUtils
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +50,9 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         //start service and play music
+
+//        RemoteConfigUtils.init()
+
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 

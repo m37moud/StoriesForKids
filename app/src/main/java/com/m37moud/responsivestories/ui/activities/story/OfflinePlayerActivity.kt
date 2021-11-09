@@ -26,6 +26,7 @@ import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
+import com.m37moud.responsivestories.util.RemoteConfigUtils
 import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
@@ -40,6 +41,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
     lateinit var adLoader: AdLoader
 
     private var shouldPlay = false
+    private var showAdsFromRemoteConfig: Boolean = false
+
 
 
     @Inject
@@ -61,7 +64,11 @@ class OfflinePlayerActivity : AppCompatActivity() {
         dataSourceFactory = buildDataSourceFactory()!!
         hideActionBar()
         initializePlayer()
-        loadAd()
+//        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
+        Log.d("OfflinePlayerActivity", "showAdsFromRemoteConfig: $showAdsFromRemoteConfig ")
+
+        if (showAdsFromRemoteConfig)
+                 loadAd()
 
     }
 
@@ -362,6 +369,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
             mInterstitialAd?.show(this)
             super.finish()
         } else {
+            shouldPlay = true
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
             super.finish()
         }

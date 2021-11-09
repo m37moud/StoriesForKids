@@ -20,6 +20,11 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.get
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import kotlinx.android.synthetic.main.activity_entered_learen.*
 import kotlinx.android.synthetic.main.folder_container.*
 import java.io.File
@@ -30,6 +35,7 @@ import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.RemoteConfigUtils
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +46,8 @@ const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 
 @AndroidEntryPoint
 class EnteredLearnActivity : AppCompatActivity() {
+
+    private var showAdsFromRemoteConfig: Boolean = false
 
     private var shouldPlay = false
     private var shouldAllowBack = false
@@ -64,6 +72,9 @@ class EnteredLearnActivity : AppCompatActivity() {
     private var clicked = false
     private var folder = ""
 
+
+    private lateinit var remoteConfig: FirebaseRemoteConfig
+
     //most of problem is fixed
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +84,7 @@ class EnteredLearnActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_entered_learen)
 
+
 //init random background
         Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearnActivity)
 
@@ -80,7 +92,44 @@ class EnteredLearnActivity : AppCompatActivity() {
             this.audioManager.getAudioService()?.playMusic()
 
         //InterstitialAd
-        loadAd()
+//        RemoteConfigUtils.init()
+        remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 1
+        }
+//        remoteConfig.setConfigSettingsAsync(configSettings)
+
+        // [START fetch_config_with_callback]
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val updated = task.result
+                    Log.d("showAdsFromRemoteConfig", "Config params updated: $updated")
+                    val welcomeMessage = remoteConfig[WELCOME_MESSAGE_KEY].asString()
+                    Log.d("showAdsFromRemoteConfig", "string: ${welcomeMessage.toString()}")
+                    Toast.makeText(this, "Fetch and activate succeeded ${welcomeMessage.toString()}",
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Fetch failed",
+                        Toast.LENGTH_SHORT).show()
+                }
+//                var s = remoteConfig[NEXT_BUTTON_TEXT].asString()
+
+            }
+
+
+
+
+        // [END fetch_config_with_callback]
+
+
+//        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
+//        val string = RemoteConfigUtils.getNextButtonText()
+//        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${string} ")
+//        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${showAdsFromRemoteConfig} ")
+
+        if (showAdsFromRemoteConfig) loadAd()
+
         entered_learn_loading.visibility = View.VISIBLE
         entered_learn_parent_frame.visibility = View.INVISIBLE
 
@@ -415,7 +464,6 @@ class EnteredLearnActivity : AppCompatActivity() {
                     }.doAction()
 
 
-
             }
             //init on click listener to english container
             english_img.setOnClickListener {
@@ -451,8 +499,6 @@ class EnteredLearnActivity : AppCompatActivity() {
 
                         }
                     }.doAction()
-
-
 
 
             }
@@ -778,22 +824,24 @@ class EnteredLearnActivity : AppCompatActivity() {
 
     private fun showAds() {
 
-        val adRequest = AdRequest.Builder()
+        if (showAdsFromRemoteConfig) {
+            val adRequest = AdRequest.Builder()
 
-            .build()
+                .build()
 
-        ad_viewOffline.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_viewOffline.visibility = View.VISIBLE
+            ad_viewOffline.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    ad_viewOffline.visibility = View.VISIBLE
+                }
+
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    ad_viewOffline.visibility = View.GONE
+                }
             }
 
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                ad_viewOffline.visibility = View.GONE
-            }
+            ad_viewOffline.visibility = View.VISIBLE
+            ad_viewOffline.loadAd(adRequest)
         }
-
-        ad_viewOffline.visibility = View.VISIBLE
-        ad_viewOffline.loadAd(adRequest)
 
 
     }
@@ -840,6 +888,7 @@ class EnteredLearnActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         showAds()
 //        startService()
         if (!Constants.activateSetting)
@@ -905,6 +954,7 @@ class EnteredLearnActivity : AppCompatActivity() {
 
             super.finish()
         } else {
+            shouldPlay = true
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
             super.finish()
         }
@@ -998,16 +1048,32 @@ class EnteredLearnActivity : AppCompatActivity() {
 //            finish()
             super.finish()
         } else {
+            shouldPlay = true
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
             super.finish()
         }
     }
 
     fun replayButton(view: View) {
+        val string = RemoteConfigUtils.getNextButtonText()
+        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${RemoteConfigUtils.getNextButtonColor()} ")
+
         Constants.clickSound(this)
 
         val name = initName(list[counter], showEng)
         val path = category.plus("Name") + folder + File.separator + name
         playImgSound(path)
+    }
+
+
+    companion object {
+
+        private const val TAG = "MainActivity"
+
+        // Remote Config keys
+        private const val NEXT_BUTTON_TEXT = "any"
+        private const val SHOW_ADS = "anay"
+        private const val WELCOME_MESSAGE_KEY = "welcome_message"
+
     }
 }

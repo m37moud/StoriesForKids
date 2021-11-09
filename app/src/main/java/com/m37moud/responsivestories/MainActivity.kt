@@ -203,6 +203,8 @@ class MainActivity : AppCompatActivity() {
             {
                 main_loading.visibility = View.GONE
                 main_parent_frame.visibility = View.VISIBLE
+
+
                 //set animation
                 initMainActivityAnimation(
                     learn_main_linearLayout,
@@ -247,6 +249,7 @@ class MainActivity : AppCompatActivity() {
         //start story activity
         story_main_img.setOnClickListener {
             Constants.clickSound(this)
+            story_main_img.isClickable = false
 
             // implements animation uising ElasticAnimation
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
@@ -260,6 +263,7 @@ class MainActivity : AppCompatActivity() {
 
         learn_main_img.setOnClickListener {
             Constants.clickSound(this)
+            learn_main_img.isClickable = false
 
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
@@ -502,8 +506,8 @@ class MainActivity : AppCompatActivity() {
 
         if (isResumeAnim) {
 
-            learn_card_view.isClickable = true
-            story_card_view.isClickable = true
+            learn_main_img.isClickable = true
+            story_main_img.isClickable = true
             main_loading.visibility = View.VISIBLE
             main_parent_frame.visibility = View.INVISIBLE
 //
@@ -578,11 +582,13 @@ class MainActivity : AppCompatActivity() {
         delay: Long
     ) {
         shouldAllowBack = false
-        learn_card_view.isClickable = false
-        story_card_view.isClickable = false
+        learn_main_img.isClickable = false
+        story_main_img.isClickable = false
         img_main_setting.isClickable = false
         img_main_home.isClickable = false
         open_menu_fab.isClickable = false
+        main_scroll.start()
+
 
 //        val translateAnimation =
 //            ObjectAnimator.ofFloat(imageView, View.TRANSLATION_X, 800f)
@@ -709,8 +715,8 @@ class MainActivity : AppCompatActivity() {
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
                         shouldAllowBack = true
-                        learn_card_view.isClickable = true
-                        story_card_view.isClickable = true
+                        learn_main_img.isClickable = true
+                        story_main_img.isClickable = true
                         img_main_setting.isClickable = true
                         img_main_home.isClickable = true
                         open_menu_fab.isClickable = true
@@ -730,8 +736,8 @@ class MainActivity : AppCompatActivity() {
         isFinish: Boolean
     ) {
         shouldAllowBack = false
-        learn_card_view.isClickable = false
-        story_card_view.isClickable = false
+        learn_main_img.isClickable = false
+        story_main_img.isClickable = false
         img_main_setting.isClickable = false
         img_main_home.isClickable = false
         open_menu_fab.isClickable = false
@@ -823,8 +829,8 @@ class MainActivity : AppCompatActivity() {
                 shouldAllowBack = true
 
                 initViewToHide()
-                learn_card_view.isClickable = true
-                story_card_view.isClickable = true
+                learn_main_img.isClickable = true
+                story_main_img.isClickable = true
                 img_main_setting.isClickable = true
                 img_main_home.isClickable = true
                 open_menu_fab.isClickable = true

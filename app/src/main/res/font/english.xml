@@ -6,7 +6,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
 <font
     android:font="@font/courgette"
     android:fontStyle="normal"
-    android:fontWeight="400"
+    android:fontWeight="700"
 
  />
 
