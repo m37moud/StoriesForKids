@@ -1,14 +1,12 @@
 package com.m37moud.responsivestories.ui.activities.learn
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -19,18 +17,18 @@ import com.m37moud.responsivestories.databinding.ActivityLearnBinding
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
-import com.m37moud.responsivestories.util.MediaService
+import com.m37moud.responsivestories.util.RemoteConfigUtils
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_learn.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_story.*
 import kotlinx.android.synthetic.main.fragment_third_screen.*
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
-    private var _binding: ActivityLearnBinding ? = null
+    private var _binding: ActivityLearnBinding? = null
     private val binding get() = _binding!!
     private val mAdapter: LearnAdapter by lazy { LearnAdapter(this@LearnActivity, this) }
     private var category: LearnModel? = null
@@ -39,6 +37,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     lateinit var audioManager: AudioManager
 
     private var shouldPlay = false
+    private var shouldAllowBack = false
+
     private var categoryPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,11 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         //start service and play music
-        this.audioManager.getAudioService()?.playMusic()
+
+//        RemoteConfigUtils.init()
+
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
 //        shouldPlay = true
 //        if (shouldPlay) {
@@ -68,6 +72,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         Handler().postDelayed(
             {
                 binding.learnLoading.visibility = View.GONE
+                shouldAllowBack = true
                 binding.learnContainerFrame.visibility = View.VISIBLE
             }, 2500
         )
@@ -78,14 +83,20 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
 
         binding.imgClick.setOnClickListener {
-            this.shouldPlay = true
-            val intent = Intent(this@LearnActivity, EnteredLearenActivity::class.java)
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
-            //get image name from Constans list
-            val url = Constants.img[categoryPosition]
-            intent.putExtra("selectedCategory", url)
-            startActivity(intent)
-            finish()
+                    val intent = Intent(this@LearnActivity, EnteredLearnActivity::class.java)
+
+                    //get image name from Constans list
+                    val url = Constants.img[categoryPosition]
+                    intent.putExtra("selectedCategory", url)
+                    shouldPlay = true
+                    startActivity(intent)
+                    finish
+                }.doAction()
+
         }
 
         val backgroundColor = parent_learn_frame.background
@@ -93,7 +104,6 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         binding.learnScroll.visibility = View.VISIBLE
 
     }
-
 
 
     private fun setupRecyclerView() {
@@ -199,9 +209,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         return str
     }
 
-
-
-
+//
 //    override fun onConfigurationChanged(newConfig: Configuration) {
 //        super.onConfigurationChanged(newConfig)
 //        // Checks the orientation of the screen
@@ -225,8 +233,6 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
     override fun onStop() {
         super.onStop()
-        Log.d("LearnActivity", "onStop: shouldPlay =${this.shouldPlay}")
-
         if (!this.shouldPlay) {
             this.audioManager.getAudioService()?.pauseMusic()
 
@@ -242,45 +248,36 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
     override fun onResume() {
 //        startService()
-        this.audioManager.getAudioService()?.resumeMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
-//        shouldPlay = false
+        shouldPlay = false
         super.onResume()
     }
 
     override fun onBackPressed() {
+
         this.shouldPlay = true
+//
+//        if (!shouldPlay) {
+//            stopService()
+//        }
+        if (shouldAllowBack) {
+            Constants.fabCloseSound(this)
 
-
-        startActivity(
-            Intent(
-                this@LearnActivity,
-                MainActivity::class.java
+            startActivity(
+                Intent(
+                    this@LearnActivity,
+                    MainActivity::class.java
+                )
             )
-        )
-        finish()
-        super.onBackPressed()
-    }
+            finish()
 
-
-    private fun startService() {
-        val intent = Intent(this@LearnActivity, MediaService::class.java)
-        if (this@LearnActivity != null) {
-            this@LearnActivity?.startService(intent)
+            super.onBackPressed()
         }
+
+
     }
 
 
-    private fun stopService() {
-        val intent = Intent(this@LearnActivity, MediaService::class.java)
-        if (this@LearnActivity != null) {
-            this@LearnActivity?.stopService(intent)
-        }
-    }
-
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        _binding = null
-//    }
 }

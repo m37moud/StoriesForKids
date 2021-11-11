@@ -23,13 +23,21 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants.Companion.USER_AGENT
+import com.m37moud.responsivestories.util.media.AudioManager
 import kotlinx.android.synthetic.main.activity_player.*
+import javax.inject.Inject
 
 
 class OnlinePlayerActivity : AppCompatActivity() {
 
     private lateinit var player : SimpleExoPlayer
     private lateinit var videoUri : Uri
+
+    private var shouldPlay = false
+
+
+    @Inject
+    lateinit var audioManager: AudioManager
 
     private lateinit var extractorsFactory : ExtractorsFactory
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,12 +173,27 @@ class OnlinePlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        player.release()
+
         player.playWhenReady =false
+    }
+    override fun onStop() {
+//        hideAds()
+        if (!shouldPlay) {
+//            stopService()
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+        player.playWhenReady = false
+
+        player.release()
+        super.onStop()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         player.playWhenReady =false
+        shouldPlay = true
         player.release()
     }
 }

@@ -1,10 +1,13 @@
 package com.m37moud.responsivestories.ui.activities.started.onboarding
 
 import android.app.ActivityOptions
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -14,11 +17,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
+import com.m37moud.responsivestories.util.Constants.Companion.buttonAppearSound
+import com.m37moud.responsivestories.util.Constants.Companion.clickSound
+import com.m37moud.responsivestories.util.Constants.Companion.fabCloseSound
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
+import kotlinx.android.synthetic.main.layout_exit_app.view.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,6 +37,7 @@ class StartActivity : AppCompatActivity() {
     @Inject
     lateinit var audioManager: AudioManager
     private var shouldPlay = false
+    private var shouldAllowBack = false
 
 //    private val audioManager: AudioManager by lazy {
 //        EntryPointAccessors.fromApplication (applicationContext,
@@ -62,8 +72,11 @@ class StartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_start)
 
 
+//
+
+
         //play background music
-        this.audioManager.getAudioService()?.playMusic()
+//        this.audioManager.getAudioService()?.playMusic()
 
 
 //        shouldPlay = true
@@ -75,35 +88,36 @@ class StartActivity : AppCompatActivity() {
 //        videosViewModel.readBackOnline.observe(this@StoryActivity, Observer {
 //            videosViewModel.backOnline = it
 //        })
-        start.animate().duration = 200
+//        start.animate().duration = 200
 
 
-        start.setOnTouchListener(Constants.Listeners.onTouch)
+//        start.setOnTouchListener(Constants.Listeners.onTouch)
 
         start.setOnClickListener {
-            start.isClickable = false
-            this.shouldPlay = true
-            val intent = Intent(this@StartActivity, MainActivity::class.java)
+            clickSound(this)
+            // implements animation uising ElasticAnimation
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    start.isClickable = false
+                    this.shouldPlay = true
+                    val intent = Intent(this@StartActivity, MainActivity::class.java)
 
 //           val pair : android.util.Pair =  Pair<View,String>(start , "toNextButton")
-            val activityOption = ActivityOptions.makeSceneTransitionAnimation(
-                this,
-                android.util.Pair.create(start, "toNextButton")
-            )
+                    val activityOption = ActivityOptions.makeSceneTransitionAnimation(
+                        this,
+                        android.util.Pair.create(start, "toNextButton")
+                    )
 
 //            start_loading.visibility = View.VISIBLE
 //            start_parent_frame.visibility = View.GONE
-            showLoading = true
-            startActivity(intent)
-            finish()
-//            Handler().postDelayed(
-//                {
-//
-//                }, 2500
-//            )
+                    showLoading = true
+                    startActivity(intent)
+                    finish()
+                }.doAction()
 
-//            finish()
+
         }
+
 
 //        val colors = IntArray(2)
 //        colors[0] = Constants.getRandomColor()
@@ -129,14 +143,22 @@ class StartActivity : AppCompatActivity() {
         start_scroll.visibility = View.VISIBLE
 
         start_bird.startAnimation(birdAnim)
-        start.startAnimation(playAnim)
+        playAnim.startOffset = 400
+        start.animate().apply {
+            startDelay = 300
+            start.startAnimation(playAnim)
+            if (shouldAllowBack)
+                buttonAppearSound(this@StartActivity)
+
+        }
 
     }
 
     override fun onResume() {
 //      Constants.startService(this)
 //        shouldPlay = false
-        this.audioManager.getAudioService()?.resumeMusic()
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
 
         Log.d("StartActivity", "onResume: $shouldPlay ")
@@ -147,8 +169,11 @@ class StartActivity : AppCompatActivity() {
 
             Handler().postDelayed(
                 {
+                    shouldAllowBack = true
                     main_loading.visibility = View.INVISIBLE
                     start_parent_frame.visibility = View.VISIBLE
+                    start_scroll.start()
+
                     showLoading = false
 
                 }, 2500
@@ -166,15 +191,18 @@ class StartActivity : AppCompatActivity() {
     }
 
 
-    override fun onPause() {
-        Log.d("StartActivity", "onPause: $shouldPlay ")
-
-        Log.d("StartActivity", "onPause: $showLoading")
-
-//        start_loading.visibility = View.VISIBLE
-//        start_parent_frame.visibility = View.INVISIBLE
-        super.onPause()
-    }
+//    override fun onPause() {
+//        super.onPause()
+//
+//        Log.d("StartActivity", "onPause: $shouldPlay ")
+//        Log.d("StartActivity", "onPause: $showLoading")
+//
+////        if (!this.shouldPlay) {
+////            this.audioManager.getAudioService()?.pauseMusic()
+////
+////        }
+//
+//    }
 
     override fun onStop() {
 //        showLoading = false
@@ -182,11 +210,9 @@ class StartActivity : AppCompatActivity() {
         Log.d("StartActivity", "onStop: $shouldPlay ")
 
         if (!this.shouldPlay) {
-//            Constants.stopService(this)
-        this.audioManager.getAudioService()?.pauseMusic()
+            this.audioManager.getAudioService()?.pauseMusic()
 
         }
-
 
 
         super.onStop()
@@ -195,34 +221,129 @@ class StartActivity : AppCompatActivity() {
 
     override fun onStart() {
         start.isClickable = true
+//        shouldAllowBack = true
 
 //        shouldPlay = false
 //        Log.d("StartActivity", "onStart: $shouldPlay ")
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
-        main_loading.visibility = View.GONE
-        start_parent_frame.visibility = View.VISIBLE
+
+
+        //init loading then activity
+        main_loading.visibility = View.VISIBLE
+        start_parent_frame.visibility = View.INVISIBLE
+        Handler().postDelayed(
+            {
+                shouldAllowBack = true
+                main_loading.visibility = View.INVISIBLE
+                start_parent_frame.visibility = View.VISIBLE
+                start_scroll.start()
+
+                showLoading = false
+
+            }, 4500
+        )
+
         super.onStart()
     }
 
     override fun onBackPressed() {
-        if (backPressed + 2000 > System.currentTimeMillis()) {
-
-                Constants.stopService(this)
-
-            super.onBackPressed()
-            super.onDestroy()
-
-
-        } else
-            Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
-                .show()
-
-        backPressed = System.currentTimeMillis()
+        if (shouldAllowBack) {
+            showExitDialog()
+//            if (backPressed + 2000 > System.currentTimeMillis()) {
+//
+//                showExitDialog()
+//
+//            } else
+////                Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
+////                    .show()
+//
+//                backPressed = System.currentTimeMillis()
+        }
     }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-//    }
+
+    private fun showExitDialog() {
+        start_scroll.stop()
+        fabCloseSound(this)
+        shouldPlay = false
+        val builder = AlertDialog.Builder(this)
+
+        val itemView = LayoutInflater.from(this).inflate(R.layout.layout_exit_app, null)
+
+        builder.setView(itemView)
+        val exitDialog = builder.create()
+        exitDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val window = exitDialog.window
+        window?.setGravity(Gravity.CENTER)
+        window?.attributes?.windowAnimations = R.style.DalogAnimation
+
+        exitDialog.setCancelable(false)
+        exitDialog.setCanceledOnTouchOutside(false)
+        itemView.exit_app.setOnClickListener {
+            Constants.clickSound(this)
+
+
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    shouldPlay = false
+
+                    exitDialog.dismiss()
+                    finishAfterTransition()
+
+//            super.onBackPressed()
+//          onDestroy()
+                }.doAction()
+
+
+        }
+
+        itemView.cancel_exit_app.setOnClickListener {
+            Constants.fabCloseSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    shouldPlay = false
+
+                    exitDialog.dismiss()
+                    start_scroll.start()
+
+                }.doAction()
+
+
+        }
+
+        itemView.rate.setOnClickListener {
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    shouldPlay = false
+
+                    exitDialog.dismiss()
+                    Toast.makeText(this, "Rate APP", Toast.LENGTH_SHORT).show()
+                }.doAction()
+
+
+        }
+        exitDialog.show()
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Log.d("StartActivity", "onDestroy: $shouldPlay ")
+//
+
+        if (!shouldPlay) {
+            this.audioManager.doUnbindService()
+            this.audioManager.getAudioService()?.onDestroy()
+
+        }
+
+
+    }
 }
 
 

@@ -1,6 +1,5 @@
 package com.m37moud.responsivestories.ui.activities.learn
 
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -21,7 +20,11 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.m37moud.responsivestories.util.MediaService
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.get
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import kotlinx.android.synthetic.main.activity_entered_learen.*
 import kotlinx.android.synthetic.main.folder_container.*
 import java.io.File
@@ -32,19 +35,23 @@ import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.RemoteConfigUtils
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_learn.*
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 
 @AndroidEntryPoint
-class EnteredLearenActivity : AppCompatActivity() {
+class EnteredLearnActivity : AppCompatActivity() {
+
+    private var showAdsFromRemoteConfig: Boolean = false
 
     private var shouldPlay = false
+    private var shouldAllowBack = false
+
     private var category: String? = null
     private var counter: Int = 0
     private lateinit var list: ArrayList<String>
@@ -65,28 +72,75 @@ class EnteredLearenActivity : AppCompatActivity() {
     private var clicked = false
     private var folder = ""
 
+
+    private lateinit var remoteConfig: FirebaseRemoteConfig
+
     //most of problem is fixed
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
 ////        changeOrientation()
-        this.audioManager.getAudioService()?.playMusic()
+
 
         setContentView(R.layout.activity_entered_learen)
-//init random background
-        Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearenActivity)
 
+
+//init random background
+        Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearnActivity)
+
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
         //InterstitialAd
-        loadAd()
+//        RemoteConfigUtils.init()
+        remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 1
+        }
+//        remoteConfig.setConfigSettingsAsync(configSettings)
+
+        // [START fetch_config_with_callback]
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val updated = task.result
+                    Log.d("showAdsFromRemoteConfig", "Config params updated: $updated")
+                    val welcomeMessage = remoteConfig[WELCOME_MESSAGE_KEY].asString()
+                    Log.d("showAdsFromRemoteConfig", "string: ${welcomeMessage.toString()}")
+                    Toast.makeText(this, "Fetch and activate succeeded ${welcomeMessage.toString()}",
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Fetch failed",
+                        Toast.LENGTH_SHORT).show()
+                }
+//                var s = remoteConfig[NEXT_BUTTON_TEXT].asString()
+
+            }
+
+
+
+
+        // [END fetch_config_with_callback]
+
+
+//        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
+//        val string = RemoteConfigUtils.getNextButtonText()
+//        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${string} ")
+//        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${showAdsFromRemoteConfig} ")
+
+        if (showAdsFromRemoteConfig) loadAd()
+
         entered_learn_loading.visibility = View.VISIBLE
         entered_learn_parent_frame.visibility = View.INVISIBLE
 
         Handler().postDelayed(
             {
+                shouldAllowBack = true
                 entered_learn_loading.visibility = View.GONE
                 entered_learn_parent_frame.visibility = View.VISIBLE
                 entered_learn_Layout.visibility = View.VISIBLE
+                getAssetsFolder()
+
 
                 //set animation
 
@@ -144,12 +198,22 @@ class EnteredLearenActivity : AppCompatActivity() {
 
         }
 
-        txt_name.setOnClickListener {
+        txt_frame_Container.setOnClickListener {
+            Constants.clickSound(this)
+
+
             clicked = false
             if (!isFolder(category!!) && !clicked) {
                 Log.d("txt_name", "showEng: " + clicked.toString())
-                changeLang()
-                showEng = !showEng
+                txt_name.animate().apply {
+                    duration = 300
+                    rotationYBy(360f)
+                    scaleXBy(0f)
+                    scaleYBy(0f)
+                    changeLang()
+                    showEng = !showEng
+                }
+
             }
 
 
@@ -171,11 +235,9 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
 
-        getAssetsFolder()
-
-
-
         right_img_btn.setOnClickListener {
+            Constants.clickSound(this)
+
 
             if (!isFolder(category!!) && !clicked) {
                 detectLanguage()
@@ -248,6 +310,8 @@ class EnteredLearenActivity : AppCompatActivity() {
         }
 
         left_img_btn.setOnClickListener {
+            Constants.clickSound(this)
+
 //            showEng = false
 
 
@@ -351,79 +415,90 @@ class EnteredLearenActivity : AppCompatActivity() {
 
 
             //init on click listener to arabic container
-            arabic_container.setOnClickListener {
-                val arabicFiles = assets.list(category!!)
-                val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
-                Log.d("getAssetsFolder", "arabic_container: " + imgList.toString())
-                if (imgList.isNotEmpty()) {
-                    imgList.forEach { folders ->
-                        if (folders.toUpperCase(Locale.ROOT) == "AR") {
-                            try {
-                                Log.d(
-                                    "getAssetsFolder", "folders : " +
-                                            folders
-                                )
-                                val path = category!! + File.separator + folders
-                                Log.d(
-                                    "getAssetsFolder", "path: " +
-                                            path
-                                )
-                                val files = assets.list(path)
-                                val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d(
-                                    "getAssetsFolder", "nFiles: " +
-                                            nFiles
-                                )
-                                folder = folders
-                                showEng = false
+            arabic_img.setOnClickListener {
+                Constants.clickSound(this)
+
+                ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                    .setOnFinishListener {
+                        val arabicFiles = assets.list(category!!)
+                        val imgList: ArrayList<String> = ArrayList(arabicFiles!!.toList())
+                        Log.d("getAssetsFolder", "arabic_container: " + imgList.toString())
+                        if (imgList.isNotEmpty()) {
+                            imgList.forEach { folders ->
+                                if (folders.toUpperCase(Locale.ROOT) == "AR") {
+                                    try {
+                                        Log.d(
+                                            "getAssetsFolder", "folders : " +
+                                                    folders
+                                        )
+                                        val path = category!! + File.separator + folders
+                                        Log.d(
+                                            "getAssetsFolder", "path: " +
+                                                    path
+                                        )
+                                        val files = assets.list(path)
+                                        val nFiles: ArrayList<String> = ArrayList(files!!.toList())
+                                        Log.d(
+                                            "getAssetsFolder", "nFiles: " +
+                                                    nFiles
+                                        )
+                                        folder = folders
+                                        showEng = false
 //                                initBtn()
 
-                                setImage(nFiles)
+                                        setImage(nFiles)
 
-                            } catch (e: IOException) {
-                                Toast.makeText(
-                                    this@EnteredLearenActivity,
-                                    " $e",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                Log.d("getAssetsFolder", "setImage: ${e.message}")
+                                    } catch (e: IOException) {
+                                        Toast.makeText(
+                                            this@EnteredLearnActivity,
+                                            " $e",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                        Log.d("getAssetsFolder", "setImage: ${e.message}")
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                }
+                        }
+                    }.doAction()
+
 
             }
             //init on click listener to english container
-            english_container.setOnClickListener {
+            english_img.setOnClickListener {
+                Constants.clickSound(this)
 
-                if (imgList.isNotEmpty()) {
-                    imgList.forEach {
-                        if (it == "EN") {
-                            try {
-                                val files = assets.list(category!! + File.separator + it)
-                                val nFiles: ArrayList<String> = ArrayList(files!!.toList())
-                                Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
-                                folder = it
-                                showEng = true
+                ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                    .setOnFinishListener {
+
+                        if (imgList.isNotEmpty()) {
+                            imgList.forEach {
+                                if (it == "EN") {
+                                    try {
+                                        val files = assets.list(category!! + File.separator + it)
+                                        val nFiles: ArrayList<String> = ArrayList(files!!.toList())
+                                        Log.d("getAssetsFolder", "nFiles: ${nFiles.toString()}")
+                                        folder = it
+                                        showEng = true
 //                                initBtn()
-                                setImage(nFiles)
+                                        setImage(nFiles)
 
-                            } catch (e: IOException) {
-                                Toast.makeText(
-                                    this@EnteredLearenActivity,
-                                    " $e",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                Log.d("getAssetsFolder", "setImage: $e")
+                                    } catch (e: IOException) {
+                                        Toast.makeText(
+                                            this@EnteredLearnActivity,
+                                            " $e",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                        Log.d("getAssetsFolder", "setImage: $e")
+                                    }
+                                }
                             }
+
+
                         }
-                    }
-
-
-                }
+                    }.doAction()
 
 
             }
@@ -516,7 +591,6 @@ class EnteredLearenActivity : AppCompatActivity() {
         return false
     }
 
-    //new work from my jop 10/6
     private fun setImage(imgList: ArrayList<String>) {
         folderContainer.visibility = View.GONE
         containerCardContainer.visibility = View.VISIBLE
@@ -543,7 +617,7 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             val drawable = Drawable.createFromStream(input, null)
 
-            Glide.with(this@EnteredLearenActivity)
+            Glide.with(this@EnteredLearnActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawable)
@@ -565,7 +639,7 @@ class EnteredLearenActivity : AppCompatActivity() {
             }
 
         } catch (e: IOException) {
-            Toast.makeText(this@EnteredLearenActivity, " $e", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@EnteredLearnActivity, " $e", Toast.LENGTH_SHORT).show()
             Log.d("TAG", "setImage: ${e.message}")
         }
 
@@ -681,14 +755,14 @@ class EnteredLearenActivity : AppCompatActivity() {
             val drawableAr = Drawable.createFromStream(srcAr, null)
 
 
-            Glide.with(this@EnteredLearenActivity)
+            Glide.with(this@EnteredLearnActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableAr).into(arabic_img)
 
         } catch (e: IOException) {
             Toast.makeText(
-                this@EnteredLearenActivity,
+                this@EnteredLearnActivity,
                 " $e",
                 Toast.LENGTH_SHORT
             )
@@ -702,14 +776,14 @@ class EnteredLearenActivity : AppCompatActivity() {
             val drawableEn = Drawable.createFromStream(srcEn, null)
 
 
-            Glide.with(this@EnteredLearenActivity)
+            Glide.with(this@EnteredLearnActivity)
                 .applyDefaultRequestOptions(requestOptions)
                 .asDrawable()
                 .load(drawableEn).into(english_img)
 
         } catch (e: IOException) {
             Toast.makeText(
-                this@EnteredLearenActivity,
+                this@EnteredLearnActivity,
                 " $e",
                 Toast.LENGTH_SHORT
             )
@@ -732,45 +806,47 @@ class EnteredLearenActivity : AppCompatActivity() {
         Log.d("loadAd", "changeOrientation: called")
 //        shouldPlay = false
 //        stopService()
-        if (mAdIsLoading && mRewardedAd != null ) {
+        if (mAdIsLoading && mRewardedAd != null) {
 
-        val display = (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay
-        val orientation = display.orientation
+            val display = (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay
+            val orientation = display.orientation
 
             shouldPlay = false
             if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
             }
-        }else{
+        } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         }
     }
 
-    //banner ads        //work from job
     private fun showAds() {
 
-        val adRequest = AdRequest.Builder()
+        if (showAdsFromRemoteConfig) {
+            val adRequest = AdRequest.Builder()
 
-            .build()
+                .build()
 
-        ad_viewOffline.adListener = object : AdListener(){
-            override fun onAdLoaded() {
-           ad_viewOffline.visibility = View.VISIBLE
+            ad_viewOffline.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    ad_viewOffline.visibility = View.VISIBLE
+                }
+
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    ad_viewOffline.visibility = View.GONE
+                }
             }
 
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                ad_viewOffline.visibility = View.GONE
-            }
+            ad_viewOffline.visibility = View.VISIBLE
+            ad_viewOffline.loadAd(adRequest)
         }
-
-        ad_viewOffline.visibility = View.VISIBLE
-        ad_viewOffline.loadAd(adRequest)
 
 
     }
-    private fun hideAds(){
+
+    private fun hideAds() {
         ad_viewOffline.pause()
         ad_viewOffline.visibility = View.GONE
     }
@@ -789,7 +865,7 @@ class EnteredLearenActivity : AppCompatActivity() {
                     val error = "domain: ${adError.domain}, code: ${adError.code}, " +
                             "message: ${adError.message}"
                     Toast.makeText(
-                        this@EnteredLearenActivity,
+                        this@EnteredLearnActivity,
                         "onAdFailedToLoad() with error $error",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -812,18 +888,20 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         showAds()
 //        startService()
-
-        this.audioManager.getAudioService()?.resumeMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
     }
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        if (shouldAllowBack)
+            super.onBackPressed()
 
-        shouldPlay = true
+//        shouldPlay = false
 //
 //        startService()
         Log.d("loadAd", "back pressed")
@@ -876,18 +954,19 @@ class EnteredLearenActivity : AppCompatActivity() {
 
             super.finish()
         } else {
+            shouldPlay = true
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
             super.finish()
         }
 
 
     }
+
     override fun onPause() {
         hideAds()
         super.onPause()
 
     }
-
 
 
     override fun onDestroy() {
@@ -911,20 +990,10 @@ class EnteredLearenActivity : AppCompatActivity() {
 
     }
 
-    private fun startService() {
-        val intent = Intent(this, MediaService::class.java)
-
-        startService(intent)
-
-    }
-
-    private fun stopService() {
-        val intent = Intent(this, MediaService::class.java)
-
-        stopService(intent)
-    }
 
     fun homeButton(view: View) {
+        Constants.clickSound(this)
+
 
         //show ads
         if (mRewardedAd != null) {
@@ -947,6 +1016,8 @@ class EnteredLearenActivity : AppCompatActivity() {
                         // don't show the ad a second time.
                         mRewardedAd = null
                         shouldPlay = true
+
+
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -968,16 +1039,41 @@ class EnteredLearenActivity : AppCompatActivity() {
                 }
             })
 
+//            startActivity(
+//                Intent(
+//                    this@EnteredLearenActivity,
+//                    LearnActivity::class.java
+//                )
+//            )
+//            finish()
             super.finish()
         } else {
+            shouldPlay = true
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
             super.finish()
         }
     }
 
     fun replayButton(view: View) {
+        val string = RemoteConfigUtils.getNextButtonText()
+        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${RemoteConfigUtils.getNextButtonColor()} ")
+
+        Constants.clickSound(this)
+
         val name = initName(list[counter], showEng)
         val path = category.plus("Name") + folder + File.separator + name
         playImgSound(path)
+    }
+
+
+    companion object {
+
+        private const val TAG = "MainActivity"
+
+        // Remote Config keys
+        private const val NEXT_BUTTON_TEXT = "any"
+        private const val SHOW_ADS = "anay"
+        private const val WELCOME_MESSAGE_KEY = "welcome_message"
+
     }
 }

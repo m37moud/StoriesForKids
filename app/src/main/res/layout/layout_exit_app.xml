@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@android:color/transparent"
+    android:padding="8dp">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+
+        android:background="@android:color/transparent">
+
+        <FrameLayout
+            android:layout_width="350dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+
+            android:background="@android:color/transparent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/yellow"
+                app:cardCornerRadius="10dp"
+
+                app:strokeColor="@color/white"
+                app:strokeWidth="3dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="center"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="2"
+                    android:text="@string/are_you_sure_to_exit"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="75dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/lightGray"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="10dp"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="3dp">
+
+                <ImageButton
+                    android:id="@+id/cancel_exit_app"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+
+                    android:background="@color/white"
+                    android:src="@drawable/ic_close"
+                    android:tint="@color/black" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+
+        android:layout_marginTop="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_title"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:elevation="10dp"
+            android:layout_gravity="top|center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/sadface" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+
+        android:layout_marginBottom="40dp"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/lightGray"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="10dp"
+            app:strokeColor="@color/white"
+            app:strokeWidth="3dp">
+
+            <Button
+                android:id="@+id/exit_app"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="20dp"
+                android:backgroundTint="@color/darkorange"
+                android:foregroundGravity="left"
+                android:gravity="center"
+                android:text="@string/exit_app"
+
+                />
+
+            <Button
+                android:id="@+id/rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="140dp"
+                android:backgroundTint="@color/darkorange"
+                android:foregroundGravity="right"
+                android:gravity="center"
+
+                android:text="@string/cancel"
+
+                />
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </FrameLayout>
+
+
+</FrameLayout>

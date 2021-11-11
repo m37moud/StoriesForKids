@@ -23,6 +23,10 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var audioManager: AudioManager
 
+
+    private var shouldPlay = false
+
+
     private val txtTopAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
@@ -42,6 +46,7 @@ class SplashActivity : AppCompatActivity() {
             R.anim.splash_right_translate
         )
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -53,7 +58,7 @@ class SplashActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        this.audioManager.getAudioService()?.playMusic()
+//        this.audioManager.getAudioService()?.playMusic()
 
 
         // Adding the handler to after the a task after some delay.
@@ -66,7 +71,8 @@ class SplashActivity : AppCompatActivity() {
                 // If user is not logged in or logout manually then user will  be redirected to the Login screen as usual.
 
                 // Get the current logged in user id
-                if(onBoardingFinished()) {
+                shouldPlay = true
+                if (onBoardingFinished()) {
                     // Launch dashboard screen.
                     startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
                 } else {
@@ -74,26 +80,44 @@ class SplashActivity : AppCompatActivity() {
                     startActivity(Intent(this@SplashActivity, StartActivity::class.java))
 
                 }
-                finish() // Call this when your activity is done and should be closed.
+                // Call this when your activity is done and should be closed.
+
+                finish()
             },
-            3000
+            3600
         ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
 
         splash_txt.startAnimation(txtBottomAnimation)
 //        splash_cow_frame.startAnimation(txtTopAnimation)
-        splash_cow_frame.animate().apply {
-            splash_cow_frame.startAnimation(txtTopAnimation)
-        }.withEndAction {
-            Log.d("txtTopAnimation", "txtTopAnimation: end")
-            cow.visibility = View.VISIBLE
-            cowRightTranslateAnimation.startOffset = 1000
-            cow.startAnimation(cowRightTranslateAnimation)
 
-        }.start()
+
+            splash_cow_frame.startAnimation(txtTopAnimation)
+        txtTopAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                bay_face_lottie.apply {
+                    visibility = View.VISIBLE
+                }
+            }
+        })
+
+//        bay_face_lottie.animate().apply {
+//            startDelay = 3500
+//
+//
+//
+//        }.start()
+
+
 
 //        splash_cow_frame.startAnimation(txtTopAnimation.setAnimationListener(object : Animation.AnimationListener))
-
-
 
 
 //        if(txtTopAnimation.hasEnded())
@@ -107,8 +131,31 @@ class SplashActivity : AppCompatActivity() {
     }
 
 
-    private fun onBoardingFinished(): Boolean{
-        val sharedPref = this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+    private fun onBoardingFinished(): Boolean {
+        val sharedPref =
+            this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         return sharedPref.getBoolean("Finished", false)
+    }
+//
+
+    override fun onStart() {
+        super.onStart()
+        this.audioManager.doBindService()
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
+    }
+
+    override fun onResume() {
+        this.audioManager.getAudioService()?.resumeMusic()
+
+
+        super.onResume()
     }
 }

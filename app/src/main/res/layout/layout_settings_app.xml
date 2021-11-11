@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="350dp"
+        android:layout_height="250dp"
+        android:background="@drawable/dialog_round"
+        android:gravity="center"
+
+
+        >
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setting_container_controller"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_margin="10dp"
+            android:layout_marginTop="8dp"
+
+            android:backgroundTint="@color/lightGray"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/setting_container_share"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/gnt_ad_green"
+            app:strokeWidth="3dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layoutDirection="ltr"
+                android:orientation="horizontal">
+
+
+                <ImageButton
+                    android:id="@+id/previous_sound_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:backgroundTint="@android:color/transparent"
+                    android:rotation="180"
+                    android:src="@android:drawable/ic_media_next"
+                    android:tint="@color/green" />
+
+                <ImageButton
+                    android:id="@+id/play_sound_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_toStartOf="@+id/next_sound_setting"
+                    android:layout_toEndOf="@+id/previous_sound_setting"
+                    android:backgroundTint="@android:color/transparent"
+                    android:src="@android:drawable/ic_media_play"
+                    android:tint="@color/green"
+                    android:visibility="invisible" />
+
+                <ImageButton
+                    android:id="@+id/pause_sound_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/next_sound_setting"
+
+
+                    android:layout_toStartOf="@+id/next_sound_setting"
+                    android:layout_toEndOf="@+id/previous_sound_setting"
+                    android:backgroundTint="@android:color/transparent"
+                    android:src="@android:drawable/ic_media_pause"
+                    android:tint="@color/green"
+                    android:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/next_sound_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+
+                    android:backgroundTint="@android:color/transparent"
+                    android:src="@android:drawable/ic_media_next"
+
+                    android:tint="@color/green"
+
+
+                    />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setting_container_share"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/lightGray"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/setting_container_donate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/setting_container_controller"
+            app:strokeColor="@color/gnt_ad_green"
+            app:strokeWidth="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@color/white"
+                    android:elevation="10dp"
+
+                    android:src="@drawable/ic_share"
+                    android:tint="@color/green" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="center"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="2"
+                    android:text="@string/share_app_with_your_friend"
+                    android:textAlignment="center"
+                    android:textColor="@color/green"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setting_container_donate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="bottom"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/lightGray"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/setting_container_share"
+            app:strokeColor="@color/gnt_ad_green"
+            app:strokeWidth="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+
+                    android:background="@color/white"
+                    android:elevation="10dp"
+                    android:src="@drawable/ic_money"
+                    android:tint="@color/green" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="center"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="2"
+                    android:text="@string/if_you_like_app_you_can_pay_cup_of_coffee_for_me"
+                    android:textAlignment="center"
+                    android:textColor="@color/green"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+</LinearLayout>

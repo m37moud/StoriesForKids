@@ -50,5 +50,10 @@
     <string name="finish">Finish</string>
     <string name="all_categories">all categories</string>
     <string name="all">all</string>
+    <string name="are_you_sure_to_exit">Are you sure to Exit</string>
+    <string name="exit_app">Exit</string>
+    <string name="cancel">Rate</string>
+    <string name="share_app_with_your_friend">share app with your friend</string>
+    <string name="if_you_like_app_you_can_pay_cup_of_coffee_for_me">if you like app you can pay cup of coffee for me</string>
 
 </resources>

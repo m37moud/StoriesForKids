@@ -26,15 +26,28 @@ import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
+import com.m37moud.responsivestories.util.RemoteConfigUtils
+import com.m37moud.responsivestories.util.media.AudioManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
+import javax.inject.Inject
 
 const val AD_InterstitialAd_ID = "ca-app-pub-3940256099942544/1033173712"
-
+@AndroidEntryPoint
 class OfflinePlayerActivity : AppCompatActivity() {
     private lateinit var player: SimpleExoPlayer
     private lateinit var videoUri: Uri
     private lateinit var dataSourceFactory: DataSource.Factory
     lateinit var adLoader: AdLoader
+
+    private var shouldPlay = false
+    private var showAdsFromRemoteConfig: Boolean = false
+
+
+
+    @Inject
+    lateinit var audioManager: AudioManager
+
 
     private val KEY_POSITION = "position"
     private var position = 0L
@@ -51,7 +64,11 @@ class OfflinePlayerActivity : AppCompatActivity() {
         dataSourceFactory = buildDataSourceFactory()!!
         hideActionBar()
         initializePlayer()
-        loadAd()
+//        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
+        Log.d("OfflinePlayerActivity", "showAdsFromRemoteConfig: $showAdsFromRemoteConfig ")
+
+        if (showAdsFromRemoteConfig)
+                 loadAd()
 
     }
 
@@ -208,6 +225,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+
         player.playWhenReady = false
         player.release()
     }
@@ -313,6 +331,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
                                 // Don't forget to set the ad reference to null so you
                                 // don't show the ad a second time.
                                 mInterstitialAd = null
+//                                shouldPlay = true
+
 //                                loadAd()
                             }
 
@@ -321,6 +341,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
                                 // Don't forget to set the ad reference to null so you
                                 // don't show the ad a second time.
                                 mInterstitialAd = null
+                                shouldPlay = true
+
                             }
 
                             override fun onAdShowedFullScreenContent() {
@@ -338,10 +360,16 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     override fun finish() {
         //show ads
+        //stop playing sound
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
         if (mInterstitialAd != null) {
             mInterstitialAd?.show(this)
             super.finish()
         } else {
+            shouldPlay = true
             Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
             super.finish()
         }
@@ -358,7 +386,7 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState?.let {
+        savedInstanceState.let {
             player.seekTo(it.getLong(KEY_POSITION))
 //            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
         }
@@ -386,8 +414,14 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
     }
 
+
     override fun onStop() {
 //        hideAds()
+        if (!shouldPlay) {
+//            stopService()
+            this.audioManager.getAudioService()?.pauseMusic()
+
+        }
         player.playWhenReady = false
 
         player.release()

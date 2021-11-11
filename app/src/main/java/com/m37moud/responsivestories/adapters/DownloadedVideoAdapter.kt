@@ -90,7 +90,7 @@ class DownloadedVideoAdapter(
     }
 
 
-    class HolderVideo(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class HolderVideo(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var vidImg: ImageView = itemView.findViewById(R.id.vid_img)
 
         //        var vidView: VideoView = itemView.findViewById(R.id.vid_show)

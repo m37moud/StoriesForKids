@@ -2,6 +2,7 @@ package com.m37moud.responsivestories.adapters
 
 import android.content.Context
 import android.net.Uri
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.TransitionManager
 import coil.load
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.LearnModel
@@ -17,6 +17,7 @@ import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import kotlinx.android.synthetic.main.category_learn_items.view.*
 import java.util.*
+import java.util.Collections.emptyList
 
 class LearnAdapter constructor(var context: Context, val mItemClickListener: ItemClickListener) :
     RecyclerView.Adapter<LearnAdapter.LearnViewHolder>() {
@@ -26,23 +27,23 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
 
     private var learnTitle = emptyList<LearnModel>()
 
-
     interface ItemClickListener {
         fun onItemClick(position: Int)
     }
 
     inner class LearnViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var container: LinearLayout = itemView.findViewById(R.id.category_learn_container)
-        var vidImg: ImageView = itemView.findViewById(R.id.img_title)
-        var vidtitle: TextView = itemView.findViewById(R.id.txt_title)
+        var learnContainer: LinearLayout = itemView.findViewById(R.id.category_learn_container)
+
+        var learnImg: ImageView = itemView.findViewById(R.id.img_title)
+
+        var learnTitle: TextView = itemView.findViewById(R.id.txt_title)
 
         init {
             itemView.setOnClickListener {
                 mItemClickListener.onItemClick(adapterPosition)
             }
         }
-
 
     }
 
@@ -71,21 +72,6 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
             error(R.drawable.ic_error_placeholder)
         }
         holder.itemView.txt_title.text = learnCategory.title
-
-
-        holder.vidImg.setOnClickListener {
-
-            var visible = false
-            TransitionManager.beginDelayedTransition(holder.container)
-            visible = !visible
-
-            holder.vidtitle.visibility = if (visible)
-                View.VISIBLE
-            else
-                View.GONE
-
-
-        }
     }
 
     //    val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabet")
@@ -114,6 +100,14 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
 
     fun getCategoryName(position: Int): LearnModel? {
         return learnTitle[position]
+    }
+
+
+    fun initEnimTouchView(holder: LearnViewHolder) {
+
+
+
+
     }
 
 

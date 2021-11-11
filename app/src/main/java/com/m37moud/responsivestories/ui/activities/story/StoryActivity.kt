@@ -83,6 +83,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
 
     private var shouldPlay = false
+    private var shouldAllowBack = false
 
     @Inject
     lateinit var audioManager: AudioManager
@@ -106,8 +107,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-
-        this.audioManager.getAudioService()?.playMusic()
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
 
         mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
         videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
@@ -130,6 +131,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         Handler().postDelayed(
             {
+                shouldAllowBack = true
                 binding.storyLoading.visibility = View.GONE
                 binding.cardView.visibility = View.VISIBLE
             }, 2500
@@ -187,6 +189,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //
 
         binding.selectCategoryFab.setOnClickListener {
+            Constants.clickSound(this)
+
             if (listCategory.isNotEmpty()) {
                 Log.d("selectCategoryFab", "selectCategoryFab: $listCategory")
                 binding.selectCategoryFab.isClickable = true
@@ -1004,15 +1008,18 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onBackPressed() {
-        shouldPlay =  true
-        startActivity(
-            Intent(
-                this@StoryActivity,
-                MainActivity::class.java
+        shouldPlay = true
+        if (shouldAllowBack) {
+            Constants.fabCloseSound(this)
+            startActivity(
+                Intent(
+                    this@StoryActivity,
+                    MainActivity::class.java
+                )
             )
-        )
-        finish()
-        super.onBackPressed()
+            finish()
+            super.onBackPressed()
+        }
 
     }
 
@@ -1027,7 +1034,10 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onResume() {
-        this.audioManager.getAudioService()?.resumeMusic()
+        shouldPlay = false
+
+        if (!Constants.activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
 
 
         super.onResume()
