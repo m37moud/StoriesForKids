@@ -23,8 +23,8 @@
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/_80sdp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/_80sdp"
                 android:background="@android:color/transparent"
                 app:srcCompat="@drawable/ic_replay_10_white_24dp" />
 
@@ -54,8 +54,8 @@
             <ImageView
                 android:layout_centerVertical="true"
                 android:id="@+id/img_fwd"
-                android:layout_marginRight="@dimen/_80sdp"
-                android:layout_alignParentRight="true"
+                android:layout_marginEnd="@dimen/_80sdp"
+                android:layout_alignParentEnd="true"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="@dimen/_5sdp"
@@ -89,7 +89,7 @@
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_weight="0.2"
                     android:gravity="center"
-                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingStart="@dimen/_5sdp"
                     android:text="00:00"
                     android:textColor="#ffffff"
                     android:textSize="@dimen/_10ssp"
@@ -115,14 +115,14 @@
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_weight="0.2"
                     android:gravity="center"
-                    android:paddingRight="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
                     android:text="99:99"
                     android:textColor="#ffffff"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
 
                     android:padding="@dimen/_3sdp"
                     android:gravity="center"
@@ -157,7 +157,7 @@
 
 
                 <ImageView
-                    android:layout_marginRight="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_2sdp"
                     android:visibility="gone"
                     android:padding="@dimen/_5sdp"
                     android:id="@+id/img_setting"

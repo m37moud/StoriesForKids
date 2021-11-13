@@ -12,18 +12,15 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
-import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
+import com.m37moud.responsivestories.ui.activities.started.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
@@ -228,7 +225,7 @@ class MainActivity : AppCompatActivity() {
         )
         supportActionBar?.hide()
         // Obtain the FirebaseAnalytics instance.
-        firebaseAnalytics = Firebase.analytics
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
 
         //fab menu
@@ -363,10 +360,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fabButtonSound(clicked :Boolean){
+    private fun fabButtonSound(clicked: Boolean) {
         if (!clicked) {
             Constants.fabOpenSound(this)
-        }else{
+        } else {
             Constants.fabCloseSound(this)
 
         }
@@ -415,6 +412,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun settingMainButton(view: View) {
+        img_main_setting.isClickable = false
         Constants.clickSound(this)
         ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
             .setOnFinishListener {
@@ -425,6 +423,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun homeMainButton(view: View) {
+        img_main_home.isClickable = false
+
         Constants.clickSound(this)
         ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
             .setOnFinishListener {
@@ -872,15 +872,14 @@ class MainActivity : AppCompatActivity() {
 
         val itemView = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
 
-        if(activateSetting){
+        if (activateSetting) {
 
             itemView.play_sound_setting.visibility = View.VISIBLE
             itemView.pause_sound_setting.visibility = View.INVISIBLE
-        }else{
+        } else {
             itemView.play_sound_setting.visibility = View.INVISIBLE
             itemView.pause_sound_setting.visibility = View.VISIBLE
         }
-
 
 
 //        val popUp = PopupWindow(
@@ -902,41 +901,64 @@ class MainActivity : AppCompatActivity() {
 //        settingsDialog.setCancelable(false)
 //        settingsDialog.setCanceledOnTouchOutside(false)
         itemView.previous_sound_setting.setOnClickListener {
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 //            if(itemView.play_sound_setting.isVisible)
-                itemView.play_sound_setting.visibility = View.INVISIBLE
-            itemView.pause_sound_setting.visibility = View.VISIBLE
+                    itemView.play_sound_setting.visibility = View.INVISIBLE
+                    itemView.pause_sound_setting.visibility = View.VISIBLE
 
 
-            this.audioManager.getAudioService()?.previousMusic()
+                    this.audioManager.getAudioService()?.previousMusic()
+                }.doAction()
+
 
         }
 
         itemView.play_sound_setting.setOnClickListener {
-            Constants.activateSetting = false
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
-            this.audioManager.getAudioService()?.playMusic()
-            itemView.play_sound_setting.visibility = View.INVISIBLE
-            itemView.pause_sound_setting.visibility = View.VISIBLE
+                    Constants.activateSetting = false
+
+                    this.audioManager.getAudioService()?.playMusic()
+                    itemView.play_sound_setting.visibility = View.INVISIBLE
+                    itemView.pause_sound_setting.visibility = View.VISIBLE
+                }.doAction()
+
 
         }
 
         itemView.pause_sound_setting.setOnClickListener {
-            Constants.activateSetting = true
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
-            this.audioManager.getAudioService()?.pauseMusic()
-            itemView.play_sound_setting.visibility = View.VISIBLE
-            itemView.pause_sound_setting.visibility = View.INVISIBLE
+                    Constants.activateSetting = true
+
+                    this.audioManager.getAudioService()?.pauseMusic()
+                    itemView.play_sound_setting.visibility = View.VISIBLE
+                    itemView.pause_sound_setting.visibility = View.INVISIBLE
+                }.doAction()
+
 
         }
 
         itemView.next_sound_setting.setOnClickListener {
 
-            itemView.play_sound_setting.visibility = View.INVISIBLE
-            itemView.pause_sound_setting.visibility = View.VISIBLE
-            this.audioManager.getAudioService()?.nextMusic()
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    itemView.play_sound_setting.visibility = View.INVISIBLE
+                    itemView.pause_sound_setting.visibility = View.VISIBLE
+                    this.audioManager.getAudioService()?.nextMusic()
+                }.doAction()
+
 
         }
         settingsDialog.show()
+        settingsDialog.setOnDismissListener {
+            img_main_setting.isClickable = true
+
+        }
+
 
     }
 

@@ -22,7 +22,7 @@
         android:theme="@style/Theme.ResponsiveStories"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.activities.started.onboarding.SplashActivity"
+            android:name=".ui.activities.started.SplashActivity"
             android:screenOrientation="landscape"
             android:theme="@style/SplashScreenStyle">
             <intent-filter>
@@ -48,7 +48,7 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ui.activities.started.onboarding.StartActivity"
+            android:name=".ui.activities.started.StartActivity"
             android:screenOrientation="landscape"
             android:theme="@style/StartScreenStyle" />
 

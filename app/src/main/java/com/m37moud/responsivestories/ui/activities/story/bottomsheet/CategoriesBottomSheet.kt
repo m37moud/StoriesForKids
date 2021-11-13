@@ -153,25 +153,25 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
                     chip.id = model.categoryId!!.toInt()
 
                     chip.text = model.categoryName
-                    val drawable = ChipDrawable.createFromAttributes(
-                        requireContext(),
-                        null,
-                        0,
-                        R.style.CustomChipStyle
-                    )
-                    chip.setOnCheckedChangeListener { compoundButton, b ->
-                        chip.setTextColor(resources.getColor(R.color.white))
-
-                    }
-//                        chip.setOnClickListener {
-//                            chip.setTextColor(resources.getColor(R.color.white))
+//                    val drawable = ChipDrawable.createFromAttributes(
+//                        requireContext(),
+//                        null,
+//                        0,
+//                        R.style.CustomChipStyle
+//                    )
+//                    chip.setOnCheckedChangeListener { compoundButton, b ->
+//                        chip.setTextColor(resources.getColor(R.color.white))
 //
-//                        }
-                    chip.setChipDrawable(drawable)
-                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
-                        chip.setTextColor(resources.getColor(R.color.white))
-                        Log.i("checkedChipIds","${buttonView.id} $isChecked")
-                    }
+//                    }
+////                        chip.setOnClickListener {
+////                            chip.setTextColor(resources.getColor(R.color.white))
+////
+////                        }
+//                    chip.setChipDrawable(drawable)
+//                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
+//                        chip.setTextColor(resources.getColor(R.color.white))
+//                        Log.i("checkedChipIds","${buttonView.id} $isChecked")
+//                    }
 //                    chip.setTextAppearance(R.style.CustomChipStyle)
                     chipGroup.addView(chip)
 

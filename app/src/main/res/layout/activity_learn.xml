@@ -81,17 +81,17 @@
                             android:alpha="0.3" />
 
 
-
                     </FrameLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="40dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
+                        app:stackFromEnd="true"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_6sdp"
 
                         />
 
@@ -105,33 +105,19 @@
                         android:layout_alignParentBottom="true">
 
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/category_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="360dp"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="65dp"
-
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:src="@drawable/ic_error_placeholder"
-                            android:visibility="gone" />
-
 
                         <ImageView
                             android:id="@+id/img_click"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="@dimen/_50sdp"
+                            android:layout_height="@dimen/_50sdp"
                             android:layout_gravity="bottom|start"
-                            android:layout_margin="10dp"
-                            android:layout_marginBottom="28dp"
+                            android:layout_margin="@dimen/_8sdp"
+                            android:layout_marginBottom="@dimen/_18sdp"
                             android:background="@drawable/button_rounded"
                             android:backgroundTint="@color/red2"
                             android:backgroundTintMode="add"
-
                             android:foreground="@drawable/btn_foreground"
-                            android:layoutDirection="rtl"
+                            android:rotation="@integer/locale_mirror_flip"
                             android:src="@drawable/ic_next"
                             android:transitionName="toNextButton"
                             app:tint="@color/white"
@@ -151,14 +137,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginEnd="40dp"
+                android:layout_marginStart="@dimen/_30sdp"
+                android:layout_marginEnd="@dimen/_30sdp"
                 android:background="@drawable/rounded"
-                android:layoutDirection="rtl"
-                android:padding="10dp"
-                android:text="animal"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/animals"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="@dimen/_20ssp" />
 
         </FrameLayout>
 

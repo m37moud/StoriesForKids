@@ -130,9 +130,9 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
         val uri =
             Uri.parse(RESOURCE + cat.img)
-        binding.categoryImg.load(uri) {
-//            crossfade(300)
-        }
+//        binding.categoryImg.load(uri) {
+////            crossfade(300)
+//        }
         binding.catTxtTitle.text = cat.title
 
 

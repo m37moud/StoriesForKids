@@ -90,8 +90,8 @@
                 android:layout_height="100dp"
                 android:background="@drawable/graient_overlay"
 
-                android:paddingLeft="35dp"
-                android:paddingRight="35dp"
+                android:paddingStart="35dp"
+                android:paddingEnd="35dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

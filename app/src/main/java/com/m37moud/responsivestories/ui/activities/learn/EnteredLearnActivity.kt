@@ -73,7 +73,7 @@ class EnteredLearnActivity : AppCompatActivity() {
     private var folder = ""
 
 
-    private lateinit var remoteConfig: FirebaseRemoteConfig
+//    private lateinit var remoteConfig: FirebaseRemoteConfig
 
     //most of problem is fixed
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,40 +87,40 @@ class EnteredLearnActivity : AppCompatActivity() {
 
 //init random background
         Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearnActivity)
+        RemoteConfigUtils.init()
 
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
         //InterstitialAd
-//        RemoteConfigUtils.init()
-        remoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 1
-        }
+//        remoteConfig = FirebaseRemoteConfig.getInstance()
+//        val configSettings = remoteConfigSettings {
+//            minimumFetchIntervalInSeconds = 0
+//        }
 //        remoteConfig.setConfigSettingsAsync(configSettings)
-
-        // [START fetch_config_with_callback]
-        remoteConfig.fetchAndActivate()
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val updated = task.result
-                    Log.d("showAdsFromRemoteConfig", "Config params updated: $updated")
-                    val welcomeMessage = remoteConfig[WELCOME_MESSAGE_KEY].asString()
-                    Log.d("showAdsFromRemoteConfig", "string: ${welcomeMessage.toString()}")
-                    Toast.makeText(this, "Fetch and activate succeeded ${welcomeMessage.toString()}",
-                        Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Fetch failed",
-                        Toast.LENGTH_SHORT).show()
-                }
-//                var s = remoteConfig[NEXT_BUTTON_TEXT].asString()
-
-            }
-
-
-
-
-        // [END fetch_config_with_callback]
+//        remoteConfig.setConfigSettingsAsync(configSettings)
+//        // [START fetch_config_with_callback]
+//        remoteConfig.fetchAndActivate()
+//            .addOnCompleteListener(this) { task ->
+//                if (task.isSuccessful) {
+//                    val updated = task.result
+//                    Log.d("showAdsFromRemoteConfig", "Config params updated: $updated")
+//                    val welcomeMessage = remoteConfig[WELCOME_MESSAGE_KEY].asString()
+//                    Log.d("showAdsFromRemoteConfig", "string: ${welcomeMessage.toString()}")
+//                    Toast.makeText(this, "Fetch and activate succeeded ${welcomeMessage.toString()}",
+//                        Toast.LENGTH_SHORT).show()
+//                } else {
+//                    Toast.makeText(this, "Fetch failed",
+//                        Toast.LENGTH_SHORT).show()
+//                }
+////                var s = remoteConfig[NEXT_BUTTON_TEXT].asString()
+//
+//            }
+//
+//
+//
+//
+//        // [END fetch_config_with_callback]
 
 
 //        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()

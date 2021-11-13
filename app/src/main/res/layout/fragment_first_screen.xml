@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".ui.activities.started.onboarding.screens.FirstScreenFragment">
 
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="150dp"
+        android:layout_width="@dimen/_270sdp"
+        android:layout_height="@dimen/_270sdp"
+        android:rotationY="@integer/locale_mirror_flip"
+
+        android:layout_marginTop="@dimen/_130sdp"
         android:src="@drawable/ic_food"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,9 +24,9 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/_40sdp"
         android:text="@string/kids_story"
-        android:textSize="30sp"
+        android:textSize="@dimen/_25ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -36,12 +37,12 @@
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_30sdp"
         android:gravity="center"
         android:text="@string/lorem_s1"
-        android:textSize="20sp"
+        android:textSize="@dimen/_20ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -53,14 +54,13 @@
         android:id="@+id/next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="40dp"
-        android:layoutDirection="rtl"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_30sdp"
         android:text="@string/next"
         android:textColor="@color/blue"
-        android:textSize="22sp"
+        android:textSize="@dimen/_20ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.m37moud.responsivestories.util
 
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.ktx.BuildConfig
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -32,26 +33,30 @@ object RemoteConfigUtils {
         val remoteConfig = Firebase.remoteConfig
 
         val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600
+//            minimumFetchIntervalInSeconds = 0
             if (BuildConfig.DEBUG) {
-                minimumFetchIntervalInSeconds = 10 // Kept 0 for quick debug
+                minimumFetchIntervalInSeconds = 0 // Kept 0 for quick debug
             } else {
                 minimumFetchIntervalInSeconds = 60 * 60 // Change this based on your requirement
             }
         }
 
         remoteConfig.setConfigSettingsAsync(configSettings)
-//        remoteConfig.setDefaultsAsync(DEFAULTS)
+        remoteConfig.setDefaultsAsync(DEFAULTS)
 
-        remoteConfig.fetchAndActivate().addOnCompleteListener {
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val updated = task.result
+                    Log.d("showAdsFromRemoteConfig", "Config params updated: $updated")
+                }
+
             Log.d(TAG, "addOnCompleteListener")
         }
 
         return remoteConfig
     }
 
-    fun getNextButtonText(): String = remoteConfig[NEXT_BUTTON_TEXT].asString()
-
+    fun getNextButtonText(): String = remoteConfig.getString(NEXT_BUTTON_TEXT)
     fun getNextButtonColor(): String = remoteConfig.getString(NEXT_BUTTON_COLOR)
 
 }

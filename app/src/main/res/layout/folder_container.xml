@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/_8sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
 
-            android:layout_margin="10dp"
-            android:layoutDirection="rtl"
+            android:layout_margin="@dimen/_8sdp"
             android:orientation="vertical">
 
 
@@ -39,8 +38,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
                     app:cardCornerRadius="10dp"
                     app:strokeColor="@color/strokeColor"
                     app:strokeWidth="3dp">
@@ -55,8 +54,8 @@
 
                         <ImageView
                             android:id="@+id/arabic_img"
-                            android:layout_width="180dp"
-                            android:layout_height="180dp"
+                            android:layout_width="@dimen/_140sdp"
+                            android:layout_height="@dimen/_140sdp"
                             android:scaleType="fitXY"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_error_placeholder" />
@@ -82,9 +81,6 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:fontFamily="sans-serif-condensed"
                         android:gravity="center"
                         android:shadowColor="@color/black"
                         android:shadowDx="2"
@@ -111,8 +107,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-
-            android:layoutDirection="rtl"
             android:orientation="vertical">
 
             <FrameLayout
@@ -142,8 +136,8 @@
 
                         <ImageView
                             android:id="@+id/english_img"
-                            android:layout_width="180dp"
-                            android:layout_height="180dp"
+                            android:layout_width="@dimen/_140sdp"
+                            android:layout_height="@dimen/_140sdp"
                             android:scaleType="fitXY"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_error_placeholder" />
@@ -154,7 +148,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="100dp"
+                    android:layout_width="@dimen/_90sdp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:backgroundTint="@color/yellow"
@@ -170,9 +164,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:fontFamily="sans-serif-condensed"
                         android:gravity="center"
                         android:shadowColor="@color/black"
                         android:shadowDx="2"
@@ -181,7 +172,7 @@
                         android:text="@string/english"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="30sp"
+                        android:textSize="@dimen/_23ssp"
                         android:textStyle="bold" />
 
                 </com.google.android.material.card.MaterialCardView>

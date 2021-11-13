@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories.ui.activities.started.onboarding
+package com.m37moud.responsivestories.ui.activities.started
 
 import android.app.ActivityOptions
 import android.app.AlertDialog
@@ -49,6 +49,13 @@ class StartActivity : AppCompatActivity() {
         AnimationUtils.loadAnimation(
             this,
             R.anim.start_bird_anim
+        )
+    }
+
+    private val flashTxtAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.start_txt_flashing
         )
     }
 
@@ -143,6 +150,7 @@ class StartActivity : AppCompatActivity() {
         start_scroll.visibility = View.VISIBLE
 
         start_bird.startAnimation(birdAnim)
+        start_txt.startAnimation(flashTxtAnim)
         playAnim.startOffset = 400
         start.animate().apply {
             startDelay = 300
@@ -176,7 +184,7 @@ class StartActivity : AppCompatActivity() {
 
                     showLoading = false
 
-                }, 2500
+                }, 2000
             )
 
         }
@@ -227,7 +235,6 @@ class StartActivity : AppCompatActivity() {
 //        Log.d("StartActivity", "onStart: $shouldPlay ")
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
-
 
 
         //init loading then activity
@@ -288,9 +295,11 @@ class StartActivity : AppCompatActivity() {
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
                     shouldPlay = false
-
+                    exitDialog.setOnDismissListener {
+                        finishAfterTransition()
+                    }
                     exitDialog.dismiss()
-                    finishAfterTransition()
+
 
 //            super.onBackPressed()
 //          onDestroy()

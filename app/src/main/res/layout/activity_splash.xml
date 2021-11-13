@@ -7,15 +7,15 @@
     android:gravity="center"
     android:background="@color/yellow"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.activities.started.onboarding.SplashActivity">
+    tools:context=".ui.activities.started.SplashActivity">
 
-<FrameLayout
-    android:id="@+id/splash_cow_frame"
-    android:layout_width="220dp"
-    android:layout_height="200dp"
-    android:background="@drawable/splash_cow_background"
+    <FrameLayout
+        android:id="@+id/splash_cow_frame"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_180sdp"
+        android:background="@drawable/splash_cow_background"
 
-    >
+        >
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/bay_face_lottie"
@@ -41,7 +41,7 @@
         android:shadowRadius="3"
         android:text="@string/responsive_stories"
         android:textColor="@color/white"
-        android:textSize="40sp"
+        android:textSize="@dimen/_25ssp"
         android:textStyle="bold"
         />
 

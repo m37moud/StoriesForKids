@@ -11,6 +11,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
@@ -65,12 +68,18 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
             Uri.parse(RESOURCE + learnCategory.img)
 
 
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .placeholder(R.drawable.ic_error_placeholder)
+        Glide.with(context)
+            .applyDefaultRequestOptions(requestOptions)
+            .asDrawable()
+            .load(uri.toString()).into(holder.itemView.img_title)
 
-
-        holder.itemView.img_title.load(uri.toString()) {
-//            crossfade(600)
-            error(R.drawable.ic_error_placeholder)
-        }
+//        holder.itemView.img_title.load(uri.toString()) {
+////            crossfade(600)
+//            error(R.drawable.ic_error_placeholder)
+//        }
         holder.itemView.txt_title.text = learnCategory.title
     }
 

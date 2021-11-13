@@ -1,16 +1,16 @@
-package com.m37moud.responsivestories.ui.activities.started.onboarding
+package com.m37moud.responsivestories.ui.activities.started
 
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.ui.activities.started.onboarding.ViewPagerActivity
 import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash.*
