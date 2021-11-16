@@ -66,7 +66,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="100dp"
+                    android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:backgroundTint="@color/yellow"
@@ -86,10 +86,12 @@
                         android:shadowDx="2"
                         android:shadowDy="2"
                         android:shadowRadius="2"
+                        android:paddingStart="@dimen/_5sdp"
+                        android:paddingEnd="@dimen/_5sdp"
                         android:text="@string/arabic"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="30sp"
+                        android:textSize="@dimen/_23ssp"
                         android:textStyle="bold"
                         />
 
@@ -148,7 +150,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="@dimen/_90sdp"
+                    android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:backgroundTint="@color/yellow"
@@ -169,6 +171,8 @@
                         android:shadowDx="2"
                         android:shadowDy="2"
                         android:shadowRadius="2"
+                        android:paddingStart="@dimen/_5sdp"
+                        android:paddingEnd="@dimen/_5sdp"
                         android:text="@string/english"
                         android:textAlignment="center"
                         android:textColor="@color/white"

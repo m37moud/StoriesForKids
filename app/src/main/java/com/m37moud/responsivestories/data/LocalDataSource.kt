@@ -39,4 +39,7 @@ class LocalDataSource @Inject constructor(
     suspend fun insertCategories(categoriesEntity : CategoriesEntity) {
         videosDao.insertCategories(categoriesEntity)
     }
+    suspend fun deleteCategories() {
+        videosDao.deleteCategories()
+    }
 }

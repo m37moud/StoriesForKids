@@ -89,7 +89,7 @@
                         android:layout_height="wrap_content"
                         app:stackFromEnd="true"
                         android:layout_marginStart="@dimen/_8sdp"
-                        android:layout_marginTop="@dimen/_30sdp"
+                        android:layout_marginTop="@dimen/_35sdp"
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:layout_marginBottom="@dimen/_6sdp"
 
@@ -119,7 +119,6 @@
                             android:foreground="@drawable/btn_foreground"
                             android:rotation="@integer/locale_mirror_flip"
                             android:src="@drawable/ic_next"
-                            android:transitionName="toNextButton"
                             app:tint="@color/white"
 
                             />
@@ -137,10 +136,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:paddingBottom="@dimen/_5sdp"
+
                 android:layout_marginStart="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_30sdp"
+                android:paddingStart="@dimen/_30sdp"
+                android:paddingEnd="@dimen/_30sdp"
                 android:background="@drawable/rounded"
-                android:padding="@dimen/_8sdp"
                 android:text="@string/animals"
                 android:textAllCaps="true"
                 android:textColor="@color/white"

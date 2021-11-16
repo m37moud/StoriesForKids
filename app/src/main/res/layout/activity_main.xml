@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <FrameLayout
             android:id="@+id/main_FrameLayout"
@@ -37,7 +37,7 @@
                 android:layout_gravity="bottom"
                 android:alpha="0.5"
                 android:scaleType="fitXY"
-                android:visibility="gone"
+                android:visibility="invisible"
                 scrolling_image_view:initialState="stopped"
                 scrolling_image_view:source="@drawable/tst1_background"
                 scrolling_image_view:speed="60dp" />
@@ -51,31 +51,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginEnd="160dp"
+            android:layout_marginEnd="@dimen/_130sdp"
             android:clipChildren="false"
             android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/story_main_linearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/main_img_rounded"
-                android:clipChildren="false"
-                android:orientation="vertical"
-                android:visibility="invisible">
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/story_main_backgroundImg"
+                    android:layout_width="@dimen/_125sdp"
+                    android:layout_height="@dimen/_120sdp"
+                    android:src="@drawable/main_img_rounded"
+
+                    />
 
                 <ImageView
                     android:id="@+id/story_main_img"
-                    android:layout_width="@dimen/_130sdp"
-                    android:layout_height="@dimen/_130sdp"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_120sdp"
                     android:src="@drawable/ic_videos"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     app:tint="@color/darkGray"
-                    tools:layout_editor_absoluteX="192dp"
-                    tools:layout_editor_absoluteY="149dp" />
+                    tools:layout_editor_absoluteX="@dimen/_180sdp"
+                    tools:layout_editor_absoluteY="@dimen/_129sdp" />
 
 
-            </LinearLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/story_main_txt"
@@ -85,12 +90,11 @@
                 android:background="@drawable/main_background_txt"
                 android:backgroundTint="@color/darkGray"
                 android:foreground="@drawable/main_forground_txt"
-                android:paddingStart="35dp"
-                android:paddingEnd="35dp"
+                android:paddingStart="@dimen/_30sdp"
+                android:paddingEnd="@dimen/_30sdp"
                 android:text="@string/story"
                 android:textColor="@color/white"
-                android:textSize="25sp"
-                android:visibility="invisible" />
+                android:textSize="@dimen/_18ssp" />
 
         </LinearLayout>
 
@@ -101,32 +105,35 @@
 
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="160dp"
+            android:layout_marginStart="@dimen/_130sdp"
             android:clipChildren="false"
             android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/learn_main_linearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/main_img_rounded"
                 android:clipChildren="false"
-                android:orientation="vertical"
-                android:visibility="invisible">
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/learn_main_backgroundImg"
+                    android:layout_width="@dimen/_125sdp"
+                    android:layout_height="@dimen/_120sdp"
+                    android:src="@drawable/main_img_rounded"
+
+                    />
 
                 <ImageView
                     android:id="@+id/learn_main_img"
-                    android:layout_width="@dimen/_130sdp"
-                    android:layout_height="@dimen/_130sdp"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_120sdp"
                     android:src="@drawable/ic_videos"
-                    android:visibility="invisible"
-
-                    app:tint="@color/darkGray"
-                    tools:layout_editor_absoluteX="192dp"
-                    tools:layout_editor_absoluteY="149dp" />
+                    android:visibility="visible"
+                    app:tint="@color/darkGray" />
 
 
-            </LinearLayout>
+            </FrameLayout>
 
 
             <TextView
@@ -134,15 +141,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
-                android:paddingStart="35dp"
-                android:paddingEnd="35dp"
                 android:background="@drawable/main_background_txt"
                 android:backgroundTint="@color/darkGray"
                 android:foreground="@drawable/main_forground_txt"
+                android:paddingStart="@dimen/_30sdp"
+                android:paddingEnd="@dimen/_30sdp"
                 android:text="@string/learn"
                 android:textColor="@color/white"
-                android:textSize="25sp"
-                android:visibility="invisible" />
+                android:textSize="@dimen/_18ssp" />
 
         </LinearLayout>
 
@@ -151,9 +157,8 @@
             android:id="@+id/main_utility"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:clipChildren="false"
-            android:visibility="visible">
+            android:layout_marginTop="@dimen/_20sdp"
+            android:clipChildren="false">
 
             <ImageView
                 android:id="@+id/img_main_home"
@@ -161,14 +166,13 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="end"
-                android:layout_marginEnd="60dp"
+                android:layout_marginEnd="@dimen/_50sdp"
                 android:background="@drawable/button_rounded"
                 android:backgroundTint="@color/red2"
                 android:backgroundTintMode="add"
                 android:foreground="@drawable/btn_foreground"
                 android:onClick="homeMainButton"
-                android:padding="15dp"
-                android:visibility="invisible"
+                android:padding="@dimen/_10sdp"
                 app:srcCompat="@drawable/ic_home"
                 app:tint="@color/white"
 
@@ -180,16 +184,15 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="top"
-                android:layout_marginStart="60dp"
-                android:layout_marginEnd="60dp"
+                android:layout_marginStart="@dimen/_50sdp"
+                android:layout_marginEnd="@dimen/_50sdp"
                 android:background="@drawable/button_rounded"
                 android:backgroundTint="@color/red2"
                 android:backgroundTintMode="add"
                 android:foreground="@drawable/btn_foreground"
                 android:foregroundTintMode="screen"
                 android:onClick="settingMainButton"
-                android:padding="15dp"
-                android:visibility="invisible"
+                android:padding="@dimen/_10sdp"
                 app:srcCompat="@drawable/ic_settings"
                 app:tint="@color/white" />
 
@@ -202,14 +205,15 @@
             android:layout_height="@dimen/_80sdp"
             android:layout_gravity="bottom"
             android:scaleType="fitXY"
-            android:src="@drawable/maingrass"
-            android:visibility="invisible" />
+            android:src="@drawable/maingrass" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/option_menu_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start">
+            android:layout_gravity="bottom|start"
+
+            android:layout_marginStart="@dimen/_16sdp">
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -217,7 +221,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="@dimen/_3sdp"
                 android:focusable="true"
                 android:src="@drawable/ic_email"
                 android:visibility="invisible"
@@ -232,7 +236,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="@dimen/_3sdp"
                 android:focusable="true"
                 android:src="@drawable/ic_facebook"
                 android:visibility="invisible"
@@ -246,7 +250,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="@dimen/_3sdp"
                 android:focusable="true"
                 android:src="@drawable/ic_youtube"
                 android:visibility="invisible"
@@ -259,10 +263,8 @@
                 android:id="@+id/open_menu_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/_8sdp"
                 android:src="@drawable/ic_add"
-                android:visibility="invisible"
                 app:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

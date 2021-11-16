@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.view.Surface
@@ -20,11 +21,7 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.get
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import kotlinx.android.synthetic.main.activity_entered_learen.*
 import kotlinx.android.synthetic.main.folder_container.*
 import java.io.File
@@ -34,8 +31,12 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.firebase.RealtimeDatabaseUtils
 import com.m37moud.responsivestories.util.Constants
-import com.m37moud.responsivestories.util.RemoteConfigUtils
+import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteConfig
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils
+import com.m37moud.responsivestories.util.Constants.Companion.addRewardAds
+import com.m37moud.responsivestories.util.Constants.Companion.bannerAds
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,11 +44,11 @@ import javax.inject.Inject
 
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
+const val AD_BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
 
 @AndroidEntryPoint
 class EnteredLearnActivity : AppCompatActivity() {
 
-    private var showAdsFromRemoteConfig: Boolean = false
 
     private var shouldPlay = false
     private var shouldAllowBack = false
@@ -55,6 +56,7 @@ class EnteredLearnActivity : AppCompatActivity() {
     private var category: String? = null
     private var counter: Int = 0
     private lateinit var list: ArrayList<String>
+    private lateinit var adView: AdView
 
 
     @Inject
@@ -79,66 +81,48 @@ class EnteredLearnActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
-////        changeOrientation()
-
-
         setContentView(R.layout.activity_entered_learen)
 
 
 //init random background
         Constants.initBackgroundColor(entered_learn_parent, this@EnteredLearnActivity)
-        RemoteConfigUtils.init()
 
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        //InterstitialAd
-//        remoteConfig = FirebaseRemoteConfig.getInstance()
-//        val configSettings = remoteConfigSettings {
-//            minimumFetchIntervalInSeconds = 0
-//        }
-//        remoteConfig.setConfigSettingsAsync(configSettings)
-//        remoteConfig.setConfigSettingsAsync(configSettings)
-//        // [START fetch_config_with_callback]
-//        remoteConfig.fetchAndActivate()
-//            .addOnCompleteListener(this) { task ->
-//                if (task.isSuccessful) {
-//                    val updated = task.result
-//                    Log.d("showAdsFromRemoteConfig", "Config params updated: $updated")
-//                    val welcomeMessage = remoteConfig[WELCOME_MESSAGE_KEY].asString()
-//                    Log.d("showAdsFromRemoteConfig", "string: ${welcomeMessage.toString()}")
-//                    Toast.makeText(this, "Fetch and activate succeeded ${welcomeMessage.toString()}",
-//                        Toast.LENGTH_SHORT).show()
-//                } else {
-//                    Toast.makeText(this, "Fetch failed",
-//                        Toast.LENGTH_SHORT).show()
-//                }
-////                var s = remoteConfig[NEXT_BUTTON_TEXT].asString()
-//
-//            }
-//
-//
-//
-//
-//        // [END fetch_config_with_callback]
+
+        RemoteConfigUtils.init(this)
+
+//        val checkStatus = RealtimeDatabaseUtils.getAdsStatus()
+//        Log.d(TAG, "AdsFolderFromFirebase: $checkStatus ")
 
 
-//        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
-//        val string = RemoteConfigUtils.getNextButtonText()
-//        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${string} ")
-//        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${showAdsFromRemoteConfig} ")
 
-        if (showAdsFromRemoteConfig) loadAd()
+        Log.d(TAG, "AdsFolderFromFirebase: $showAdsFromRemoteConfig ")
 
+        entered_learn_container_loading.visibility = View.VISIBLE
         entered_learn_loading.visibility = View.VISIBLE
         entered_learn_parent_frame.visibility = View.INVISIBLE
 
-        Handler().postDelayed(
+        MobileAds.initialize(this)
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
+                .build()
+        )
+        Handler(Looper.getMainLooper()).postDelayed(
             {
                 shouldAllowBack = true
+                entered_learn_container_loading.visibility = View.GONE
                 entered_learn_loading.visibility = View.GONE
                 entered_learn_parent_frame.visibility = View.VISIBLE
                 entered_learn_Layout.visibility = View.VISIBLE
+                if (showAdsFromRemoteConfig) {
+                    loadAd()
+                    showAds()
+
+                }
+
                 getAssetsFolder()
 
 
@@ -148,8 +132,8 @@ class EnteredLearnActivity : AppCompatActivity() {
         )
 
 
-        img_replay.setOnTouchListener(Constants.Listeners.onTouch)
-        img_home.setOnTouchListener(Constants.Listeners.onTouch)
+//        img_replay.setOnTouchListener(Constants.Listeners.onTouch)
+//        img_home.setOnTouchListener(Constants.Listeners.onTouch)
 //        if (mRewardedAd == null) {
 ////            changeOrientation()
 //        }
@@ -824,63 +808,103 @@ class EnteredLearnActivity : AppCompatActivity() {
 
     private fun showAds() {
 
-        if (showAdsFromRemoteConfig) {
-            val adRequest = AdRequest.Builder()
+        val mBannerID = if(TextUtils.isEmpty(bannerAds))
+            AD_BANNER_ID
+        else
+            bannerAds.toString()
 
-                .build()
+        try {
 
-            ad_viewOffline.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    ad_viewOffline.visibility = View.VISIBLE
+            MobileAds.initialize(this) { }
+            adView = AdView(this)
+            entered_learn_ad_container.addView(adView)
+
+            if (showAdsFromRemoteConfig) {
+                adView.adSize = AdSize.BANNER
+                adView.adUnitId = mBannerID
+                val adRequest = AdRequest.Builder()
+               .build()
+
+                Log.d("showAds", " : bannerAds " + bannerAds.toString())
+
+
+                adView.adListener = object : AdListener() {
+                    override fun onAdLoaded() {
+//                        ad_viewOffline.visibility = View.VISIBLE
+                        entered_learn_ad_container.visibility = View.VISIBLE
+                    }
+
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+//                        ad_viewOffline.visibility = View.GONE
+                        entered_learn_ad_container.visibility = View.GONE
+                        Log.d("showAds", " : catch " + adError.toString())
+
+                    }
                 }
 
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    ad_viewOffline.visibility = View.GONE
-                }
+//                ad_viewOffline.visibility = View.VISIBLE
+                entered_learn_ad_container.visibility = View.VISIBLE
+                adView.loadAd(adRequest)
             }
-
-            ad_viewOffline.visibility = View.VISIBLE
-            ad_viewOffline.loadAd(adRequest)
+        } catch (e: Exception) {
+//            ad_viewOffline.visibility = View.GONE
+            entered_learn_ad_container.visibility = View.GONE
+            e.printStackTrace()
+            Log.d("showAds", " : catch " + e)
         }
 
 
     }
 
     private fun hideAds() {
-        ad_viewOffline.pause()
-        ad_viewOffline.visibility = View.GONE
+        adView.pause()
+//        ad_viewOffline.visibility = View.GONE
+        entered_learn_ad_container.visibility = View.GONE
     }
 
     private fun loadAd() {
 
-        var adRequest = AdRequest.Builder().build()
+        val mRewardID = if(TextUtils.isEmpty(addRewardAds))
+            AD_REWARDEDAD_ID
+        else
+            addRewardAds.toString()
 
-        RewardedAd.load(
-            this, AD_REWARDEDAD_ID, adRequest,
-            object : RewardedAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d("loadAd", adError?.message)
-                    mRewardedAd = null
-                    mAdIsLoading = false
-                    val error = "domain: ${adError.domain}, code: ${adError.code}, " +
-                            "message: ${adError.message}"
-                    Toast.makeText(
-                        this@EnteredLearnActivity,
-                        "onAdFailedToLoad() with error $error",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        try {
+            var adRequest = AdRequest.Builder().build()
+
+
+            RewardedAd.load(
+                this, mRewardID, adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d("loadAd", adError?.message)
+                        mRewardedAd = null
+                        mAdIsLoading = false
+                        val error = "domain: ${adError.domain}, code: ${adError.code}, " +
+                                "message: ${adError.message}"
+                        Toast.makeText(
+                            this@EnteredLearnActivity,
+                            "onAdFailedToLoad() with error $error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onAdLoaded(rewardedAd: RewardedAd) {
+
+                        Log.d("loadAd", "Ad was loaded.")
+                        mRewardedAd = rewardedAd
+                        mAdIsLoading = false
+
+
+                    }
                 }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("showAds", " : catch " + e)
+        }
 
-                override fun onAdLoaded(rewardedAd: RewardedAd) {
 
-                    Log.d("loadAd", "Ad was loaded.")
-                    mRewardedAd = rewardedAd
-                    mAdIsLoading = false
-
-
-                }
-            }
-        )
 
 
     }
@@ -889,7 +913,6 @@ class EnteredLearnActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        showAds()
 //        startService()
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.resumeMusic()
@@ -975,6 +998,8 @@ class EnteredLearnActivity : AppCompatActivity() {
 //            changeOrientation()
 
         }
+        adView.destroy()
+        entered_learn_ad_container.visibility = View.GONE
 
         super.onDestroy()
     }
@@ -994,50 +1019,51 @@ class EnteredLearnActivity : AppCompatActivity() {
     fun homeButton(view: View) {
         Constants.clickSound(this)
 
-
-        //show ads
-        if (mRewardedAd != null) {
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                //show ads
+                if (mRewardedAd != null) {
 //            shouldPlay = false
-            mRewardedAd?.fullScreenContentCallback =
-                object : FullScreenContentCallback() {
-                    override fun onAdDismissedFullScreenContent() {
-                        Log.d("loadAd", "showInterstitial Ad was dismissed.")
-                        // Don't forget to set the ad reference to null so you
-                        // don't show the ad a second time.
-                        mRewardedAd = null
-                        mAdIsLoading = false
+                    mRewardedAd?.fullScreenContentCallback =
+                        object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                Log.d("loadAd", "showInterstitial Ad was dismissed.")
+                                // Don't forget to set the ad reference to null so you
+                                // don't show the ad a second time.
+                                mRewardedAd = null
+                                mAdIsLoading = false
 //                                shouldPlay = true
 //                                loadAd()
-                    }
+                            }
 
-                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                        Log.d("loadAd", "showInterstitial Ad failed to show.")
-                        // Don't forget to set the ad reference to null so you
-                        // don't show the ad a second time.
-                        mRewardedAd = null
-                        shouldPlay = true
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                                Log.d("loadAd", "showInterstitial Ad failed to show.")
+                                // Don't forget to set the ad reference to null so you
+                                // don't show the ad a second time.
+                                mRewardedAd = null
+                                shouldPlay = true
 
 
-                    }
+                            }
 
-                    override fun onAdShowedFullScreenContent() {
+                            override fun onAdShowedFullScreenContent() {
 
-                        Log.d("loadAd", "showInterstitial Ad showed fullscreen content.")
-                        // Called when ad is dismissed.
-                        mRewardedAd = null
-                        mAdIsLoading = true
+                                Log.d("loadAd", "showInterstitial Ad showed fullscreen content.")
+                                // Called when ad is dismissed.
+                                mRewardedAd = null
+                                mAdIsLoading = true
 
-                    }
-                }
+                            }
+                        }
 //            mAdIsLoading = true
-            mRewardedAd?.show(this, OnUserEarnedRewardListener() {
+                    mRewardedAd?.show(this, OnUserEarnedRewardListener() {
 
-                fun onUserEarnedReward(rewardItem: RewardItem) {
+                        fun onUserEarnedReward(rewardItem: RewardItem) {
 //                    var rewardAmount = rewardItem.getReward()
-                    var rewardType = rewardItem.type
-                    Log.d("loadAd", "User earned the reward.")
-                }
-            })
+                            var rewardType = rewardItem.type
+                            Log.d("loadAd", "User earned the reward.")
+                        }
+                    })
 
 //            startActivity(
 //                Intent(
@@ -1046,29 +1072,46 @@ class EnteredLearnActivity : AppCompatActivity() {
 //                )
 //            )
 //            finish()
-            super.finish()
-        } else {
-            shouldPlay = true
-            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
-            super.finish()
-        }
+                    super.finish()
+                } else {
+                    shouldPlay = true
+                    Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
+                    super.finish()
+                }
+            }.doAction()
+
+
     }
 
     fun replayButton(view: View) {
-        val string = RemoteConfigUtils.getNextButtonText()
-        Log.d("EnteredLearnActivity", "showAdsFromRemoteConfig: ${RemoteConfigUtils.getNextButtonColor()} ")
-
         Constants.clickSound(this)
+//        val remoteConfig = FirebaseRemoteConfig.getInstance()
 
-        val name = initName(list[counter], showEng)
-        val path = category.plus("Name") + folder + File.separator + name
-        playImgSound(path)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+
+//                val string = RemoteConfigUtils.getNextButtonText()
+//                Log.d(
+//                    "EnteredLearnActivity",
+//                    "showAdsFromRemoteConfig: ${remoteConfig.getString("WELCOME_MESSAGE_KEY")} "
+//                )
+                Log.d(
+                    "EnteredLearnActivity",
+                    "showAdsFromRemoteConfig: ${RemoteConfigUtils.getNextButtonText()} "
+                )
+
+
+                val name = initName(list[counter], showEng)
+                val path = category.plus("Name") + folder + File.separator + name
+                playImgSound(path)
+            }.doAction()
+
     }
 
 
     companion object {
 
-        private const val TAG = "MainActivity"
+        private const val TAG = "EnteredLearnActivity"
 
         // Remote Config keys
         private const val NEXT_BUTTON_TEXT = "any"

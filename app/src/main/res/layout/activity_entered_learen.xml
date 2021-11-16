@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,35 +10,12 @@
 
 
     <FrameLayout
-        android:id="@+id/entered_learn_Layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:id="@+id/entered_learn_container_loading"
 
-
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:id="@+id/entered_learn_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:scaleType="fitXY"
-            scrolling_image_view:initialState="started"
-            scrolling_image_view:source="@drawable/tst1_background"
-            scrolling_image_view:speed="60dp" />
-
-        <FrameLayout
-            android:id="@+id/entered_learn_FrameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:alpha="0.3" />
-
-    </FrameLayout>
-
-    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_centerInParent="true"
+        android:visibility="invisible">
 
         <include
             android:id="@+id/entered_learn_loading"
@@ -47,15 +24,18 @@
     </FrameLayout>
 
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/ad_viewOffline"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/entered_learn_ad_container"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|center"
-        app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom|center"
+        android:visibility="gone"
 
-        />
+        >
+
+    </FrameLayout>
 
 
     <FrameLayout
@@ -63,14 +43,44 @@
         android:id="@+id/entered_learn_parent_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/entered_learn_ad_container"
+        android:layout_centerInParent="true"
+        android:background="@android:color/transparent"
+
         android:clipChildren="false">
+
+        <FrameLayout
+            android:id="@+id/entered_learn_Layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+
+            <com.q42.android.scrollingimageview.ScrollingImageView
+                android:id="@+id/entered_learn_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:scaleType="fitXY"
+                scrolling_image_view:initialState="started"
+                scrolling_image_view:source="@drawable/tst1_background"
+                scrolling_image_view:speed="60dp" />
+
+            <FrameLayout
+                android:id="@+id/entered_learn_FrameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:alpha="0.3" />
+
+        </FrameLayout>
 
 
         <RelativeLayout
             android:id="@+id/utility"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:clipChildren="false">
 
             <ImageView
@@ -115,9 +125,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:layout_width="@dimen/_350sdp"
-            android:layout_height="@dimen/_180sdp"
+            android:layout_height="@dimen/_190sdp"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_20sdp">
+            android:layout_marginTop="@dimen/_15sdp">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -300,4 +310,4 @@
     </FrameLayout>
 
 
-</FrameLayout>
+</RelativeLayout>

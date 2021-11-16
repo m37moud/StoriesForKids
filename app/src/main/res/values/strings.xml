@@ -56,5 +56,9 @@
     <string name="share_app_with_your_friend">share app with your friend</string>
     <string name="if_you_like_app_you_can_pay_cup_of_coffee_for_me">if you like app you can pay cup of coffee for me</string>
     <string name="bird">bird</string>
+    <string name="update_now">update now</string>
+    <string name="update_app">Update</string>
+    <string name="dialog_update_available_message">new Update Available</string>
+    <string name="later">Later</string>
 
 </resources>

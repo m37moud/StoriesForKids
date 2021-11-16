@@ -3,6 +3,7 @@ package com.m37moud.responsivestories.adapters
 import android.content.Context
 import android.net.Uri
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -112,7 +113,19 @@ class LearnAdapter constructor(var context: Context, val mItemClickListener: Ite
     }
 
 
-    fun initEnimTouchView(holder: LearnViewHolder) {
+    fun initAnimationTouchView(holder: LearnViewHolder) {
+        Log.d("initAnimationTouchView", "called: ")
+        var visible : Boolean = false
+
+        holder.learnImg.setOnClickListener {
+            TransitionManager.beginDelayedTransition(holder.learnContainer)
+            visible = !visible
+           holder.learnTitle.visibility = if(!visible){
+               View.GONE
+            }else
+               View.VISIBLE
+
+        }
 
 
 

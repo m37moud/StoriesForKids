@@ -1,11 +1,11 @@
 package com.m37moud.responsivestories
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.view.animation.Animation
@@ -15,17 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.started.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
-import com.m37moud.responsivestories.util.FirebaseService
+import com.m37moud.responsivestories.util.NetworkResult
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import com.skydoves.elasticviews.ElasticAnimation
@@ -34,7 +30,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
 import javax.inject.Inject
 
-const val TOPIC = "/topics/myTopic2"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -167,27 +162,17 @@ class MainActivity : AppCompatActivity() {
     }
     private var clicked = false
 
-    private lateinit var videosViewModel: VideosViewModel
-
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
+
         setContentView(R.layout.activity_main)
 
 
-        //play background music
-//        shouldPlay = true
-//        this.audioManager.getAudioService()?.playMusic()
-
-
-//        if (!shouldPlay) {
-//            shouldPlay = true
-//            Constants.startService(this)
-//        }
-
+        // hide views to prepare animation
+        initViewToHide()
         Log.d("MainActivity", "onCreate: called $shouldPlay")
 
 
@@ -196,7 +181,10 @@ class MainActivity : AppCompatActivity() {
 
         animInvoked = 0
 
-        Handler().postDelayed(
+
+        supportActionBar?.hide()
+
+        Handler(Looper.getMainLooper()).postDelayed(
             {
                 main_loading.visibility = View.GONE
                 main_parent_frame.visibility = View.VISIBLE
@@ -204,7 +192,7 @@ class MainActivity : AppCompatActivity() {
 
                 //set animation
                 initMainActivityAnimation(
-                    learn_main_linearLayout,
+                    learn_main_backgroundImg,
                     learn_main_txt,
                     learn_main_img,
                     learnLinearLayoutAnim,
@@ -213,7 +201,7 @@ class MainActivity : AppCompatActivity() {
                     500
                 )
                 initMainActivityAnimation(
-                    story_main_linearLayout,
+                    story_main_backgroundImg,
                     story_main_txt,
                     story_main_img,
                     storyLinearLayoutAnim,
@@ -223,9 +211,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }, 2500
         )
-        supportActionBar?.hide()
-        // Obtain the FirebaseAnalytics instance.
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
 
         //fab menu
@@ -235,12 +220,6 @@ class MainActivity : AppCompatActivity() {
 
         facebook_fab.setOnClickListener { getOpenFacebookIntent() }
         gmail_fab.setOnClickListener { getOpenMailIntent() }
-
-
-//        learn_main_img.setOnTouchListener(Constants.Listeners.onTouch)
-//        story_main_img.setOnTouchListener(Constants.Listeners.onTouch)
-//        img_main_home.setOnTouchListener(Constants.Listeners.onTouch)
-//        img_main_setting.setOnTouchListener(Constants.Listeners.onTouch)
 
 
         //start story activity
@@ -271,66 +250,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                // Get new FCM registration token
-                val token = task.result
-                FirebaseService.token = token
-                Log.d(TAG, "token: ${token.toString()}")
-                val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
-                referenceVideos.child("client").setValue(token)
-                    .addOnSuccessListener {
-                        Log.d("Fetching", "sendRegistrationToServer :  successful ")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.d(
-                            "Fetching",
-                            " sendRegistrationToServer :  err " + e.message.toString()
-                        )
-
-                        //failed to add info to database
-                    }
-                // Log and toast
-                val msg = getString(R.string.msg_token_fmt, token)
-                Log.d(TAG, msg)
-//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-            } else {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-            }
-
-
-        }
-
-
-
-        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
-            .addOnCompleteListener { task ->
-                Log.d("subscribet", "succ ")
-                if (!task.isSuccessful) {
-                    Log.d("subscribe", "faild ")
-                }
-
-                Toast.makeText(baseContext, "subscribeToTopic is Successful", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        MobileAds.initialize(this)
-        MobileAds.setRequestConfiguration(
-            RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
-                .build()
-        )
-
-//
-
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-            param(FirebaseAnalytics.Param.ITEM_ID, "id")
-            param(FirebaseAnalytics.Param.ITEM_NAME, "name")
-            param(FirebaseAnalytics.Param.CONTENT_TYPE, "image")
-        }
-
-        videosViewModel = ViewModelProvider(this@MainActivity).get(VideosViewModel::class.java)
+//        MobileAds.initialize(this)
+//        MobileAds.setRequestConfiguration(
+//            RequestConfiguration.Builder()
+//                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
+//                .build()
+//        )
 
 
         //init background
@@ -398,7 +324,8 @@ class MainActivity : AppCompatActivity() {
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        videosViewModel.saveDownloadStatus(false)
+
+
         Log.d("MainActivity", "onStart: called $shouldPlay")
 
         super.onStart()
@@ -407,7 +334,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
 //        when app end download status = false
         Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
-        videosViewModel.saveDownloadStatus(false)
         super.onDestroy()
     }
 
@@ -494,6 +420,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+
+
     override fun onResume() {
         Log.d(TAG, "onResume: called")
         animInvoked = 0
@@ -511,13 +439,13 @@ class MainActivity : AppCompatActivity() {
             main_loading.visibility = View.VISIBLE
             main_parent_frame.visibility = View.INVISIBLE
 //
-            Handler().postDelayed(
+            Handler(Looper.getMainLooper()).postDelayed(
                 {
                     main_loading.visibility = View.GONE
                     main_parent_frame.visibility = View.VISIBLE
 
                     initMainActivityAnimation(
-                        learn_main_linearLayout,
+                        learn_main_backgroundImg,
                         learn_main_txt,
                         learn_main_img,
                         learnLinearLayoutAnim,
@@ -527,7 +455,7 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     initMainActivityAnimation(
-                        story_main_linearLayout,
+                        story_main_backgroundImg,
                         story_main_txt,
                         story_main_img,
                         storyLinearLayoutAnim,
@@ -573,7 +501,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMainActivityAnimation(
-        layout: LinearLayout,
+        backgroundImg: ImageView,
         textView: TextView,
         imageView: ImageView,
         layoutAnim: Animation,
@@ -581,13 +509,7 @@ class MainActivity : AppCompatActivity() {
         imgAnim: Animation,
         delay: Long
     ) {
-        shouldAllowBack = false
-        learn_main_img.isClickable = false
-        story_main_img.isClickable = false
-        img_main_setting.isClickable = false
-        img_main_home.isClickable = false
-        open_menu_fab.isClickable = false
-        main_scroll.start()
+        startInitButtons()
 
 
 //        val translateAnimation =
@@ -632,13 +554,10 @@ class MainActivity : AppCompatActivity() {
                 }.withEndAction {
 
 
-//                    Toast.makeText(this@MainActivity, "start", Toast.LENGTH_SHORT).show()
-
                     img_main_home.apply {
 
                         visibility = View.VISIBLE
                         img_main_setting.visibility = View.VISIBLE
-
                         animate().apply {
                             startDelay = 300
                             buttonsAnim.duration = 300
@@ -664,14 +583,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        layout.apply {
+        backgroundImg.apply {
             visibility = View.VISIBLE
             animate().apply {
                 startDelay = 1200
                 layoutAnim.duration = 300
 //                Toast.makeText(this@MainActivity, "layoutAnim", Toast.LENGTH_SHORT).show()
                 layoutAnim.startOffset = delay
-                layout.startAnimation(layoutAnim)
+                backgroundImg.startAnimation(layoutAnim)
 
 //                Constants.buttonAppearSound(this@MainActivity)
 
@@ -714,12 +633,7 @@ class MainActivity : AppCompatActivity() {
                         imageView.startAnimation(txtAndImgInfiniteAnim)
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
-                        shouldAllowBack = true
-                        learn_main_img.isClickable = true
-                        story_main_img.isClickable = true
-                        img_main_setting.isClickable = true
-                        img_main_home.isClickable = true
-                        open_menu_fab.isClickable = true
+                        finishInitButtons()
 
                     }.start()
                 }.start()
@@ -730,18 +644,31 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun exitMainActivityAnimation(
-        isStory: Boolean,
-        isLearn: Boolean,
-        isFinish: Boolean
-    ) {
+    private fun startInitButtons() {
         shouldAllowBack = false
         learn_main_img.isClickable = false
         story_main_img.isClickable = false
         img_main_setting.isClickable = false
         img_main_home.isClickable = false
         open_menu_fab.isClickable = false
+        main_scroll.start()
+    }
 
+    private fun finishInitButtons() {
+        shouldAllowBack = true
+        learn_main_img.isClickable = true
+        story_main_img.isClickable = true
+        img_main_setting.isClickable = true
+        img_main_home.isClickable = true
+        open_menu_fab.isClickable = true
+    }
+
+    private fun exitMainActivityAnimation(
+        isStory: Boolean,
+        isLearn: Boolean,
+        isFinish: Boolean
+    ) {
+        startInitButtons()
 
         this.shouldPlay = true
 
@@ -826,16 +753,12 @@ class MainActivity : AppCompatActivity() {
 
                 isResumeAnim = true
                 isAnimFinish = true
-                shouldAllowBack = true
 
                 initViewToHide()
-                learn_main_img.isClickable = true
-                story_main_img.isClickable = true
-                img_main_setting.isClickable = true
-                img_main_home.isClickable = true
-                open_menu_fab.isClickable = true
-                Constants.fabCloseSound(this)
 
+                finishInitButtons()
+
+                Constants.fabCloseSound(this)
 
             }.start()
 
@@ -843,8 +766,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViewToHide() {
         Log.d(TAG, "initViewToHide: called")
-        learn_main_linearLayout.visibility = View.INVISIBLE
-        story_main_linearLayout.visibility = View.INVISIBLE
+        learn_main_backgroundImg.visibility = View.INVISIBLE
+        story_main_backgroundImg.visibility = View.INVISIBLE
         story_main_img.visibility = View.INVISIBLE
         learn_main_img.visibility = View.INVISIBLE
         img_main_home.visibility = View.INVISIBLE
@@ -852,6 +775,7 @@ class MainActivity : AppCompatActivity() {
         learn_main_txt.visibility = View.INVISIBLE
         story_main_txt.visibility = View.INVISIBLE
         open_menu_fab.visibility = View.INVISIBLE
+        main_grass.visibility = View.INVISIBLE
     }
 
     override fun onStop() {
@@ -896,7 +820,7 @@ class MainActivity : AppCompatActivity() {
         settingsDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         val window = settingsDialog.window
         window?.setGravity(Gravity.CENTER)
-        window?.attributes?.windowAnimations = R.style.DalogAnimation
+        window?.attributes?.windowAnimations = R.style.DialogAnimation
 
 //        settingsDialog.setCancelable(false)
 //        settingsDialog.setCanceledOnTouchOutside(false)

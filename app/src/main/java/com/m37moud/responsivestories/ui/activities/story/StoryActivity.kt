@@ -3,6 +3,7 @@ package com.m37moud.responsivestories.ui.activities.story
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -10,6 +11,7 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -28,6 +30,7 @@ import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
@@ -129,7 +132,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         binding.cardView.visibility = View.INVISIBLE
 
 
-        Handler().postDelayed(
+        Handler(Looper.getMainLooper()).postDelayed(
             {
                 shouldAllowBack = true
                 binding.storyLoading.visibility = View.GONE
@@ -448,7 +451,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     private fun readVideosWithCategories(categories: String) {
-        Log.d("mah readVideosWithCategories", "readVideosWithCategories called! $categories")
+        Log.d("readVideosCategories", "readVideosWithCategories called! $categories")
 
 
         hideLoading()
@@ -458,7 +461,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 .observe(this@StoryActivity, Observer { database ->
                     if (database.isNotEmpty()) {
 
-                        Log.d("mah readVideosWithCategories", "if statement true")
+                        Log.d("readVideosCategories", "if statement true")
 
                         listReadDatabase = database as ArrayList
                         //room change
@@ -468,12 +471,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                         adapterReadDatabase.setData(listReadDatabase)
                         binding.rcStory.adapter = adapterReadDatabase
                         Log.d(
-                            "mah readVideosWithCategories",
+                            "readVideosCategories",
                             "list is " + listReadDatabase.toString()
                         )
 
                     } else {
-                        Log.d("mah readVideosWithCategories", "if statement is false ...")
+                        Log.d("readVideosCategories", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
                         mainViewModel.readVideos.removeObservers(this@StoryActivity)
                     }
@@ -618,7 +621,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun requestApiData() {
         listVid = ArrayList()
         listVid.clear()
-        Log.d("mah firstCheck requestApiData", "method calle is ")
+        Log.d("requestApiData", "method calle is ")
 
         mainViewModel.getVideos()
         mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
@@ -728,13 +731,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
     private fun firstRequestApiData() {
 
-        Log.d("readDatabase firstRequestApiData", "requestApiData called!")
+        Log.d("firstRequestApiData", "requestApiData called!")
         mainViewModel.getVideos()
 
         mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
-                    Log.d("readDatabase firstRequestApiData", "requestApiData sucsess!")
+                    Log.d("firstRequestApiData", "requestApiData sucsess!")
                     hideLoading()
                     binding.rcStory.adapter = mAdapter
                     response.data?.let {
@@ -766,7 +769,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
     private fun saveVideoData(model: VideoModel) {
-        Log.d("readDatabase saveVideoData", "videoData!" + model)
+        Log.d("saveVideoData", "videoData!" + model)
         val id = model.id!!
 
         val videoData: VideoEntity = VideoEntity(
@@ -784,8 +787,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         mainViewModel.insertVideos(videoData).invokeOnCompletion {
             counter++
             val size = listVid.size
-            Log.d("readDatabase saveVideoData", "isert all videos !" + size)
-            Log.d("readDatabase saveVideoData", "isert all videos !" + counter)
+            Log.d("saveVideoData", "isert all videos !" + size)
+            Log.d("saveVideoData", "isert all videos !" + counter)
             //refresh the list again
             if (counter == size) {
 
@@ -915,7 +918,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
     private fun getCategoriesFromFirebase() {
 
-        Log.d("getCategoriesFromFirebase", "getCategories called!")
+        Log.d("getCategoriesFirebase", "getCategories called!")
         mainViewModel.getCategories()
 
         mainViewModel.categoriesResponse.observe(this@StoryActivity, Observer { response ->
@@ -949,9 +952,16 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     private fun prepareSaveCategoriesData(list: ArrayList<CategoriesModel>) {
-        Log.d("prepareSaveCategoriesData ", "CategoriesModel! called")
+        Log.d("prepareSaveCategories", "CategoriesModel! called")
 
         if (list.isNotEmpty()) {
+            if(list.size != listCategory.size)
+            {
+                Log.d("prepareSaveCategories", "if ! true")
+
+                mainViewModel.deleteCategories()
+            }
+
             list.forEach {
                 saveCategoriesData(it)
             }
@@ -960,7 +970,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     private fun saveCategoriesData(model: CategoriesModel) {
-        Log.d("readDatabase saveVideoData", "videoData!" + model)
+        Log.d("saveCategoriesData", "videoData!" + model)
         val id = model.categoryId!!
 
         val categoryData: CategoriesEntity = CategoriesEntity(
@@ -970,42 +980,41 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         )
         mainViewModel.insertCategories(categoryData).invokeOnCompletion {
             val size = listCategory.size
-            Log.d("readDatabase saveVideoData", "isert all videos !" + size)
-
+            Log.d("saveVideoData", "isert all videos !" + size)
 
         }
 
     }
 
     private fun readCategoriesFromDatabase() {
-        Log.d("mah readCategoriesFromDatabase", "readCategoriesFromDatabase called!")
+        Log.d("readCategoriesDatabase", "readCategoriesFromDatabase called!")
         lifecycleScope.launch {
             mainViewModel.readCategories.observe(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
-                    Log.d("mah readCategoriesFromDatabase", "if statement true")
+                    Log.d("readCategoriesDatabase", "if statement true")
 
 //                    listCategory = database as ArrayList<CategoriesModel>
                     listCategoriesReadDatabase = database as ArrayList
                     listCategoriesReadDatabase.forEach {
                         val categoryModel =
                             CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
-
                         listCategory.add(categoryModel)
 
                     }
 
 
-                    Log.d("mah readCategoriesFromDatabase", "list is " + listCategory)
+                    Log.d("readCategoriesDatabase", "list is " + listCategory)
 
                 } else {
-                    Log.d("mah readCategoriesFromDatabase", "if statement is false ...")
+                    Log.d("readCategoriesDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
                     mainViewModel.readCategories.removeObservers(this@StoryActivity)
                 }
             })
         }
     }
+
 
     override fun onBackPressed() {
         shouldPlay = true
@@ -1038,7 +1047,6 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.resumeMusic()
-
 
         super.onResume()
     }

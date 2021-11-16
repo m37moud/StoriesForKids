@@ -11,6 +11,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.R
 import kotlinx.android.synthetic.main.activity_start.*
@@ -23,6 +24,13 @@ class Constants {
          var activateSetting = false
          var disableNextSound = false
          var disablePreviousSound = false
+
+        //Ads
+         var showAdsFromRemoteConfig: Boolean = false
+        var addRewardAds : String? = ""
+        var bannerAds : String? = ""
+        var interstitialAds : String? = ""
+
 
 
         val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabets")
@@ -83,6 +91,13 @@ class Constants {
 //
 //             val color: Int = generator.getRandomColor()
 //             frame.background = color
+        }
+
+        fun initBackgroundColor(frame: RelativeLayout? , context :Context) {
+            val androidColors = context.resources.getIntArray(R.array.androidcolors)
+            val randomAndroidColor = androidColors[Random().nextInt(androidColors.size)]
+            frame!!.setBackgroundColor(randomAndroidColor)
+
         }
 
 

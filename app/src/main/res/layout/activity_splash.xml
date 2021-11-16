@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@color/yellow"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".ui.activities.started.SplashActivity">
 
     <FrameLayout
@@ -17,17 +17,17 @@
 
         >
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/bay_face_lottie"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="invisible"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/splashbabyface" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/bay_face_lottie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/splashbabyface" />
 
-</FrameLayout>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/splash_txt"
@@ -42,7 +42,6 @@
         android:text="@string/responsive_stories"
         android:textColor="@color/white"
         android:textSize="@dimen/_25ssp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
 
 </LinearLayout>

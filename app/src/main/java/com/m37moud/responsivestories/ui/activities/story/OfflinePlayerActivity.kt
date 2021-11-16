@@ -3,6 +3,7 @@ package com.m37moud.responsivestories.ui.activities.story
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -25,8 +26,11 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
+import com.m37moud.responsivestories.ui.activities.learn.AD_REWARDEDAD_ID
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
-import com.m37moud.responsivestories.util.RemoteConfigUtils
+import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.Constants.Companion.interstitialAds
+import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteConfig
 import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
@@ -41,7 +45,6 @@ class OfflinePlayerActivity : AppCompatActivity() {
     lateinit var adLoader: AdLoader
 
     private var shouldPlay = false
-    private var showAdsFromRemoteConfig: Boolean = false
 
 
 
@@ -301,11 +304,16 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
 
     private fun loadAd() {
+        val mInterstitialAdsID = if(TextUtils.isEmpty(interstitialAds))
+            AD_InterstitialAd_ID
+        else
+            interstitialAds.toString()
 
         var adRequest = AdRequest.Builder().build()
 
+
         InterstitialAd.load(
-            this, AD_InterstitialAd_ID, adRequest,
+            this, mInterstitialAdsID, adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     Log.d("loadAd", adError?.message)

@@ -34,4 +34,8 @@ interface VideoDao {
     @Query("SELECT * FROM category_table ORDER BY categoryId ASC")
     fun readCategories(): Flow<List<CategoriesEntity>>
 
+
+    @Query("DELETE FROM category_table ")
+    suspend fun deleteCategories()
+
 }

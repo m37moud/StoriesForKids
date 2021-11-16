@@ -47,6 +47,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
 //        val data = arguments?.getParcelableArrayList("myListCategory")
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
@@ -102,9 +103,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
                 videosViewModel.saveExitStatus(true)
             }
-//            arguments?.putString("chipCategory" , categoryChip)
 
+
+//            arguments?.putString("chipCategory" , categoryChip)
 //            mainViewModel.readVideosWithCategory(categoryChip)
+
+
             this.dismiss()
 //            //do search
 //            recipesViewModel.saveSearch(true)
@@ -137,6 +141,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     }
 
 
+
     private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
         Log.d("initChip", "initChip: called")
 
@@ -153,12 +158,13 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
                     chip.id = model.categoryId!!.toInt()
 
                     chip.text = model.categoryName
-//                    val drawable = ChipDrawable.createFromAttributes(
-//                        requireContext(),
-//                        null,
-//                        0,
-//                        R.style.CustomChipStyle
-//                    )
+                    val drawable = ChipDrawable.createFromAttributes(
+                        requireContext(),
+                        null,
+                        0,
+                        R.style.CustomChipStyle
+                    )
+
 //                    chip.setOnCheckedChangeListener { compoundButton, b ->
 //                        chip.setTextColor(resources.getColor(R.color.white))
 //
@@ -167,12 +173,16 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 ////                            chip.setTextColor(resources.getColor(R.color.white))
 ////
 ////                        }
-//                    chip.setChipDrawable(drawable)
+
+                    chip.setChipDrawable(drawable)
+
 //                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
 //                        chip.setTextColor(resources.getColor(R.color.white))
 //                        Log.i("checkedChipIds","${buttonView.id} $isChecked")
 //                    }
 //                    chip.setTextAppearance(R.style.CustomChipStyle)
+
+
                     chipGroup.addView(chip)
 
                 }
