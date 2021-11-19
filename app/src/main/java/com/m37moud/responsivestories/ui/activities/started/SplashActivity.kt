@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -16,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.*
 import javax.inject.Inject
+private const val TAG = "SplashActivity"
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
@@ -72,17 +74,13 @@ class SplashActivity : AppCompatActivity() {
             delay(3000)
 
 
-            // If the user is logged in once and did not logged out manually from the app.
-            // So, next time when the user is coming into the app user will be redirected to MainScreen.
-            // If user is not logged in or logout manually then user will  be redirected to the Login screen as usual.
-
-            // Get the current logged in user id
             shouldPlay = true
             if (onBoardingFinished()) {
+                Log.d(TAG, "onCreate: ${onBoardingFinished()}")
                 // Launch dashboard screen.
                 startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
             } else {
-                // Launch the Login Activity
+                // Launch the start Activity
                 startActivity(Intent(this@SplashActivity, StartActivity::class.java))
 
             }
@@ -95,52 +93,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
 
-            // Adding the handler to after the a task after some delay.
-            // It is deprecated in the API level 30.
-//            Handler().postDelayed(
-//                {
-//
-//                    // If the user is logged in once and did not logged out manually from the app.
-//                    // So, next time when the user is coming into the app user will be redirected to MainScreen.
-//                    // If user is not logged in or logout manually then user will  be redirected to the Login screen as usual.
-//
-//                    // Get the current logged in user id
-//                    shouldPlay = true
-//                    if (onBoardingFinished()) {
-//                        // Launch dashboard screen.
-//                        startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
-//                    } else {
-//                        // Launch the Login Activity
-//                        startActivity(Intent(this@SplashActivity, StartActivity::class.java))
-//
-//                    }
-//                    // Call this when your activity is done and should be closed.
-//
-//                    finish()
-//                },
-//                3600
-//            ) // Here we pass the delay time in milliSeconds after which the splash activity will disappear.
 
-            splash_txt.startAnimation(txtBottomAnimation)
-//        splash_cow_frame.startAnimation(txtTopAnimation)
-
-
-            splash_cow_frame.startAnimation(txtTopAnimation)
-            txtTopAnimation.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                    bay_face_lottie.apply {
-                        visibility = View.VISIBLE
-                    }
-                }
-            })
 
 
         }
@@ -157,6 +110,27 @@ class SplashActivity : AppCompatActivity() {
             super.onStart()
             this.audioManager.doBindService()
 
+            //start animation
+            splash_txt.startAnimation(txtBottomAnimation)
+
+            splash_img_background.startAnimation(txtTopAnimation)
+            txtTopAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                    bay_face_lottie.apply {
+                        visibility = View.VISIBLE
+                    }
+
+                }
+            })
+
         }
 
         override fun onStop() {
@@ -165,6 +139,10 @@ class SplashActivity : AppCompatActivity() {
                 this.audioManager.getAudioService()?.pauseMusic()
 
             }
+
+            splash_txt.clearAnimation()
+            splash_cow_frame.clearAnimation()
+            bay_face_lottie.pauseAnimation()
         }
 
         override fun onResume() {

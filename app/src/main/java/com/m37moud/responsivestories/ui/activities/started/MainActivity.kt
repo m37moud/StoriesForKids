@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories
+package com.m37moud.responsivestories.ui.activities.started
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.started.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
 import javax.inject.Inject
 
+private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -39,11 +41,6 @@ class MainActivity : AppCompatActivity() {
     private var isResumeAnim = false
     private var shouldPlay = false
     private var shouldAllowBack = false
-
-
-    private var isStory = false
-    private var isLearn = false
-    private var isFinish = false
 
 
     @Inject
@@ -163,7 +160,6 @@ class MainActivity : AppCompatActivity() {
     private var clicked = false
 
 
-    val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFullScreen()
@@ -182,7 +178,7 @@ class MainActivity : AppCompatActivity() {
         animInvoked = 0
 
 
-        supportActionBar?.hide()
+//        supportActionBar?.hide()
 
         Handler(Looper.getMainLooper()).postDelayed(
             {
@@ -236,7 +232,7 @@ class MainActivity : AppCompatActivity() {
 
 
         }
-
+        //start learn activity
         learn_main_img.setOnClickListener {
             Constants.clickSound(this)
             learn_main_img.isClickable = false
@@ -251,18 +247,158 @@ class MainActivity : AppCompatActivity() {
 
 
 
-//        MobileAds.initialize(this)
-//        MobileAds.setRequestConfiguration(
-//            RequestConfiguration.Builder()
-//                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
-//                .build()
-//        )
-
 
         //init background
         main_scroll.visibility = View.VISIBLE
 
     }
+
+
+    override fun onStart() {
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
+
+
+
+        Log.d("MainActivity", "onStart: called $shouldPlay")
+
+        super.onStart()
+    }
+
+
+
+
+
+
+
+    override fun onResume() {
+        Log.d(TAG, "onResume: called")
+        animInvoked = 0
+
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
+
+        if (isResumeAnim) {
+
+            learn_main_img.isClickable = true
+            story_main_img.isClickable = true
+            main_loading.visibility = View.VISIBLE
+            main_parent_frame.visibility = View.INVISIBLE
+//
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    main_loading.visibility = View.GONE
+                    main_parent_frame.visibility = View.VISIBLE
+
+                    initMainActivityAnimation(
+                        learn_main_backgroundImg,
+                        learn_main_txt,
+                        learn_main_img,
+                        learnLinearLayoutAnim,
+                        learnTxtAnim,
+                        learnImgAnim,
+                        500
+                    )
+
+                    initMainActivityAnimation(
+                        story_main_backgroundImg,
+                        story_main_txt,
+                        story_main_img,
+                        storyLinearLayoutAnim,
+                        storyTxtAnim,
+                        storyImgAnim,
+                        700
+                    )
+
+                }, 2500
+            )
+
+        }
+        super.onResume()
+
+    }
+
+
+
+
+
+    override fun onPause() {
+//        Log.d(TAG, "onPause: called")
+        Log.d("MainActivity", "onPause: called $shouldPlay")
+
+        isResumeAnim = false
+//        shouldPlay = false
+//        initViewToHide()
+        super.onPause()
+    }
+
+    override fun onStop() {
+//        Log.d(TAG, "onStop: called")
+        Log.d("MainActivity", "onPause: called $shouldPlay")
+
+        showLoading = false
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+//            Constants.stopService(this)
+        }
+
+        super.onStop()
+    }
+
+    override fun onBackPressed() {
+        showLoading = true
+//        this.shouldPlay = true
+
+        if (shouldAllowBack)
+            exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
+
+    }
+    override fun onDestroy() {
+//        when app end download status = false
+        Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
+        super.onDestroy()
+    }
+
+
+    fun settingMainButton(view: View) {
+        img_main_setting.isClickable = false
+        Constants.clickSound(this)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                showSettingDialog()
+
+            }.doAction()
+
+    }
+
+    fun homeMainButton(view: View) {
+        img_main_home.isClickable = false
+
+        Constants.clickSound(this)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                shouldPlay = true
+
+                startActivity(
+                    Intent(
+                        this@MainActivity,
+                        StartActivity::class.java
+                    )
+                )
+                finish()
+            }.doAction()
+
+
+    }
+
+    private fun setFullScreen() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+    }
+
 
     private fun onAddButtonClicked() {
         fabButtonSound(clicked)
@@ -320,54 +456,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        if (!Constants.activateSetting)
-            this.audioManager.getAudioService()?.playMusic()
-
-
-
-        Log.d("MainActivity", "onStart: called $shouldPlay")
-
-        super.onStart()
-    }
-
-    override fun onDestroy() {
-//        when app end download status = false
-        Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
-        super.onDestroy()
-    }
-
-    fun settingMainButton(view: View) {
-        img_main_setting.isClickable = false
-        Constants.clickSound(this)
-        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
-            .setOnFinishListener {
-                showSettingDialog()
-
-            }.doAction()
-
-    }
-
-    fun homeMainButton(view: View) {
-        img_main_home.isClickable = false
-
-        Constants.clickSound(this)
-        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
-            .setOnFinishListener {
-                shouldPlay = true
-
-                startActivity(
-                    Intent(
-                        this@MainActivity,
-                        StartActivity::class.java
-                    )
-                )
-                finish()
-            }.doAction()
-
-
-    }
-
     private fun getOpenFacebookIntent(): Intent? = try {
 //        context.getPackageManager().getPackageInfo("com.facebook.katana", 0)
         Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/536320790653318")).apply {
@@ -418,86 +506,6 @@ class MainActivity : AppCompatActivity() {
             Intent.ACTION_SEND,
             Uri.parse("https://www.youtube.com/channel/UC7pejtgsjgdPODeWGgXLFuQ?sub_confirmation=1")
         )
-    }
-
-
-
-    override fun onResume() {
-        Log.d(TAG, "onResume: called")
-        animInvoked = 0
-
-        if (!Constants.activateSetting)
-            this.audioManager.getAudioService()?.resumeMusic()
-
-//        Constants.startService(this)
-//        shouldPlay = false
-
-        if (isResumeAnim) {
-
-            learn_main_img.isClickable = true
-            story_main_img.isClickable = true
-            main_loading.visibility = View.VISIBLE
-            main_parent_frame.visibility = View.INVISIBLE
-//
-            Handler(Looper.getMainLooper()).postDelayed(
-                {
-                    main_loading.visibility = View.GONE
-                    main_parent_frame.visibility = View.VISIBLE
-
-                    initMainActivityAnimation(
-                        learn_main_backgroundImg,
-                        learn_main_txt,
-                        learn_main_img,
-                        learnLinearLayoutAnim,
-                        learnTxtAnim,
-                        learnImgAnim,
-                        500
-                    )
-
-                    initMainActivityAnimation(
-                        story_main_backgroundImg,
-                        story_main_txt,
-                        story_main_img,
-                        storyLinearLayoutAnim,
-                        storyTxtAnim,
-                        storyImgAnim,
-                        700
-                    )
-
-                }, 2500
-            )
-
-        }
-        super.onResume()
-
-    }
-
-
-    override fun onBackPressed() {
-        showLoading = true
-//        this.shouldPlay = true
-
-        if (shouldAllowBack)
-            exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
-
-    }
-
-    private fun setFullScreen() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-    }
-
-    override fun onPause() {
-//        Log.d(TAG, "onPause: called")
-        Log.d("MainActivity", "onPause: called $shouldPlay")
-
-        isResumeAnim = false
-//        shouldPlay = false
-//        initViewToHide()
-        super.onPause()
     }
 
     private fun initMainActivityAnimation(
@@ -778,18 +786,6 @@ class MainActivity : AppCompatActivity() {
         main_grass.visibility = View.INVISIBLE
     }
 
-    override fun onStop() {
-//        Log.d(TAG, "onStop: called")
-        Log.d("MainActivity", "onPause: called $shouldPlay")
-
-        showLoading = false
-        if (!shouldPlay) {
-            this.audioManager.getAudioService()?.pauseMusic()
-//            Constants.stopService(this)
-        }
-
-        super.onStop()
-    }
 
     private fun showSettingDialog() {
         val builder = AlertDialog.Builder(this)

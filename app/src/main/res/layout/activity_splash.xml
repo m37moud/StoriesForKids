@@ -11,20 +11,34 @@
 
     <FrameLayout
         android:id="@+id/splash_cow_frame"
-        android:layout_width="@dimen/_200sdp"
-        android:layout_height="@dimen/_180sdp"
-        android:background="@drawable/splash_cow_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
 
         >
+        <ImageView
+            android:id="@+id/splash_img_background"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_180sdp"
+            android:layout_gravity="center"
+
+            android:src="@drawable/splash_cow_background"
+            />
+<!--        <ImageView-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            app:tint="@color/blue"-->
+<!--            android:src="@drawable/ic_child"/>-->
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/bay_face_lottie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="@dimen/_170sdp"
             android:layout_gravity="center"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:lottie_autoPlay="true"
-            app:lottie_loop="true"
+            app:lottie_loop="false"
             app:lottie_rawRes="@raw/splashbabyface" />
 
     </FrameLayout>
@@ -39,6 +53,8 @@
         android:shadowDx="3"
         android:shadowDy="3"
         android:shadowRadius="3"
+        android:textAlignment="center"
+
         android:text="@string/responsive_stories"
         android:textColor="@color/white"
         android:textSize="@dimen/_25ssp"

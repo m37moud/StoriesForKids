@@ -87,11 +87,11 @@
                         android:id="@+id/rv_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:stackFromEnd="true"
                         android:layout_marginStart="@dimen/_8sdp"
-                        android:layout_marginTop="@dimen/_35sdp"
+                        android:layout_marginTop="@dimen/_45sdp"
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:layout_marginBottom="@dimen/_6sdp"
+                        app:stackFromEnd="true"
 
                         />
 

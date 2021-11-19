@@ -45,8 +45,10 @@
             android:screenOrientation="landscape"
             android:theme="@style/LearnScreenStyle" />
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="landscape" />
+            android:name=".ui.activities.started.MainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainScreenStyle"
+            />
         <activity
             android:name=".ui.activities.started.StartActivity"
             android:screenOrientation="landscape"

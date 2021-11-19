@@ -255,6 +255,7 @@
                                 android:shadowRadius="2"
                                 android:text="@string/bird"
                                 android:textAlignment="center"
+                                android:paddingBottom="@dimen/_5sdp"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/_20ssp" />
 

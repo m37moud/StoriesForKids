@@ -60,7 +60,7 @@ class VideosViewModel @ViewModelInject constructor(
 
     fun saveLoadingStatus(loadingStatus: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
-            dataStoreRepository.saveDownloadStatus(loadingStatus)
+            dataStoreRepository.saveLoadingStatus(loadingStatus)
         }
 
 

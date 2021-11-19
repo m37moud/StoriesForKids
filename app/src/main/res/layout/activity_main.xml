@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.started.MainActivity">
 
 
     <include
@@ -93,8 +93,9 @@
                 android:paddingStart="@dimen/_30sdp"
                 android:paddingEnd="@dimen/_30sdp"
                 android:text="@string/story"
+                android:paddingBottom="@dimen/_5sdp"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_18ssp" />
+                android:textSize="@dimen/_15ssp" />
 
         </LinearLayout>
 
@@ -146,9 +147,11 @@
                 android:foreground="@drawable/main_forground_txt"
                 android:paddingStart="@dimen/_30sdp"
                 android:paddingEnd="@dimen/_30sdp"
+                android:paddingBottom="@dimen/_5sdp"
+
                 android:text="@string/learn"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_18ssp" />
+                android:textSize="@dimen/_15ssp" />
 
         </LinearLayout>
 

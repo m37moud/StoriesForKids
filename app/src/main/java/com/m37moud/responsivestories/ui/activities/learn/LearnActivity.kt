@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.LearnAdapter
 import com.m37moud.responsivestories.databinding.ActivityLearnBinding
@@ -18,6 +17,7 @@ import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
+import com.m37moud.responsivestories.ui.activities.started.MainActivity
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,10 +38,12 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
     private var shouldPlay = false
     private var shouldAllowBack = false
-    private var playSound = false
+
+    //    private var playSound = false
+//    var v: Boolean = false
+
 
     private var categoryPosition = 0
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +54,6 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-
 
 
         //start service and play music
@@ -80,10 +81,11 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
                 binding.learnLoading.visibility = View.GONE
                 shouldAllowBack = true
                 binding.learnContainerFrame.visibility = View.VISIBLE
+                display()
             }, 2500
         )
 
-        display()
+
 
         setupRecyclerView()
 
@@ -154,13 +156,15 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         if (categoryName != null) playImgSound(categoryName)
 
 
-       val holder = binding.rvTitle.findViewHolderForLayoutPosition(position)as LearnAdapter.LearnViewHolder
-        mAdapter.initAnimationTouchView(holder)
+////
+//        val holder =
+//            binding.rvTitle.findViewHolderForLayoutPosition(position) as LearnAdapter.LearnViewHolder
+////        v = !v
+//        mAdapter.initAnimationTouchView(holder)
 
 
         Log.d("LearnFragment", "clicked: $position")
     }
-
 
 
 //    private fun changeOrientation() {

@@ -27,13 +27,11 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.addRewardAds
 import com.m37moud.responsivestories.util.Constants.Companion.bannerAds
-import com.m37moud.responsivestories.util.Constants.Companion.buttonAppearSound
 import com.m37moud.responsivestories.util.Constants.Companion.clickSound
 import com.m37moud.responsivestories.util.Constants.Companion.fabCloseSound
 import com.m37moud.responsivestories.util.Constants.Companion.interstitialAds
@@ -52,7 +50,10 @@ import kotlinx.android.synthetic.main.layout_exit_app.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 const val TOPIC = "/topics/myTopic2"
+private const val TAG = "StartActivity"
+
 
 @AndroidEntryPoint
 class StartActivity : AppCompatActivity() {
@@ -65,7 +66,6 @@ class StartActivity : AppCompatActivity() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var videosViewModel: VideosViewModel
     private lateinit var mainViewModel: MainViewModel
-
 
 
     //bird animation
@@ -102,35 +102,40 @@ class StartActivity : AppCompatActivity() {
         )
         setContentView(R.layout.activity_start)
 
+        // Obtain the FirebaseAnalytics instance.
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        videosViewModel = ViewModelProvider(this@StartActivity).get(VideosViewModel::class.java)
+        mainViewModel = ViewModelProvider(this@StartActivity).get(MainViewModel::class.java)
 
         Log.d("StartActivity", "onCreate: $shouldPlay ")
 
         main_loading.visibility = View.VISIBLE
         start_parent_frame.visibility = View.INVISIBLE
+
         initImgScroll()
+
+        //fetch ads model
+        getAdsFolderFromFirebase()
+
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 shouldAllowBack = true
-                main_loading.visibility = View.INVISIBLE
+                main_loading.visibility = View.GONE
                 start_parent_frame.visibility = View.VISIBLE
-                //play all anim
-                startAllAnim()
+                start_frameLayout_scroll.visibility = View.VISIBLE
+                start_scroll.visibility = View.VISIBLE
 
                 showLoading = false
 
                 //check to update the app
                 checkForUpdate()
 
-            }, 2500
+            }, 1500
         )
 
-        // Obtain the FirebaseAnalytics instance.
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        videosViewModel = ViewModelProvider(this@StartActivity).get(VideosViewModel::class.java)
-        mainViewModel = ViewModelProvider(this@StartActivity).get(MainViewModel::class.java)
 
-        //fetch ads model
-        getAdsFolderFromFirebase()
+
+
 
         lifecycleScope.launch(Dispatchers.IO) {
             FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
@@ -190,7 +195,6 @@ class StartActivity : AppCompatActivity() {
 
         start.setOnClickListener {
             clickSound(this)
-            stopAllAnim()
             // implements animation uising ElasticAnimation
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
@@ -236,21 +240,39 @@ class StartActivity : AppCompatActivity() {
 
 
 //        initBackgroundColor(start_FrameLayout,this@StartActivity)
-        start_frameLayout_scroll.visibility = View.VISIBLE
-        start_scroll.visibility = View.VISIBLE
 
-        start_bird.startAnimation(birdAnim)
-        start_txt.startAnimation(flashTxtAnim)
-        playAnim.startOffset = 400
-        start.animate().apply {
-            startDelay = 300
-            start.startAnimation(playAnim)
-            if (shouldAllowBack)
-                buttonAppearSound(this@StartActivity)
 
-        }
+//        start_bird.startAnimation(birdAnim)
+//        start_txt.startAnimation(flashTxtAnim)
+//        playAnim.startOffset = 400
+//        start.animate().apply {
+//            startDelay = 300
+//            start.startAnimation(playAnim)
+//            if (shouldAllowBack)
+//                buttonAppearSound(this@StartActivity)
+//
+//        }
 
     }
+
+
+    override fun onStart() {
+        //play all anim
+        startAllAnim()
+
+        start.isClickable = true
+        //Log.d("StartActivity", "onStart: $shouldPlay ")
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
+
+        //prepare fo check downloads to story
+        videosViewModel.saveDownloadStatus(false)
+
+
+        super.onStart()
+    }
+
+
 
     override fun onResume() {
 //      Constants.startService(this)
@@ -304,8 +326,9 @@ class StartActivity : AppCompatActivity() {
 //    }
 
     override fun onStop() {
-//        showLoading = false
-//        shouldPlay = false
+        //stop all animation
+        stopAllAnim()
+
         Log.d("StartActivity", "onStop: $shouldPlay ")
 
         if (!this.shouldPlay) {
@@ -318,36 +341,9 @@ class StartActivity : AppCompatActivity() {
     }
 
 
-    override fun onStart() {
-        start.isClickable = true
-//        shouldAllowBack = true
-
-//        shouldPlay = false
-//        Log.d("StartActivity", "onStart: $shouldPlay ")
-        if (!activateSetting)
-            this.audioManager.getAudioService()?.playMusic()
-
-//prepare fo check downloads to story
-        videosViewModel.saveDownloadStatus(false)
-
-        //init loading then activity
-
-
-        super.onStart()
-    }
-
     override fun onBackPressed() {
         if (shouldAllowBack) {
             showExitDialog()
-//            if (backPressed + 2000 > System.currentTimeMillis()) {
-//
-//                showExitDialog()
-//
-//            } else
-////                Toast.makeText(applicationContext, "Press Back again to Exit", Toast.LENGTH_SHORT)
-////                    .show()
-//
-//                backPressed = System.currentTimeMillis()
         }
     }
 
@@ -379,7 +375,10 @@ class StartActivity : AppCompatActivity() {
                 .setOnFinishListener {
                     shouldPlay = false
                     exitDialog.setOnDismissListener {
+                        videosViewModel.saveDownloadStatus(false)
+
                         finishAffinity()
+
                     }
                     exitDialog.dismiss()
 
@@ -424,9 +423,6 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun initImgScroll() {
-
-
-
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -494,37 +490,45 @@ class StartActivity : AppCompatActivity() {
     //check app to update
 
     private fun checkForUpdate() {
+        videosViewModel.readShouldDownload.observe(this@StartActivity, Observer {
+            Log.d(TAG, " called! + it = $it ")
+            if (!it) {
 
-        val appVersion: String = getAppVersion(this)
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
+                val appVersion: String = getAppVersion(this)
+                val remoteConfig = FirebaseRemoteConfig.getInstance()
 
-        val currentVersion =
-            remoteConfig.getString("min_version_of_app")
-        val minVersion =
-            remoteConfig.getString("latest_version_of_app")
+                val currentVersion =
+                    remoteConfig.getString("min_version_of_app")
+                val minVersion =
+                    remoteConfig.getString("latest_version_of_app")
 
-        Log.d("checkForUpdate", "currentVersion: $currentVersion ")
-        Log.d("checkForUpdate", "minVersion: $minVersion ")
-        Log.d("checkForUpdate", "appVersion: $appVersion ")
-        if (!TextUtils.isEmpty(minVersion) && !TextUtils.isEmpty(appVersion) && checkMandateVersionApplicable(
-                getAppVersionWithoutAlphaNumeric(minVersion),
-                getAppVersionWithoutAlphaNumeric(appVersion)
-            )
-        ) {
-            Log.d("checkForUpdate", "appVersion:force ")
+                Log.d("checkForUpdate", "currentVersion: $currentVersion ")
+                Log.d("checkForUpdate", "minVersion: $minVersion ")
+                Log.d("checkForUpdate", "appVersion: $appVersion ")
+                if (!TextUtils.isEmpty(minVersion) && !TextUtils.isEmpty(appVersion) && checkMandateVersionApplicable(
+                        getAppVersionWithoutAlphaNumeric(minVersion),
+                        getAppVersionWithoutAlphaNumeric(appVersion)
+                    )
+                ) {
+                    Log.d("checkForUpdate", "appVersion:force ")
 
-            onUpdateNeeded(true)
-        } else if (!TextUtils.isEmpty(currentVersion) && !TextUtils.isEmpty(appVersion) && !TextUtils.equals(
-                currentVersion,
-                appVersion
-            )
-        ) {
-            Log.d("checkForUpdate", "appVersion:flex ")
+                    onUpdateNeeded(true)
+                } else if (!TextUtils.isEmpty(currentVersion) && !TextUtils.isEmpty(appVersion) && !TextUtils.equals(
+                        currentVersion,
+                        appVersion
+                    )
+                ) {
+                    Log.d("checkForUpdate", "appVersion:flex ")
 
-            onUpdateNeeded(false)
-        } else {
-            moveForward()
-        }
+                    onUpdateNeeded(false)
+                } else {
+
+                    moveForward()
+                }
+            }
+
+        })
+
     }
 
 
@@ -549,7 +553,7 @@ class StartActivity : AppCompatActivity() {
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e("TAG", e.message.toString())
         }
-        return result?:""
+        return result ?: ""
     }
 
     private fun getAppVersionWithoutAlphaNumeric(result: String): String {
@@ -617,7 +621,7 @@ class StartActivity : AppCompatActivity() {
 
 // end check methods
 
-    private fun stopAllAnim(){
+    private fun stopAllAnim() {
         start_scroll.stop()
         start_cat.pauseAnimation()
         start_bird.clearAnimation()
@@ -630,7 +634,7 @@ class StartActivity : AppCompatActivity() {
 
     }
 
-    private fun startAllAnim(){
+    private fun startAllAnim() {
         start_scroll.start()
         start_cat.resumeAnimation()
         start_bird.startAnimation(birdAnim)
@@ -639,12 +643,10 @@ class StartActivity : AppCompatActivity() {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
 
-        Log.d("StartActivity", "onDestroy: $shouldPlay ")
-        videosViewModel.saveDownloadStatus(false)
+        Log.d(TAG, "onDestroy: $shouldPlay ")
 
         if (!shouldPlay) {
             this.audioManager.doUnbindService()

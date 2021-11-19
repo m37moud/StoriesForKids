@@ -31,7 +31,6 @@ import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.DownloadedVideoAdapter
 import com.m37moud.responsivestories.adapters.VideoAdapter
@@ -40,6 +39,7 @@ import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.databinding.ActivityStoryBinding
 import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.models.VideoModel
+import com.m37moud.responsivestories.ui.activities.started.MainActivity
 import com.m37moud.responsivestories.ui.activities.story.bottomsheet.CategoriesBottomSheet
 import com.m37moud.responsivestories.util.*
 import com.m37moud.responsivestories.util.Constants.Companion.getRandomColor
@@ -899,22 +899,6 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         }
     }
 
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        // Checks the orientation of the screen
-//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            val layout = LinearLayoutManager(this@StoryActivity,LinearLayoutManager.HORIZONTAL, false)
-//
-//            binding.rcStory.layoutManager = layout
-//            binding.rcStory.setHasFixedSize(true)
-////            Toast.makeText(requireContext(), "landscape", Toast.LENGTH_SHORT).show()
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            binding.rcStory.layoutManager = GridLayoutManager(this@StoryActivity, 2)
-//            binding.rcStory.setHasFixedSize(true)
-//
-////            Toast.makeText(requireContext(), "portrait", Toast.LENGTH_SHORT).show()
-//        }
-//    }
 
     private fun getCategoriesFromFirebase() {
 
