@@ -12,8 +12,11 @@ class MyApplication: Application() {
 //
     override fun onCreate() {
         super.onCreate()
-    initFirebaseRemoteConfig()
+
+
+//    initFirebaseRemoteConfig()
     }
+
     private fun initFirebaseRemoteConfig() {
        try{
 

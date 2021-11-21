@@ -66,6 +66,7 @@
                     android:layout_width="@dimen/_125sdp"
                     android:layout_height="@dimen/_120sdp"
                     android:src="@drawable/main_img_rounded"
+                    
 
                     />
 
@@ -73,11 +74,9 @@
                     android:id="@+id/story_main_img"
                     android:layout_width="@dimen/_120sdp"
                     android:layout_height="@dimen/_120sdp"
-                    android:src="@drawable/ic_videos"
+                    android:src="@drawable/ic_story"
                     android:visibility="visible"
-                    app:tint="@color/darkGray"
-                    tools:layout_editor_absoluteX="@dimen/_180sdp"
-                    tools:layout_editor_absoluteY="@dimen/_129sdp" />
+                   />
 
 
             </FrameLayout>
@@ -129,9 +128,9 @@
                     android:id="@+id/learn_main_img"
                     android:layout_width="@dimen/_120sdp"
                     android:layout_height="@dimen/_120sdp"
-                    android:src="@drawable/ic_videos"
+                    android:src="@drawable/ic_learn2"
                     android:visibility="visible"
-                    app:tint="@color/darkGray" />
+                     />
 
 
             </FrameLayout>

@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.*
 import javax.inject.Inject
+
 private const val TAG = "SplashActivity"
 
 @AndroidEntryPoint
@@ -46,111 +47,98 @@ class SplashActivity : AppCompatActivity() {
         )
     }
 
-    private val cowRightTranslateAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this,
-            R.anim.splash_right_translate
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        )
 
         setContentView(R.layout.activity_splash)
 
-        // This is used to hide the status bar and make the splash screen as a full screen activity.
-        // It is deprecated in the API level 30. I will update you with the alternate solution soon.
-
-//        this.audioManager.getAudioService()?.playMusic()
-
-
-        activityScope.launch {
-
-
-            delay(3000)
-
-
-            shouldPlay = true
-            if (onBoardingFinished()) {
-                Log.d(TAG, "onCreate: ${onBoardingFinished()}")
-                // Launch dashboard screen.
-                startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
-            } else {
-                // Launch the start Activity
-                startActivity(Intent(this@SplashActivity, StartActivity::class.java))
-
-            }
-            // Call this when your activity is done and should be closed.
-
-            finish()
-
-
-
-        }
 
 
 
 
 
-        }
+    }
 
 
-        private fun onBoardingFinished(): Boolean {
-            val sharedPref =
-                this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
-            return sharedPref.getBoolean("Finished", false)
-        }
+    private fun onBoardingFinished(): Boolean {
+        Log.d(TAG, "onBoardingFinished: called")
+
+        val sharedPref =
+            this@SplashActivity.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+        return sharedPref.getBoolean("Finished", false)
+    }
 //
 
-        override fun onStart() {
-            super.onStart()
-            this.audioManager.doBindService()
+    override fun onStart() {
+        super.onStart()
+        this.audioManager.doBindService()
 
-            //start animation
-            splash_txt.startAnimation(txtBottomAnimation)
+        //start animation
+        splash_txt.startAnimation(txtBottomAnimation)
 
-            splash_img_background.startAnimation(txtTopAnimation)
-            txtTopAnimation.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                    bay_face_lottie.apply {
-                        visibility = View.VISIBLE
-                    }
-
-                }
-            })
-
-        }
-
-        override fun onStop() {
-            super.onStop()
-            if (!shouldPlay) {
-                this.audioManager.getAudioService()?.pauseMusic()
+        splash_img_background.startAnimation(txtTopAnimation)
+        txtTopAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
 
             }
 
-            splash_txt.clearAnimation()
-            splash_cow_frame.clearAnimation()
-            bay_face_lottie.pauseAnimation()
-        }
+            override fun onAnimationRepeat(p0: Animation?) {
 
-        override fun onResume() {
-            this.audioManager.getAudioService()?.resumeMusic()
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                bay_face_lottie.apply {
+                    visibility = View.VISIBLE
+                        playAnimation()
+
+                    // This is used to hide the status bar and make the splash screen as a full screen activity.
+                    // It is deprecated in the API level 30. I will update you with the alternate solution soon.
+
+                    activityScope.launch {
 
 
-            super.onResume()
-        }
+                        delay(2000)
+
+
+                        shouldPlay = true
+                        if (!onBoardingFinished()) {
+                            Log.d(TAG, "onCreate: ${onBoardingFinished()}")
+                            // Launch dashboard screen.
+                            startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
+                        } else {
+                            Log.d(TAG, "onStart: ${onBoardingFinished()}")
+                            // Launch the start Activity
+                            startActivity(Intent(this@SplashActivity, StartActivity::class.java))
+
+                        }
+                        // Call this when your activity is done and should be closed.
+
+                        finish()
+
+
+                    }
+
+
+                }
+
+            }
+        })
+
+    }
+
+
+//
+//    override fun onResume() {
+//        this.audioManager.getAudioService()?.resumeMusic()
+//
+//
+//        super.onResume()
+//    }
 
     override fun onPause() {
         super.onPause()
@@ -161,5 +149,15 @@ class SplashActivity : AppCompatActivity() {
         }
 
     }
+    override fun onStop() {
+        super.onStop()
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
 
+        }
+        splash_txt.clearAnimation()
+        splash_cow_frame.clearAnimation()
+        bay_face_lottie.pauseAnimation()
     }
+
+}

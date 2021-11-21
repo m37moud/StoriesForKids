@@ -2,16 +2,21 @@
 <!-- START xml_defaults -->
 <defaultsMap>
     <entry>
-        <key>loading_phrase</key>
-        <value>Fetching config…</value>
+        <key>min_version_of_app</key>
+        <value>1.0</value>
     </entry>
     <entry>
-        <key>welcome_message_caps</key>
-        <value>false</value>
+        <key>latest_version_of_app</key>
+        <value>1.0</value>
     </entry>
     <entry>
-        <key>welcome_message</key>
-        <value>Welcome to my awesome app!</value>
+        <key>NEXT_BUTTON_TEXT</key>
+        <value>NEXT_BUTTON_TEXT</value>
     </entry>
+    <entry>
+        <key>NEXT_BUTTON_COLOR</key>
+        <value>NEXT_BUTTON_COLOR</value>
+    </entry>
+
 </defaultsMap>
     <!-- END xml_defaults -->

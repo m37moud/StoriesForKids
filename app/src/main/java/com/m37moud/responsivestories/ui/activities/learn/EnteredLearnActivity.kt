@@ -97,7 +97,6 @@ class EnteredLearnActivity : AppCompatActivity() {
 //        Log.d(TAG, "AdsFolderFromFirebase: $checkStatus ")
 
 
-
         Log.d(TAG, "AdsFolderFromFirebase: $showAdsFromRemoteConfig ")
 
         entered_learn_container_loading.visibility = View.VISIBLE
@@ -808,7 +807,7 @@ class EnteredLearnActivity : AppCompatActivity() {
 
     private fun showAds() {
 
-        val mBannerID = if(TextUtils.isEmpty(bannerAds))
+        val mBannerID = if (TextUtils.isEmpty(bannerAds))
             AD_BANNER_ID
         else
             bannerAds.toString()
@@ -823,7 +822,7 @@ class EnteredLearnActivity : AppCompatActivity() {
                 adView.adSize = AdSize.BANNER
                 adView.adUnitId = mBannerID
                 val adRequest = AdRequest.Builder()
-               .build()
+                    .build()
 
                 Log.d("showAds", " : bannerAds " + bannerAds.toString())
 
@@ -857,14 +856,15 @@ class EnteredLearnActivity : AppCompatActivity() {
     }
 
     private fun hideAds() {
-        adView.pause()
+        if (this.adView != null) adView.pause()
+
 //        ad_viewOffline.visibility = View.GONE
         entered_learn_ad_container.visibility = View.GONE
     }
 
     private fun loadAd() {
 
-        val mRewardID = if(TextUtils.isEmpty(addRewardAds))
+        val mRewardID = if (TextUtils.isEmpty(addRewardAds))
             AD_REWARDEDAD_ID
         else
             addRewardAds.toString()
@@ -903,8 +903,6 @@ class EnteredLearnActivity : AppCompatActivity() {
             e.printStackTrace()
             Log.d("showAds", " : catch " + e)
         }
-
-
 
 
     }
@@ -1095,10 +1093,10 @@ class EnteredLearnActivity : AppCompatActivity() {
 //                    "EnteredLearnActivity",
 //                    "showAdsFromRemoteConfig: ${remoteConfig.getString("WELCOME_MESSAGE_KEY")} "
 //                )
-                Log.d(
-                    "EnteredLearnActivity",
-                    "showAdsFromRemoteConfig: ${RemoteConfigUtils.getNextButtonText()} "
-                )
+//                Log.d(
+//                    "EnteredLearnActivity",
+//                    "showAdsFromRemoteConfig: ${RemoteConfigUtils.getNextButtonText()} "
+//                )
 
 
                 val name = initName(list[counter], showEng)

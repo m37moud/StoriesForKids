@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">ResponsiveStories</string>
     <string name="kids_story">Kids Story</string>
-    <string name="lovely">Lovely Stories</string>
+    <string name="lovely">Children Education</string>
     <string name="enjoy">Enjoy time</string>
 
     <string name="lorem_s1">educational kids story build to teach children what is important to do</string>
-    <string name="lorem_s2">we will make children love to teach because we intrduous our story with love</string>
+    <string name="lorem_s2">Teaching Children what they need before the primary stage</string>
     <string name="lorem_s3">kids will enjoy in using the app</string>
     <!-- TODO: Remove or change this placeholder text -->
     <!-- TODO: Remove or change this placeholder text -->

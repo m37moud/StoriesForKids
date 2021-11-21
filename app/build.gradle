@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId "com.m37moud.responsivestories"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 

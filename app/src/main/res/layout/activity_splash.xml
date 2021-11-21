@@ -7,11 +7,15 @@
     android:background="@color/yellow"
     android:gravity="center"
     android:orientation="vertical"
+    android:clipChildren="false"
+
     tools:context=".ui.activities.started.SplashActivity">
 
     <FrameLayout
         android:id="@+id/splash_cow_frame"
         android:layout_width="wrap_content"
+        android:clipChildren="false"
+
         android:layout_height="wrap_content"
         android:layout_gravity="center"
 
@@ -37,7 +41,7 @@
             android:layout_height="@dimen/_170sdp"
             android:layout_gravity="center"
             android:visibility="gone"
-            app:lottie_autoPlay="true"
+            app:lottie_autoPlay="false"
             app:lottie_loop="false"
             app:lottie_rawRes="@raw/splashbabyface" />
 

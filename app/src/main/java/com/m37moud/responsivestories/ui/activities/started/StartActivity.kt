@@ -22,12 +22,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.addRewardAds
@@ -38,6 +40,7 @@ import com.m37moud.responsivestories.util.Constants.Companion.interstitialAds
 import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteConfig
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.FirebaseService
+import com.m37moud.responsivestories.util.NetworkListener
 import com.m37moud.responsivestories.util.NetworkResult
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.MainViewModel
@@ -48,6 +51,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 import kotlinx.android.synthetic.main.layout_exit_app.view.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -66,6 +70,8 @@ class StartActivity : AppCompatActivity() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var videosViewModel: VideosViewModel
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var networkListener: NetworkListener
+
 
 
     //bird animation
@@ -83,29 +89,49 @@ class StartActivity : AppCompatActivity() {
         )
     }
 
-    //play button
-    private val playAnim: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this,
-            R.anim.zoom_in
-        )
-    }
-
-    private var backPressed = 0L
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        )
         setContentView(R.layout.activity_start)
+        videosViewModel = ViewModelProvider(this@StartActivity).get(VideosViewModel::class.java)
+        mainViewModel = ViewModelProvider(this@StartActivity).get(MainViewModel::class.java)
+
+        videosViewModel.readBackOnline.observe(this@StartActivity, Observer {
+            videosViewModel.backOnline = it
+        })
+        //check for internet connection
+        lifecycleScope.launchWhenStarted {
+            networkListener = NetworkListener()
+            networkListener.checkNetworkAvailability(this@StartActivity)
+                .collect { status ->
+                    Log.d("NetworkListener", status.toString())
+                    videosViewModel.networkStatus = status
+                    videosViewModel.showNetworkStatus()
+                    //read database
+                    videosViewModel.readBottomSheetExitStatus.observe(
+                        this@StartActivity,
+                        Observer { exitStatus ->
+                            Log.d("bottomSheetExit", exitStatus.toString())
+                            if (exitStatus) {
+                                RemoteConfigUtils.init(this@StartActivity)
+
+                            } else {
+                                showSnackBar("No internet Connection Please Connect Internet")
+                            }
+                        })
+                }
+        }
+        //
+
 
         // Obtain the FirebaseAnalytics instance.
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        videosViewModel = ViewModelProvider(this@StartActivity).get(VideosViewModel::class.java)
-        mainViewModel = ViewModelProvider(this@StartActivity).get(MainViewModel::class.java)
+
 
         Log.d("StartActivity", "onCreate: $shouldPlay ")
 
@@ -177,12 +203,12 @@ class StartActivity : AppCompatActivity() {
                         Log.d("subscribe", "faild ")
                     }
 
-                    Toast.makeText(
-                        baseContext,
-                        "subscribeToTopic is Successful",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+//                    Toast.makeText(
+//                        baseContext,
+//                        "subscribeToTopic is Successful",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
                 }
 
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
@@ -640,6 +666,15 @@ class StartActivity : AppCompatActivity() {
         start_bird.startAnimation(birdAnim)
         start_txt.startAnimation(flashTxtAnim)
 
+    }
+    private fun showSnackBar(msg :String){
+        val view = this.findViewById<View>(R.id.main_grass)
+        Snackbar.make(
+            view,
+            msg,
+            Snackbar.LENGTH_LONG
+        ).setAction("okay"){}
+            .show()
     }
 
 
