@@ -24,6 +24,7 @@ class Constants {
          var activateSetting = false
          var disableNextSound = false
          var disablePreviousSound = false
+         var doOnce = false
 
         //Ads
          var showAdsFromRemoteConfig: Boolean = false

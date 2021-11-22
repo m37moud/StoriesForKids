@@ -14,7 +14,6 @@ import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -50,9 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 import kotlinx.android.synthetic.main.layout_exit_app.view.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 const val TOPIC = "/topics/myTopic2"
@@ -67,11 +64,11 @@ class StartActivity : AppCompatActivity() {
     lateinit var audioManager: AudioManager
     private var shouldPlay = false
     private var shouldAllowBack = false
+    private var checkUpdate = false
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var videosViewModel: VideosViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var networkListener: NetworkListener
-
 
 
     //bird animation
@@ -90,7 +87,6 @@ class StartActivity : AppCompatActivity() {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        window.setFlags(
@@ -101,7 +97,10 @@ class StartActivity : AppCompatActivity() {
         videosViewModel = ViewModelProvider(this@StartActivity).get(VideosViewModel::class.java)
         mainViewModel = ViewModelProvider(this@StartActivity).get(MainViewModel::class.java)
 
+
         videosViewModel.readBackOnline.observe(this@StartActivity, Observer {
+            Log.d("Fetching", "sendRegistrationToServer :  $it ")
+
             videosViewModel.backOnline = it
         })
         //check for internet connection
@@ -113,24 +112,24 @@ class StartActivity : AppCompatActivity() {
                     videosViewModel.networkStatus = status
                     videosViewModel.showNetworkStatus()
                     //read database
-                    videosViewModel.readBottomSheetExitStatus.observe(
-                        this@StartActivity,
-                        Observer { exitStatus ->
-                            Log.d("bottomSheetExit", exitStatus.toString())
-                            if (exitStatus) {
-                                RemoteConfigUtils.init(this@StartActivity)
+                    if (status) {
+                        RemoteConfigUtils.init()
+                        //check to update the app
+                        if (!Constants.doOnce) {
+                            checkForUpdate()
+                            subscribeFCM()
+                        }
 
-                            } else {
-                                showSnackBar("No internet Connection Please Connect Internet")
-                            }
-                        })
+
+                    } else {
+                        showSnackBar("No internet Connection Please Connect Internet")
+                    }
                 }
         }
         //
 
 
         // Obtain the FirebaseAnalytics instance.
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
 
         Log.d("StartActivity", "onCreate: $shouldPlay ")
@@ -153,70 +152,10 @@ class StartActivity : AppCompatActivity() {
 
                 showLoading = false
 
-                //check to update the app
-                checkForUpdate()
 
             }, 1500
         )
 
-
-
-
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-
-            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Get new FCM registration token
-                    val token = task.result
-                    FirebaseService.token = token
-                    Log.d("StartActivity", "token: ${token.toString()}")
-                    val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
-                    referenceVideos.child("client").setValue(token)
-                        .addOnSuccessListener {
-                            Log.d("Fetching", "sendRegistrationToServer :  successful ")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.d(
-                                "Fetching",
-                                " sendRegistrationToServer :  err " + e.message.toString()
-                            )
-
-                            //failed to add info to database
-                        }
-                    // Log and toast
-                    val msg = getString(R.string.msg_token_fmt, token)
-                    Log.d("StartActivity", msg)
-//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.w("StartActivity", "Fetching FCM registration token failed", task.exception)
-                }
-
-            }
-
-
-            FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
-                .addOnCompleteListener { task ->
-                    Log.d("subscribet", "succ ")
-                    if (!task.isSuccessful) {
-                        Log.d("subscribe", "faild ")
-                    }
-
-//                    Toast.makeText(
-//                        baseContext,
-//                        "subscribeToTopic is Successful",
-//                        Toast.LENGTH_SHORT
-//                    )
-//                        .show()
-                }
-
-            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-                param(FirebaseAnalytics.Param.ITEM_ID, "id")
-                param(FirebaseAnalytics.Param.ITEM_NAME, "name")
-                param(FirebaseAnalytics.Param.CONTENT_TYPE, "image")
-            }
-        }
 
 
         start.setOnClickListener {
@@ -226,6 +165,7 @@ class StartActivity : AppCompatActivity() {
                 .setOnFinishListener {
                     start.isClickable = false
                     this.shouldPlay = true
+                    Constants.doOnce = true
                     val intent = Intent(this@StartActivity, MainActivity::class.java)
 
 //           val pair : android.util.Pair =  Pair<View,String>(start , "toNextButton")
@@ -281,6 +221,66 @@ class StartActivity : AppCompatActivity() {
 
     }
 
+    private fun subscribeFCM() {
+        FirebaseService.sharedPref = getSharedPreferences("sharedPref", MODE_PRIVATE)
+
+        uploadFCMTokenToDatabase()
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+            .addOnCompleteListener { task ->
+                Log.d("subscribet", "succ ")
+                if (!task.isSuccessful) {
+                    Log.d("subscribe", "faild ")
+                }
+
+                //
+            }
+
+        firebaseAnalytic()
+    }
+
+    private fun uploadFCMTokenToDatabase() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Get new FCM registration token
+                val token = task.result
+                FirebaseService.token = token
+                Log.d("StartActivity", "token: ${token.toString()}")
+                val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
+                referenceVideos.child("client").setValue(token)
+                    .addOnSuccessListener {
+                        Log.d("Fetching", "sendRegistrationToServer :  successful ")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.d(
+                            "Fetching",
+                            " sendRegistrationToServer :  err " + e.message.toString()
+                        )
+
+                        //failed to add info to database
+                    }
+                // Log and toast
+                val msg = getString(R.string.msg_token_fmt, token)
+                Log.d("StartActivity", msg)
+                //                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            } else {
+                Log.w("StartActivity", "Fetching FCM registration token failed", task.exception)
+            }
+
+        }
+    }
+
+    private fun firebaseAnalytic() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
+            param(FirebaseAnalytics.Param.ITEM_ID, "id")
+            param(FirebaseAnalytics.Param.ITEM_NAME, "name")
+            param(FirebaseAnalytics.Param.CONTENT_TYPE, "image")
+        }
+    }
+
 
     override fun onStart() {
         //play all anim
@@ -297,7 +297,6 @@ class StartActivity : AppCompatActivity() {
 
         super.onStart()
     }
-
 
 
     override fun onResume() {
@@ -516,44 +515,43 @@ class StartActivity : AppCompatActivity() {
     //check app to update
 
     private fun checkForUpdate() {
-        videosViewModel.readShouldDownload.observe(this@StartActivity, Observer {
-            Log.d(TAG, " called! + it = $it ")
-            if (!it) {
+        Log.d(TAG, " called!  ")
+        if (!checkUpdate) {
+            val appVersion: String = getAppVersion(this)
+//            val remoteConfig = FirebaseRemoteConfig.getInstance()
 
-                val appVersion: String = getAppVersion(this)
-                val remoteConfig = FirebaseRemoteConfig.getInstance()
+            val currentVersion = RemoteConfigUtils.getMinVersionOfApp()
+//                remoteConfig.getString("min_version_of_app")
+            val minVersion =RemoteConfigUtils.getLatestVersionOfApp()
+//                remoteConfig.getString("latest_version_of_app")
 
-                val currentVersion =
-                    remoteConfig.getString("min_version_of_app")
-                val minVersion =
-                    remoteConfig.getString("latest_version_of_app")
-
-                Log.d("checkForUpdate", "currentVersion: $currentVersion ")
-                Log.d("checkForUpdate", "minVersion: $minVersion ")
-                Log.d("checkForUpdate", "appVersion: $appVersion ")
-                if (!TextUtils.isEmpty(minVersion) && !TextUtils.isEmpty(appVersion) && checkMandateVersionApplicable(
-                        getAppVersionWithoutAlphaNumeric(minVersion),
-                        getAppVersionWithoutAlphaNumeric(appVersion)
-                    )
-                ) {
-                    Log.d("checkForUpdate", "appVersion:force ")
-
-                    onUpdateNeeded(true)
-                } else if (!TextUtils.isEmpty(currentVersion) && !TextUtils.isEmpty(appVersion) && !TextUtils.equals(
-                        currentVersion,
-                        appVersion
-                    )
-                ) {
-                    Log.d("checkForUpdate", "appVersion:flex ")
-
-                    onUpdateNeeded(false)
-                } else {
-
-                    moveForward()
-                }
+            Log.d("checkForUpdate", "currentVersion: $currentVersion ")
+            Log.d("checkForUpdate", "minVersion: $minVersion ")
+            Log.d("checkForUpdate", "appVersion: $appVersion ")
+            if (!TextUtils.isEmpty(minVersion) && !TextUtils.isEmpty(appVersion) && checkMandateVersionApplicable(
+                    getAppVersionWithoutAlphaNumeric(minVersion),
+                    getAppVersionWithoutAlphaNumeric(appVersion)
+                )
+            ) {
+                Log.d("checkForUpdate", "appVersion:force ")
+//force update
+                onUpdateNeeded(true)
+            } else if (!TextUtils.isEmpty(currentVersion) && !TextUtils.isEmpty(appVersion) && !TextUtils.equals(
+                    currentVersion,
+                    appVersion
+                )
+            ) {
+                Log.d("checkForUpdate", "appVersion:flex ")
+                //update available can continue
+                onUpdateNeeded(false)
+                checkUpdate = true
+            } else {
+                checkUpdate = true
+                moveForward()
             }
 
-        })
+
+        }
 
     }
 
@@ -667,13 +665,14 @@ class StartActivity : AppCompatActivity() {
         start_txt.startAnimation(flashTxtAnim)
 
     }
-    private fun showSnackBar(msg :String){
+
+    private fun showSnackBar(msg: String) {
         val view = this.findViewById<View>(R.id.main_grass)
         Snackbar.make(
             view,
             msg,
             Snackbar.LENGTH_LONG
-        ).setAction("okay"){}
+        ).setAction("okay") {}
             .show()
     }
 

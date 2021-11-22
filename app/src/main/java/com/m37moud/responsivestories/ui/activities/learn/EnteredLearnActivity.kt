@@ -72,6 +72,7 @@ class EnteredLearnActivity : AppCompatActivity() {
 
     private var showEng by Delegates.notNull<Boolean>()
     private var clicked = false
+    private var bannerAdShowed = false
     private var folder = ""
 
 
@@ -91,7 +92,8 @@ class EnteredLearnActivity : AppCompatActivity() {
             this.audioManager.getAudioService()?.playMusic()
 
 
-        RemoteConfigUtils.init(this)
+//        RemoteConfigUtils.init(this)
+//        RemoteConfigUtils.init()
 
 //        val checkStatus = RealtimeDatabaseUtils.getAdsStatus()
 //        Log.d(TAG, "AdsFolderFromFirebase: $checkStatus ")
@@ -119,6 +121,7 @@ class EnteredLearnActivity : AppCompatActivity() {
                 if (showAdsFromRemoteConfig) {
                     loadAd()
                     showAds()
+                    bannerAdShowed = true
 
                 }
 
@@ -856,7 +859,7 @@ class EnteredLearnActivity : AppCompatActivity() {
     }
 
     private fun hideAds() {
-        if (this.adView != null) adView.pause()
+        adView.pause()
 
 //        ad_viewOffline.visibility = View.GONE
         entered_learn_ad_container.visibility = View.GONE
@@ -984,8 +987,9 @@ class EnteredLearnActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        hideAds()
         super.onPause()
+        if (this.bannerAdShowed) hideAds()
+
 
     }
 
@@ -996,8 +1000,12 @@ class EnteredLearnActivity : AppCompatActivity() {
 //            changeOrientation()
 
         }
-        adView.destroy()
-        entered_learn_ad_container.visibility = View.GONE
+        if (this.bannerAdShowed ) {
+            adView.destroy()
+            entered_learn_ad_container.visibility = View.GONE
+        }
+
+
 
         super.onDestroy()
     }

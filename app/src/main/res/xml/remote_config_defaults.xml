@@ -11,11 +11,11 @@
     </entry>
     <entry>
         <key>NEXT_BUTTON_TEXT</key>
-        <value>NEXT_BUTTON_TEXT</value>
+        <value>some text</value>
     </entry>
     <entry>
         <key>NEXT_BUTTON_COLOR</key>
-        <value>NEXT_BUTTON_COLOR</value>
+        <value>#ffff</value>
     </entry>
 
 </defaultsMap>
