@@ -12,19 +12,13 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
-import com.m37moud.responsivestories.ui.activities.started.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
-import com.m37moud.responsivestories.util.NetworkResult
 import com.m37moud.responsivestories.util.media.AudioManager
-import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -736,6 +730,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         finish()
+
                     }
 
                     isLearn -> {
@@ -873,6 +868,31 @@ class MainActivity : AppCompatActivity() {
 
 
         }
+        itemView.share_container.setOnClickListener {
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    val applicationNameId: Int = this.applicationInfo.labelRes
+                    val appPackageName: String = this.packageName
+                    val i = Intent(Intent.ACTION_SEND)
+                    i.type = "text/plain"
+                    i.putExtra(Intent.EXTRA_SUBJECT, this.getString(applicationNameId))
+                    val text = R.string.share_app
+                    val link = "https://play.google.com/store/apps/details?id=$appPackageName"
+                    i.putExtra(Intent.EXTRA_TEXT, "$text $link")
+                    startActivity(Intent.createChooser(i, "Share link:"))
+                }.doAction()
+
+        }
+
+        itemView.donate_container.setOnClickListener {
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    val intent = Intent(this, WebViewActivity::class.java)
+                    startActivity(intent)
+                }.doAction()
+
+        }
+
         settingsDialog.show()
         settingsDialog.setOnDismissListener {
             img_main_setting.isClickable = true

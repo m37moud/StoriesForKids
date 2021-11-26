@@ -36,4 +36,9 @@
     <string name="share_app_with_your_friend">شارك التطبيق مع اصدقائك</string>
     <string name="if_you_like_app_you_can_pay_cup_of_coffee_for_me">لو عجبك البرنامج ممكن تعزمنى على كوب قهوه</string>
     <string name="bird">عصفور</string>
+    <string name="update_now">تحديث الان</string>
+    <string name="update_app">تحديث</string>
+    <string name="dialog_update_available_message">يوجد نسخة جديدة من البرنامج</string>
+    <string name="later">لاحقا</string>
+    <string name="share_app">برنامج تعليمى مفيد للاطفال</string>
 </resources>

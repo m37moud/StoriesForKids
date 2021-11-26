@@ -43,6 +43,12 @@
         <item name="android:windowFullscreen">true</item>
 
     </style>
+    <style name="WebViewActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/arabic</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowFullscreen">true</item>
+
+    </style>
 
     <style name="ViewPagerScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="fontFamily">@font/arabic</item>

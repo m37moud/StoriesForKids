@@ -283,6 +283,7 @@ class StartActivity : AppCompatActivity() {
 
 
     override fun onStart() {
+        super.onStart()
         //play all anim
         startAllAnim()
 
@@ -295,11 +296,12 @@ class StartActivity : AppCompatActivity() {
         videosViewModel.saveDownloadStatus(false)
 
 
-        super.onStart()
+
     }
 
 
     override fun onResume() {
+        super.onStart()
 //      Constants.startService(this)
 //        shouldPlay = false
         if (!activateSetting)

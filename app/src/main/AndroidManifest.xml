@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ResponsiveStories"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".ui.activities.started.SplashActivity"
             android:screenOrientation="landscape"
@@ -35,7 +36,6 @@
             android:name=".ui.activities.started.onboarding.ViewPagerActivity"
             android:screenOrientation="landscape"
             android:theme="@style/ViewPagerScreenStyle" />
-
         <activity
             android:name=".ui.activities.story.StoryActivity"
             android:screenOrientation="landscape"
@@ -47,13 +47,17 @@
         <activity
             android:name=".ui.activities.started.MainActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/MainScreenStyle"
-            />
+            android:theme="@style/MainScreenStyle" />
+
+        <activity android:name=".ui.activities.started.WebViewActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/WebViewActivity"/>
+
+
         <activity
             android:name=".ui.activities.started.StartActivity"
             android:screenOrientation="landscape"
             android:theme="@style/StartScreenStyle" />
-
         <activity
             android:name=".ui.activities.learn.EnteredLearnActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
@@ -71,7 +75,6 @@
         <service
             android:name=".util.media.AudioService"
             android:enabled="true" />
-
         <service
             android:name=".util.DemoDownloadService"
             android:exported="false">

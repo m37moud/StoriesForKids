@@ -1,5 +1,6 @@
 package com.m37moud.responsivestories.ui.activities.started
 
+import android.animation.Animator
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -95,33 +96,65 @@ class SplashActivity : AppCompatActivity() {
                 bay_face_lottie.apply {
                     visibility = View.VISIBLE
                         playAnimation()
+                    addAnimatorListener(object : Animator.AnimatorListener{
+                        override fun onAnimationRepeat(animation: Animator?) {
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            //Add your code here for animation end
+                            shouldPlay = true
+                            if (!onBoardingFinished()) {
+                                Log.d(TAG, "onCreate: ${onBoardingFinished()}")
+                                // Launch dashboard screen.
+                                startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
+                            } else {
+                                Log.d(TAG, "onStart: ${onBoardingFinished()}")
+                                // Launch the start Activity
+                                startActivity(Intent(this@SplashActivity, StartActivity::class.java))
+
+                            }
+                            // Call this when your activity is done and should be closed.
+
+                            finish()
+
+
+                        }
+
+                        override fun onAnimationCancel(animation: Animator?) {
+                        }
+
+                        override fun onAnimationStart(animation: Animator?) {
+                        }
+
+                    })
+
 
                     // This is used to hide the status bar and make the splash screen as a full screen activity.
                     // It is deprecated in the API level 30. I will update you with the alternate solution soon.
 
-                    activityScope.launch {
-
-
-                        delay(2000)
-
-
-                        shouldPlay = true
-                        if (!onBoardingFinished()) {
-                            Log.d(TAG, "onCreate: ${onBoardingFinished()}")
-                            // Launch dashboard screen.
-                            startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
-                        } else {
-                            Log.d(TAG, "onStart: ${onBoardingFinished()}")
-                            // Launch the start Activity
-                            startActivity(Intent(this@SplashActivity, StartActivity::class.java))
-
-                        }
-                        // Call this when your activity is done and should be closed.
-
-                        finish()
-
-
-                    }
+//                    activityScope.launch {
+//
+//
+//                        delay(3000)
+//
+//
+//                        shouldPlay = true
+//                        if (!onBoardingFinished()) {
+//                            Log.d(TAG, "onCreate: ${onBoardingFinished()}")
+//                            // Launch dashboard screen.
+//                            startActivity(Intent(this@SplashActivity, ViewPagerActivity::class.java))
+//                        } else {
+//                            Log.d(TAG, "onStart: ${onBoardingFinished()}")
+//                            // Launch the start Activity
+//                            startActivity(Intent(this@SplashActivity, StartActivity::class.java))
+//
+//                        }
+//                        // Call this when your activity is done and should be closed.
+//
+//                        finish()
+//
+//
+//                    }
 
 
                 }

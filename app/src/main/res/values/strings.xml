@@ -60,5 +60,6 @@
     <string name="update_app">Update</string>
     <string name="dialog_update_available_message">new Update Available</string>
     <string name="later">Later</string>
+    <string name="share_app">Hey Check out this Great app:</string>
 
 </resources>

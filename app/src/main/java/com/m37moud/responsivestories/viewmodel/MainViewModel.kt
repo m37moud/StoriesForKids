@@ -40,6 +40,9 @@ class   MainViewModel @ViewModelInject constructor(
 
     }
 
+    var videosDatabase: MutableLiveData<NetworkResult<ArrayList<VideoEntity>>> = MutableLiveData()
+
+
     fun insertVideos(videoEntity: VideoEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertVideos(videoEntity)
@@ -48,6 +51,9 @@ class   MainViewModel @ViewModelInject constructor(
     //Categories
     val readCategories: LiveData<List<CategoriesEntity>> =
         repository.local.readCategories().asLiveData()
+
+    val readCategoriesFromVideos: LiveData<List<CategoriesEntity>> =
+        repository.local.readCategoriesFromVideos().asLiveData()
 
 
     fun insertCategories(categoriesEntity: CategoriesEntity) =

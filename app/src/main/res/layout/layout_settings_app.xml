@@ -111,6 +111,7 @@
             app:strokeWidth="3dp">
 
             <LinearLayout
+                android:id="@+id/share_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -166,6 +167,7 @@
             app:strokeWidth="3dp">
 
             <LinearLayout
+                android:id="@+id/donate_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
