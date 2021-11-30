@@ -23,10 +23,12 @@ import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 private const val TAG = "MainActivity"
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -156,7 +158,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setFullScreen()
+//        setFullScreen()
 
         setContentView(R.layout.activity_main)
 
@@ -384,14 +386,14 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
-    private fun setFullScreen() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-    }
+//
+//    private fun setFullScreen() {
+//        requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        )
+//    }
 
 
     private fun onAddButtonClicked() {
@@ -816,8 +818,10 @@ class MainActivity : AppCompatActivity() {
 //        settingsDialog.setCancelable(false)
 //        settingsDialog.setCanceledOnTouchOutside(false)
         itemView.previous_sound_setting.setOnClickListener {
+            Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
+
 //            if(itemView.play_sound_setting.isVisible)
                     itemView.play_sound_setting.visibility = View.INVISIBLE
                     itemView.pause_sound_setting.visibility = View.VISIBLE
@@ -830,10 +834,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         itemView.play_sound_setting.setOnClickListener {
+            Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
 
-                    Constants.activateSetting = false
+                    activateSetting = false
 
                     this.audioManager.getAudioService()?.playMusic()
                     itemView.play_sound_setting.visibility = View.INVISIBLE
@@ -844,10 +849,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         itemView.pause_sound_setting.setOnClickListener {
+            Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
 
-                    Constants.activateSetting = true
+                    activateSetting = true
 
                     this.audioManager.getAudioService()?.pauseMusic()
                     itemView.play_sound_setting.visibility = View.VISIBLE
@@ -858,6 +864,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         itemView.next_sound_setting.setOnClickListener {
+            Constants.clickSound(this)
 
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
@@ -869,6 +876,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         itemView.share_container.setOnClickListener {
+            Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
                     val applicationNameId: Int = this.applicationInfo.labelRes
@@ -885,6 +893,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         itemView.donate_container.setOnClickListener {
+            Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
                     val intent = Intent(this, WebViewActivity::class.java)
@@ -895,6 +904,7 @@ class MainActivity : AppCompatActivity() {
 
         settingsDialog.show()
         settingsDialog.setOnDismissListener {
+            Constants.fabCloseSound(this)
             img_main_setting.isClickable = true
 
         }

@@ -10,8 +10,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:alpha="0.5"
         android:background="@drawable/start_background"
-android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -19,6 +19,7 @@ android:alpha="0.5"
         app:layout_constraintTop_toTopOf="parent"
 
         >
+
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -50,14 +51,10 @@ android:alpha="0.5"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
 
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
         android:text="@string/kids_story"
-        android:textColor="@color/white"
         android:textSize="@dimen/_25ssp"
-        android:textStyle="bold"
+        style="@style/text_views"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,14 +67,8 @@ android:alpha="0.5"
         android:layout_marginStart="@dimen/_30sdp"
         android:layout_marginEnd="@dimen/_30sdp"
         android:gravity="center"
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
         android:text="@string/lorem_s1"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-
+        style="@style/text_views"
         android:textSize="@dimen/_18ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -91,19 +82,14 @@ android:alpha="0.5"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_30sdp"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
         android:text="@string/next"
-        android:textAlignment="center"
         android:textColor="@color/red2"
         android:textSize="@dimen/_20ssp"
-        android:textStyle="bold"
+        style="@style/text_views"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -137,7 +137,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:paddingBottom="@dimen/_5sdp"
-
                 android:layout_marginStart="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_30sdp"
                 android:paddingStart="@dimen/_30sdp"
@@ -145,7 +144,7 @@
                 android:background="@drawable/rounded"
                 android:text="@string/animals"
                 android:textAllCaps="true"
-                android:textColor="@color/white"
+                style="@style/text_views"
                 android:textSize="@dimen/_20ssp" />
 
         </FrameLayout>

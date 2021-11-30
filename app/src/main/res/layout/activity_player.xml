@@ -11,7 +11,7 @@
         android:id="@+id/OnlinePlayerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        app:controller_layout_id="@layout/offline_player_custom_control"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

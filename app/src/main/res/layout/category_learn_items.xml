@@ -34,16 +34,12 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_6sdp"
-            android:shadowColor="@color/black"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:paddingBottom="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:shadowRadius="2"
-            android:textColor="@color/white"
             android:textSize="@dimen/_18ssp"
-            android:textStyle="bold"
+            style="@style/text_views"
+            android:text="test"
 
             />
 

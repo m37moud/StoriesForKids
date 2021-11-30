@@ -6,11 +6,12 @@
     android:layout_height="match_parent"
 
     tools:context=".ui.activities.started.onboarding.screens.SecondScreenFragment">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/start_background"
         android:alpha="0.7"
+        android:background="@drawable/start_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -18,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
 
         >
+
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -44,20 +46,13 @@
 
     <TextView
         android:id="@+id/title2"
+        style="@style/text_views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
 
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
+        android:layout_marginTop="@dimen/_10sdp"
         android:text="@string/lovely"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textDirection="locale"
         android:textSize="@dimen/_30ssp"
-        android:textStyle="bold"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,41 +60,31 @@
 
     <TextView
         android:id="@+id/description2"
+        style="@style/text_views"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_40sdp"
         android:gravity="center"
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
         android:text="@string/lorem_s2"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textDirection="locale"
         android:textSize="@dimen/_18ssp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title2" />
 
     <TextView
         android:id="@+id/next2"
+        style="@style/text_views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_30sdp"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
         android:text="@string/next"
-        android:textAlignment="center"
         android:textColor="@color/red2"
-        android:textDirection="locale"
         android:textSize="@dimen/_20ssp"
-        android:textStyle="bold"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 

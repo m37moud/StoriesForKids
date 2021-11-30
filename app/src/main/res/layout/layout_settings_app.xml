@@ -132,14 +132,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:shadowColor="@color/black"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="2"
                     android:text="@string/share_app_with_your_friend"
-                    android:textDirection="locale"
-                    android:textAlignment="center"
                     android:textColor="@color/green"
+                    style="@style/text_views"
+
                     android:textSize="@dimen/_20ssp"
                      />
 
@@ -188,14 +184,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:shadowColor="@color/black"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="2"
                     android:text="@string/if_you_like_app_you_can_pay_cup_of_coffee_for_me"
-                    android:textDirection="locale"
-                    android:textAlignment="center"
                     android:textColor="@color/green"
+                    style="@style/text_views"
                     android:textSize="@dimen/_20ssp"
                     />
 

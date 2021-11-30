@@ -248,15 +248,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layoutDirection="locale"
-                                android:shadowColor="@color/black"
-                                android:shadowDx="2"
-                                android:shadowDy="2"
-                                android:shadowRadius="2"
                                 android:text="@string/bird"
-                                android:textAlignment="center"
                                 android:paddingBottom="@dimen/_5sdp"
-                                android:textColor="@color/white"
+                                style="@style/text_views"
+
                                 android:textSize="@dimen/_20ssp" />
 
                         </FrameLayout>

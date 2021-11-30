@@ -22,8 +22,8 @@
         >
         <ImageView
             android:id="@+id/splash_img_background"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_180sdp"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="@dimen/_160sdp"
             android:layout_gravity="center"
 
             android:src="@drawable/splash_cow_background"
@@ -53,15 +53,9 @@
         android:layout_height="wrap_content"
         android:duplicateParentState="true"
         android:elevation="10dp"
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
-        android:textAlignment="center"
-
+        style="@style/text_views"
         android:text="@string/responsive_stories"
-        android:textColor="@color/white"
         android:textSize="@dimen/_25ssp"
-        android:textStyle="bold" />
+         />
 
 </LinearLayout>

@@ -93,7 +93,8 @@
                 android:paddingEnd="@dimen/_30sdp"
                 android:text="@string/story"
                 android:paddingBottom="@dimen/_5sdp"
-                android:textColor="@color/white"
+                style="@style/text_views"
+
                 android:textSize="@dimen/_15ssp" />
 
         </LinearLayout>
@@ -147,9 +148,9 @@
                 android:paddingStart="@dimen/_30sdp"
                 android:paddingEnd="@dimen/_30sdp"
                 android:paddingBottom="@dimen/_5sdp"
+                style="@style/text_views"
 
                 android:text="@string/learn"
-                android:textColor="@color/white"
                 android:textSize="@dimen/_15ssp" />
 
         </LinearLayout>

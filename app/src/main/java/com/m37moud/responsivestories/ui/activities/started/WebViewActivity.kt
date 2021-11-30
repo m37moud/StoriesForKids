@@ -1,5 +1,6 @@
 package com.m37moud.responsivestories.ui.activities.started
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.webkit.WebView
@@ -11,16 +12,15 @@ import kotlinx.android.synthetic.main.activity_webview.*
 
 
 class WebViewActivity : AppCompatActivity() {
-    private var webViewurl: WebView? = null
-//    var AMW = AndroidInterface.GetInstance()
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
 
         webView1!!.settings.javaScriptEnabled = true
 
-        webView1.getSettings().builtInZoomControls = true
+        webView1.settings.builtInZoomControls = true
         val activity: Activity = this
         webView1.setWebViewClient(object : WebViewClient() {
             override fun onReceivedError(

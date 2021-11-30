@@ -35,13 +35,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:shadowColor="@color/black"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="2"
                     android:text="@string/are_you_sure_to_exit"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
+                    style="@style/text_views"
+
                     android:textSize="@dimen/_25ssp" />
 
             </com.google.android.material.card.MaterialCardView>
