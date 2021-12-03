@@ -745,13 +745,13 @@ class MainActivity : AppCompatActivity() {
                         finish()
                     }
                     isFinish -> {
-                        startActivity(
-                            Intent(
-                                this@MainActivity,
-                                StartActivity::class.java
-                            )
-                        )
-                        finish()
+//                        startActivity(
+//                            Intent(
+//                                this@MainActivity,
+//                                StartActivity::class.java
+//                            )
+//                        )
+//                        finish()
                         super.onBackPressed()
                     }
                 }

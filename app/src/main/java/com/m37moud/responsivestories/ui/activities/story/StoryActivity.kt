@@ -111,7 +111,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         listVid = ArrayList()
         roomList = ArrayList()
-        listCategory = ArrayList()
+//        listCategory = ArrayList()
 
 //        videosViewModel.saveExitStatus(false)
 
@@ -201,6 +201,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         //from database
 //        readCategoriesFromDatabase()
+        //bring categories from videos were downloaded
         readCategoriesFromVideos()
 
 //
@@ -551,7 +552,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 } else {
                     Log.d("mah readDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
+//                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
                     firstRequestApiData()
                 }
             })
@@ -1010,9 +1011,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         }
 
     }
+
+    //bring categories from videos were downloaded
     private fun readCategoriesFromVideos() {
+        listCategory = ArrayList()
+
         Log.d("readCategoriesVideos", " called!")
-        lifecycleScope.launch {
+//        lifecycleScope.launch {
             mainViewModel.readCategoriesFromVideos.observe(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
@@ -1030,15 +1035,16 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
                     Log.d("readCategoriesVideos", "list is " + listCategory)
 
+                    mainViewModel.readCategoriesFromVideos.removeObservers(this@StoryActivity)
+
                 } else {
                     getCategoriesFromFirebase()
 
                     Log.d("readCategoriesVideos", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                    mainViewModel.readCategoriesFromVideos.removeObservers(this@StoryActivity)
                 }
             })
-        }
+//        }
     }
 
 

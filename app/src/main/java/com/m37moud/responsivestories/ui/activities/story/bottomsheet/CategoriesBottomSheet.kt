@@ -35,14 +35,14 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
     private var categoryChip = DEFAULT_CATEGORY_TYPE
     private var categoryChipId = 0
-//    private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
-//    private lateinit var listCategory: ArrayList<CategoriesModel>
+    private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
+    private lateinit var listCategory: ArrayList<CategoriesModel>
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        listCategory = ArrayList()
+        listCategory = ArrayList()
 
         videosViewModel = ViewModelProvider(requireActivity()).get(VideosViewModel::class.java)
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
@@ -57,13 +57,11 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 //        readCategoriesFromVideos()
 
         val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
-//        val data = arguments?.getParcelableArrayList("myListCategory")
 
         val data =
             arguments?.getParcelableArrayList<CategoriesModel>("myListCategory") as ArrayList<CategoriesModel>
-        Log.d("CategoriesBottomSheet", "initChip: " + data)
+        Log.d("CategoriesBottomSheet", "initChip:$data  size: ${data.size}"  )
 
-//        initChip(data, mView.categories_chipGroub)
         initChip(data, mView.categories_chipGroub)
 
         videosViewModel.readCategoriesType.asLiveData().observe(viewLifecycleOwner) { value ->
@@ -129,6 +127,14 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         return mView
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
+
+    }
+
     override fun onStart() {
         super.onStart()
         //this forces the sheet to appear at max height even on landscape
@@ -151,7 +157,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
-        Log.d("initChip", "initChip: called")
+        Log.d("initChip", "initChip: called list size : ${list?.size}")
 
         if (list is ArrayList<CategoriesModel>) {
             if (list.isNotEmpty()) {
@@ -202,6 +208,37 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     }
+    private fun readCategoriesFromVideos() {
+        Log.d("readCategoriesVideos", " called!")
+        lifecycleScope.launch {
+            mainViewModel.readCategoriesFromVideos.observe(this@CategoriesBottomSheet, Observer { database ->
+                if (database.isNotEmpty()) {
+
+                    Log.d("readCategoriesVideos", "if statement true")
+
+//                    listCategory = database as ArrayList<CategoriesModel>
+                    listCategoriesReadDatabase = database as java.util.ArrayList
+                    listCategoriesReadDatabase.forEach {
+                        val categoryModel =
+                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+                        listCategory.add(categoryModel)
+
+                    }
+
+
+                    Log.d("readCategoriesVideos", "list is " + listCategory)
+
+                } else {
+
+                    Log.d("readCategoriesVideos", "if statement is false ...")
+//                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+                    mainViewModel.readCategoriesFromVideos.removeObservers(this@CategoriesBottomSheet)
+                }
+            })
+        }
+    }
+
+
 //    private fun readCategoriesFromVideos() {
 //        Log.d("readCategoriesVideos", " called!")
 //        lifecycleScope.launch {

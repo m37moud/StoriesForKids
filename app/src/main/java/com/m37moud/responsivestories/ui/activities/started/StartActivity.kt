@@ -49,6 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_start.*
 import kotlinx.android.synthetic.main.layout_exit_app.view.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
@@ -56,6 +57,7 @@ const val TOPIC = "/topics/myTopic2"
 private const val TAG = "StartActivity"
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class StartActivity : AppCompatActivity() {
 
@@ -179,7 +181,7 @@ class StartActivity : AppCompatActivity() {
                     showLoading = true
                     startActivity(intent)
                     overridePendingTransition(0, 0)
-                    finish()
+//                    finish()
                 }.doAction()
 
 

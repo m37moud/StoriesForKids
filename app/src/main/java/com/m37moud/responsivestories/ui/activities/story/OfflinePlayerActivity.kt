@@ -45,12 +45,14 @@ import javax.inject.Inject
 
 
 const val AD_InterstitialAd_ID = "ca-app-pub-3940256099942544/1033173712"
+const val AD_NATIVE_ID = "ca-app-pub-3940256099942544/2247696110"
 
 @AndroidEntryPoint
 class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRendererEventListener,
     PlaybackPreparer, PlayerControlView.VisibilityListener {
-    private lateinit var simpleExoPlayer: SimpleExoPlayer
-    //    private lateinit var playerView: PlayerView
+    private var simpleExoPlayer: SimpleExoPlayer? = null
+
+//  private var playerView: PlayerView? = null
     private lateinit var videoUri: Uri
     private lateinit var dataSourceFactory: DataSource.Factory
     private lateinit var handler: Handler
@@ -65,7 +67,6 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     lateinit var audioManager: AudioManager
 
 
-    private val KEY_POSITION = "position"
     private var position = 0L
 
     //ads refrence
@@ -109,9 +110,13 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
     private fun playVideo() {
         try {
+            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
+            val videoTrackSelectionFactory: TrackSelection.Factory =
+                AdaptiveTrackSelection.Factory(bandwidthMeter)
+            val trackSelector: TrackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
+
 //
-            simpleExoPlayer = SimpleExoPlayer.Builder(this)
-                .build()
+//            simpleExoPlayer = SimpleExoPlayer.Builder(this).build()
             val intent = intent
             val url = intent.getStringExtra("videoUri")
             videoUri = Uri.parse(url)
@@ -121,19 +126,15 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
                 DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
             )
 
-            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-            val videoTrackSelectionFactory: TrackSelection.Factory =
-                AdaptiveTrackSelection.Factory(bandwidthMeter)
-            val trackSelector: TrackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
 
             simpleExoPlayer =
                 ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector)
 //            playerView.useController = true
 //            playerView.requestFocus()
 //            playerView.player = simpleExoPlayer
-//            simpleExoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-            simpleExoPlayer.playWhenReady = true //run file/link when ready to play.
-            simpleExoPlayer.setVideoDebugListener(this) //for listening to resolution change and  outputing the resolution
+            simpleExoPlayer?.repeatMode = Player.REPEAT_MODE_ONE
+            simpleExoPlayer?.playWhenReady = true //run file/link when ready to play.
+            simpleExoPlayer?.setVideoDebugListener(this) //for listening to resolution change and  outputing the resolution
 
             val downloadRequest: DownloadRequest =
                 AdaptiveExoplayer.getInstance(this).downloadTracker
@@ -141,9 +142,9 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
             val mediaSource =
                 DownloadHelper.createMediaSource(downloadRequest, dataSourceFactory)
 
-            simpleExoPlayer.prepare(mediaSource, false, true)
+            simpleExoPlayer?.prepare(mediaSource, false, true)
 
-            simpleExoPlayer.addListener(object : Player.EventListener {
+            simpleExoPlayer?.addListener(object : Player.EventListener {
 
                 override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 }
@@ -187,12 +188,14 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
                             OfflinePlayerView.keepScreenOn = true
                             Log.d("FragmentActivity.TAG", "playbackState : " + "STATE_READY")
                             loading_exoplayer_offline.visibility = View.GONE
-                            if (simpleExoPlayer.isPlaying) {
+                            if (simpleExoPlayer?.isPlaying!!) {
 
 //                                showAds()
                                 my_template.visibility = View.GONE
 
                             } else {
+                                OfflinePlayerView.keepScreenOn = false
+
                                 showNativeAds()
 //                                hideAds()
 
@@ -219,9 +222,9 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
                 override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
                 override fun onPlayerError(error: ExoPlaybackException) {
                     Log.v("FragmentActivity.TAG", "Listener-onPlayerError...")
-                    simpleExoPlayer.stop()
-                    simpleExoPlayer.prepare(mediaSource)
-                    simpleExoPlayer.playWhenReady = true
+                    simpleExoPlayer?.stop()
+                    simpleExoPlayer?.prepare(mediaSource)
+                    simpleExoPlayer?.playWhenReady = true
                 }
 
                 override fun onPositionDiscontinuity(reason: Int) {}
@@ -240,7 +243,7 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
             OfflinePlayerView.keepScreenOn = true
             OfflinePlayerView.player = simpleExoPlayer
-            simpleExoPlayer.playWhenReady = true
+            simpleExoPlayer?.playWhenReady = true
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -251,8 +254,8 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     override fun onBackPressed() {
         super.onBackPressed()
 
-        simpleExoPlayer.playWhenReady = false
-        simpleExoPlayer.release()
+        simpleExoPlayer?.playWhenReady = false
+        simpleExoPlayer?.release()
     }
 
     private fun buildDataSourceFactory(): DataSource.Factory? {
@@ -275,8 +278,8 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 //    }
 
     private fun showNativeAds() {
-
-        adLoader = AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+        MobileAds.initialize(this)
+        adLoader = AdLoader.Builder(this, AD_NATIVE_ID)
             .forNativeAd { ad: NativeAd ->
                 // Show the ad.
 
@@ -406,34 +409,34 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
 
     }
+//
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        position = simpleExoPlayer?.currentPosition!!
+//        outState.putLong(KEY_POSITION, position)
+////        outState.putBoolean(KEY_PLAYER_PLAY_WHEN_READY, player.playWhenReady)
+//    }
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//        savedInstanceState.let {
+//            simpleExoPlayer?.seekTo(it.getLong(KEY_POSITION))
+////            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
+//        }
+//    }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        position = simpleExoPlayer.currentPosition
-        outState.putLong(KEY_POSITION, position)
-//        outState.putBoolean(KEY_PLAYER_PLAY_WHEN_READY, player.playWhenReady)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState.let {
-            simpleExoPlayer.seekTo(it.getLong(KEY_POSITION))
-//            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
-        }
-    }
-
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            hideAds()
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            showAds()
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
-        }
-    }
+//
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+////            hideAds()
+//            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+////            showAds()
+//            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
 
 //
@@ -467,8 +470,8 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
             override fun run() {
                 if (simpleExoPlayer != null) {
                     tv_player_current_time.text =
-                        stringForTime(simpleExoPlayer.currentPosition.toInt())
-                    tv_player_end_time.text = stringForTime(simpleExoPlayer.duration.toInt())
+                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
                     handler.postDelayed(this, 1000)
                 }
             }
@@ -505,7 +508,9 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
     private fun releasePlayer() {
         if (simpleExoPlayer != null) {
-            simpleExoPlayer.release()
+            simpleExoPlayer?.stop()
+            simpleExoPlayer?.playWhenReady = false
+            simpleExoPlayer?.release()
 //            simpleExoPlayer = null
         }
     }
@@ -533,23 +538,32 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
         ad_viewOffline.resume()
 //        if (Util.SDK_INT <= 23 || playerView == null) {
         initExoplayer()
-////            if (playerView != null) {
-////                playerView.onResume();
-////            }
-////        }
+//            if (simpleExoPlayer != null) {
+//                initExoplayer()
+//                simpleExoPlayer.onResume()
+//            }
+//        }
 //
 //        FullScreencall()
+        if(simpleExoPlayer != null) {
+            simpleExoPlayer?.seekTo(position);
+            simpleExoPlayer?.playWhenReady = true;
+        }
     }
 
     override fun onPause() {
 //        hideAds()
-        if (Util.SDK_INT <= 23) {
-//            if (playerView != null) {
-//                playerView.onPause();
-//            }
-            simpleExoPlayer.playWhenReady = false
-            simpleExoPlayer.release()
-        }
+//        if (Util.SDK_INT <= 23) {
+////            if (playerView != null) {
+////                playerView.onPause();
+////            }
+            if(simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
+                position = simpleExoPlayer?.currentPosition!!
+                simpleExoPlayer?.playWhenReady = false
+            }
+//            simpleExoPlayer?.stop()
+//            simpleExoPlayer?.release()
+//        }
 
         super.onPause()
 
@@ -567,9 +581,9 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 //            if (playerView != null) {
 //                playerView.onPause();
 //            }
-            simpleExoPlayer.playWhenReady = false
+            simpleExoPlayer?.playWhenReady = false
 
-            simpleExoPlayer.release()
+            simpleExoPlayer?.release()
         }
 
         super.onStop()
@@ -582,7 +596,8 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
             mInterstitialAd = null
         }
         ad_viewOffline.destroy()
-        simpleExoPlayer.release()
+//        simpleExoPlayer.release()
+        releasePlayer()
         super.onDestroy()
     }
 
