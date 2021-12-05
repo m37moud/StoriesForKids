@@ -61,5 +61,8 @@
     <string name="dialog_update_available_message">new Update Available</string>
     <string name="later">Later</string>
     <string name="share_app">Hey Check out this Great app:</string>
+    <string name="string_ok">ok</string>
+    <string name="need_permission">need permission</string>
+    <string name="desc_toast">descinding</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.m37moud.responsivestories.ui.activities.started
 
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,6 +30,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils.isUploadToGooglePlay
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.addRewardAds
@@ -106,28 +109,6 @@ class StartActivity : AppCompatActivity() {
             videosViewModel.backOnline = it
         })
         //check for internet connection
-        lifecycleScope.launchWhenStarted {
-            networkListener = NetworkListener()
-            networkListener.checkNetworkAvailability(this@StartActivity)
-                .collect { status ->
-                    Log.d("NetworkListener", status.toString())
-                    videosViewModel.networkStatus = status
-                    videosViewModel.showNetworkStatus()
-                    //read database
-                    if (status) {
-                        RemoteConfigUtils.init()
-                        //check to update the app
-                        if (!Constants.doOnce) {
-                            checkForUpdate()
-                            subscribeFCM()
-                        }
-
-
-                    } else {
-                        showSnackBar("No internet Connection Please Connect Internet")
-                    }
-                }
-        }
         //
 
 
@@ -153,6 +134,29 @@ class StartActivity : AppCompatActivity() {
                 start_scroll.visibility = View.VISIBLE
 
                 showLoading = false
+
+                lifecycleScope.launchWhenStarted {
+                    networkListener = NetworkListener()
+                    networkListener.checkNetworkAvailability(this@StartActivity)
+                        .collect { status ->
+                            Log.d("NetworkListener", status.toString())
+                            videosViewModel.networkStatus = status
+                            videosViewModel.showNetworkStatus()
+                            //read database
+                            if (status) {
+                                RemoteConfigUtils.init()
+                                //check to update the app
+                                if (!Constants.doOnce) {
+                                    checkForUpdate()
+                                    subscribeFCM()
+                                }
+
+
+                            } else {
+                                showSnackBar("No internet Connection Please Connect Internet")
+                            }
+                        }
+                }
 
 
             }, 1500
@@ -294,9 +298,8 @@ class StartActivity : AppCompatActivity() {
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        //prepare fo check downloads to story
+        //prepare for check downloads to story
         videosViewModel.saveDownloadStatus(false)
-
 
 
     }
@@ -404,7 +407,7 @@ class StartActivity : AppCompatActivity() {
                 .setOnFinishListener {
                     shouldPlay = false
                     exitDialog.setOnDismissListener {
-                        videosViewModel.saveDownloadStatus(false)
+//                        videosViewModel.saveDownloadStatus(false)
 
                         finishAffinity()
 
@@ -437,7 +440,10 @@ class StartActivity : AppCompatActivity() {
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
                     shouldPlay = false
-//resume animation
+                    //check for upload to google play
+                    if (isUploadToGooglePlay()) rate(this)
+
+                    //resume animation
                     startAllAnim()
 
                     exitDialog.dismiss()
@@ -526,7 +532,7 @@ class StartActivity : AppCompatActivity() {
 
             val currentVersion = RemoteConfigUtils.getMinVersionOfApp()
 //                remoteConfig.getString("min_version_of_app")
-            val minVersion =RemoteConfigUtils.getLatestVersionOfApp()
+            val minVersion = RemoteConfigUtils.getLatestVersionOfApp()
 //                remoteConfig.getString("latest_version_of_app")
 
             Log.d("checkForUpdate", "currentVersion: $currentVersion ")
@@ -670,8 +676,30 @@ class StartActivity : AppCompatActivity() {
 
     }
 
+    private fun rate(context: Context) {
+//        val context = view.context
+        val uri = Uri.parse("FBD://details?id=" + context.packageName)
+        val goToMarket: Intent = Intent(Intent.ACTION_VIEW, uri)
+        goToMarket.addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+        )
+        try {
+            context.startActivity(goToMarket)
+        } catch (e: ActivityNotFoundException) {
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    //store link
+                    Uri.parse(getOpenLink() + context.packageName)
+                )
+            )
+        }
+    }
+
     private fun showSnackBar(msg: String) {
-        val view = this.findViewById<View>(R.id.main_grass)
+        val view = this.findViewById<View>(R.id.start_parent_frame)
         Snackbar.make(
             view,
             msg,
@@ -694,6 +722,8 @@ class StartActivity : AppCompatActivity() {
 
 
     }
+
+
 }
 
 

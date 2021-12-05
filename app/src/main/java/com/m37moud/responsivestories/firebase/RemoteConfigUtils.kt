@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.firebase.remoteconfig.ktx.get
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.m37moud.responsivestories.BuildConfig
@@ -19,6 +20,8 @@ object RemoteConfigUtils {
     private const val NEXT_BUTTON_COLOR = "NEXT_BUTTON_COLOR"
     private const val min_version_of_app = "min_version_of_app"
     private const val latest_version_of_app = "latest_version_of_app"
+    private const val GOOGLE_PLAY_STATUS = "uploaded_to_google"
+    private const val STORE_LINK = "store_link"
 
     private val DEFAULTS: HashMap<String, Any> =
         hashMapOf(
@@ -106,5 +109,7 @@ object RemoteConfigUtils {
     fun getNextButtonColor(): String = remoteConfig.getString(NEXT_BUTTON_COLOR)
     fun getMinVersionOfApp(): String = remoteConfig.getString(min_version_of_app)
     fun getLatestVersionOfApp(): String = remoteConfig.getString(latest_version_of_app)
+    fun isUploadToGooglePlay(): Boolean = remoteConfig.getBoolean(GOOGLE_PLAY_STATUS)
+    fun getOpenLink(): String = remoteConfig.getString(STORE_LINK)
 
 }

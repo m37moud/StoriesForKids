@@ -1,6 +1,7 @@
 package com.m37moud.responsivestories.ui.activities.started
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,11 +14,13 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
+import com.m37moud.responsivestories.util.Logger
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -879,15 +882,9 @@ class MainActivity : AppCompatActivity() {
             Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
-                    val applicationNameId: Int = this.applicationInfo.labelRes
-                    val appPackageName: String = this.packageName
-                    val i = Intent(Intent.ACTION_SEND)
-                    i.type = "text/plain"
-                    i.putExtra(Intent.EXTRA_SUBJECT, this.getString(applicationNameId))
-                    val text = R.string.share_app
-                    val link = "https://play.google.com/store/apps/details?id=$appPackageName"
-                    i.putExtra(Intent.EXTRA_TEXT, "$text $link")
-                    startActivity(Intent.createChooser(i, "Share link:"))
+
+
+                    share()
                 }.doAction()
 
         }
@@ -910,6 +907,21 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+    private fun share() {
+//
+
+
+        val applicationNameId: Int = this.applicationInfo.labelRes
+        val appPackageName: String = this.packageName
+        val i = Intent(Intent.ACTION_SEND)
+        i.type = "text/plain"
+        i.putExtra(Intent.EXTRA_SUBJECT, this.getString(applicationNameId))
+        val text = R.string.share_app
+        val link = getOpenLink().plus(appPackageName) // get store link
+        Logger.d(text.toString())
+        i.putExtra(Intent.EXTRA_TEXT, "$text /n $link")
+        startActivity(Intent.createChooser(i, "Share link:"))
     }
 
 

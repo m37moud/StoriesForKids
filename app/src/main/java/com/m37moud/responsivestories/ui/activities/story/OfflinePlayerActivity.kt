@@ -75,12 +75,10 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setFullScreen()
         setContentView(R.layout.activity_offline_player)
         img_back_player.setOnClickListener(this)
 //        playerView = findViewById(R.id.OfflinePlayerView)
         dataSourceFactory = buildDataSourceFactory()!!
-//        hideActionBar()
 //        initExoplayer()
         prepareView()
 //        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
@@ -96,17 +94,6 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
         playVideo()
     }
 //
-//    private fun hideActionBar() {
-//        supportActionBar!!.hide()
-//    }
-
-//    private fun setFullScreen() {
-//        requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        window.setFlags(
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN
-//        )
-//    }
 
     private fun playVideo() {
         try {
@@ -278,7 +265,9 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 //    }
 
     private fun showNativeAds() {
-        MobileAds.initialize(this)
+        Log.d("showNativeAds", "showNativeAds: called")
+
+//        MobileAds.initialize(this)
         adLoader = AdLoader.Builder(this, AD_NATIVE_ID)
             .forNativeAd { ad: NativeAd ->
                 // Show the ad.
@@ -291,6 +280,8 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
 
                 if (adLoader.isLoading) {
+                    Log.d("showNativeAds", "showNativeAds: error if true")
+
                     // The AdLoader is still loading ads.
                     // Expect more adLoaded or onAdFailedToLoad callbacks.
                     val styles: NativeTemplateStyle =
@@ -493,18 +484,6 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
         }
     }
 
-    fun FullScreencall() {
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            val v = this.window.decorView
-            v.systemUiVisibility = View.GONE
-        } else if (Build.VERSION.SDK_INT >= 19) {
-            //for new api versions.
-            val decorView = window.decorView
-            val uiOptions =
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            decorView.systemUiVisibility = uiOptions
-        }
-    }
 
     private fun releasePlayer() {
         if (simpleExoPlayer != null) {

@@ -1,6 +1,7 @@
 package com.m37moud.responsivestories.ui.activities.story
 
 import android.app.NotificationManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
@@ -1078,6 +1079,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
 
+
+
     override fun onBackPressed() {
         shouldPlay = true
         if (shouldAllowBack) {
@@ -1104,6 +1107,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             this.audioManager.getAudioService()?.pauseMusic()
 
         }else{
+            videosViewModel.saveDownloadStatus(false)
+
             videosViewModel.saveCategoryType(
                 "",
                 0
@@ -1126,6 +1131,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
     override fun onDestroy() {
         Log.d("StoryActivity", "onDestroy: ")
+        //prepare for check downloads to story
 
 
         downloadTracker.removeListener(this)

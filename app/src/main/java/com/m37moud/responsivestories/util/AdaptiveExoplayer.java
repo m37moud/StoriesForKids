@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.m37moud.responsivestories.models.VideoModel;
-import com.m37moud.responsivestories.util.DownloadTracker;
 
 import java.io.File;
 import java.io.IOException;
