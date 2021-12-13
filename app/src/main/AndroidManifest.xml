@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:name=".MyApplication"
@@ -21,8 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ResponsiveStories"
         android:usesCleartextTraffic="true">
+
         <activity
-            android:name=".ui.activities.started.onboarding.SplashActivity"
+            android:name=".ui.activities.started.SplashActivity"
             android:screenOrientation="landscape"
             android:theme="@style/SplashScreenStyle">
             <intent-filter>
@@ -35,7 +38,6 @@
             android:name=".ui.activities.started.onboarding.ViewPagerActivity"
             android:screenOrientation="landscape"
             android:theme="@style/ViewPagerScreenStyle" />
-
         <activity
             android:name=".ui.activities.story.StoryActivity"
             android:screenOrientation="landscape"
@@ -45,13 +47,19 @@
             android:screenOrientation="landscape"
             android:theme="@style/LearnScreenStyle" />
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="landscape" />
+            android:name=".ui.activities.started.MainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainScreenStyle" />
+
+        <activity android:name=".ui.activities.started.WebViewActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/WebViewActivity"/>
+
+
         <activity
-            android:name=".ui.activities.started.onboarding.StartActivity"
+            android:name=".ui.activities.started.StartActivity"
             android:screenOrientation="landscape"
             android:theme="@style/StartScreenStyle" />
-
         <activity
             android:name=".ui.activities.learn.EnteredLearnActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
@@ -60,16 +68,18 @@
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
             android:name=".ui.activities.story.OfflinePlayerActivity"
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:theme="@style/Exoplayer"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activities.story.OnlinePlayerActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
+            android:theme="@style/Exoplayer"
             android:screenOrientation="landscape" />
 
         <service
             android:name=".util.media.AudioService"
             android:enabled="true" />
-
         <service
             android:name=".util.DemoDownloadService"
             android:exported="false">

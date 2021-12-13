@@ -9,11 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.m37moud.responsivestories.R
-import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
+import com.m37moud.responsivestories.ui.activities.started.StartActivity
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.util.media.PodcastEntryPoint
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.android.synthetic.main.fragment_third_screen.*
 import kotlinx.android.synthetic.main.fragment_third_screen.view.*
 
 class ThirdScreenFragment : Fragment() {

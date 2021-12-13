@@ -7,29 +7,26 @@
     android:layout_height="match_parent"
     android:background="@drawable/start_background"
 
-    tools:context=".ui.activities.started.onboarding.StartActivity">
+    tools:context=".ui.activities.started.StartActivity">
 
-<FrameLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    >
-    <include
-        layout="@layout/loading"
-        />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <include layout="@layout/loading" />
 
+    </FrameLayout>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/start_parent_frame"
         android:layout_width="match_parent"
-        android:background="@drawable/start_background"
         android:layout_height="match_parent"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.7"
@@ -49,7 +46,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
                 android:alpha="0.5"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:visibility="gone"
                 scrolling_image_view:initialState="stopped"
                 scrolling_image_view:source="@drawable/tst1_background"
@@ -60,69 +57,84 @@
 
 
         <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotationY="@integer/locale_mirror_flip"
+            android:scaleType="fitXY"
+            android:src="@drawable/startforeground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/start"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="100dp"
-            android:layout_marginBottom="60dp"
+            android:layout_width="@dimen/_55sdp"
+            android:layout_height="@dimen/_55sdp"
+            android:layout_marginStart="@dimen/_80sdp"
+            android:layout_marginBottom="@dimen/_50sdp"
             android:background="@drawable/button_rounded"
-            android:backgroundTint="@color/darkorange"
-            android:backgroundTintMode="screen"
+            app:backgroundTint="@color/darkorange"
+            app:backgroundTintMode="screen"
             android:foreground="@drawable/btn_foreground"
-            android:layoutDirection="rtl"
-            android:padding="20dp"
-            android:transitionName="toNextButton"
+            android:padding="@dimen/_10sdp"
+            android:rotation="@integer/locale_mirror_flip"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@android:drawable/ic_media_play"
             app:tint="@color/white" />
 
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layoutDirection="rtl"
-        android:scaleType="fitXY"
+        <ImageView
+            android:id="@+id/start_bird"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:layout_marginEnd="@dimen/_24sdp"
+            android:rotationY="@integer/locale_mirror_flip"
+            android:scaleType="fitXY"
+            android:src="@drawable/startbird"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        android:src="@drawable/startforeground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/main_grass"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70sdp"
+            android:rotationY="@integer/locale_mirror_flip"
+            android:scaleType="fitXY"
+            android:src="@drawable/startbottom1"
 
-    <ImageView
-        android:id="@+id/start_bird"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:layoutDirection="rtl"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        android:scaleType="fitXY"
-        android:src="@drawable/startbird"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/main_grass"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/startbottom1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/start_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:alpha=".6"
+            android:duplicateParentState="true"
+            android:elevation="10dp"
+            android:text="@string/responsive_stories"
+            android:textSize="@dimen/_20ssp"
+            style="@style/text_views"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/cow"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginEnd="8dp"
-            android:layoutDirection="rtl"
+            android:id="@+id/start_cat"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="@dimen/_165sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:rotationY="@integer/locale_mirror_flip"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/catloading" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

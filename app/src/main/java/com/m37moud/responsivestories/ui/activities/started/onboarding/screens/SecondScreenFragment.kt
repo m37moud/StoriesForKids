@@ -14,8 +14,10 @@ import kotlinx.android.synthetic.main.fragment_second_screen.view.*
 
 class SecondScreenFragment : Fragment() {
     private val audioManager: AudioManager by lazy {
-        EntryPointAccessors.fromApplication (context,
-            PodcastEntryPoint::class.java).audioManager()
+        EntryPointAccessors.fromApplication(
+            context,
+            PodcastEntryPoint::class.java
+        ).audioManager()
     }
     private var shouldPlay = false
 
@@ -33,12 +35,13 @@ class SecondScreenFragment : Fragment() {
             shouldPlay = true
 
             viewPager?.currentItem = 2
-            requireActivity().finish()
+//            requireActivity().finish()
 
         }
 
         return view
     }
+
     override fun onStop() {
 
         if (!shouldPlay) {

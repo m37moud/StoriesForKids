@@ -5,19 +5,19 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.adapters.LearnAdapter
 import com.m37moud.responsivestories.databinding.ActivityLearnBinding
 import com.m37moud.responsivestories.models.LearnModel
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.RESOURCE
-import com.m37moud.responsivestories.util.RemoteConfigUtils
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils
+import com.m37moud.responsivestories.ui.activities.started.MainActivity
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +39,12 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
     private var shouldPlay = false
     private var shouldAllowBack = false
 
+    //    private var playSound = false
+//    var v: Boolean = false
+
+
     private var categoryPosition = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+
         //start service and play music
 
 //        RemoteConfigUtils.init()
@@ -69,15 +76,16 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         binding.learnContainerFrame.visibility = View.INVISIBLE
 
 
-        Handler().postDelayed(
+        Handler(Looper.getMainLooper()).postDelayed(
             {
                 binding.learnLoading.visibility = View.GONE
                 shouldAllowBack = true
                 binding.learnContainerFrame.visibility = View.VISIBLE
+                display()
             }, 2500
         )
 
-        display()
+
 
         setupRecyclerView()
 
@@ -119,6 +127,8 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         if (category == null) {
             category = LearnModel("animals", getString(R.string.animals), "")
             initToNextPage(this.category!!)
+            val categoryName = category!!.img
+            if (categoryName != null) playImgSound(categoryName)
         }
         initToNextPage(this.category!!)
 
@@ -130,9 +140,9 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
 
         val uri =
             Uri.parse(RESOURCE + cat.img)
-        binding.categoryImg.load(uri) {
-//            crossfade(300)
-        }
+//        binding.categoryImg.load(uri) {
+////            crossfade(300)
+//        }
         binding.catTxtTitle.text = cat.title
 
 
@@ -145,10 +155,16 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         val categoryName = category.img
         if (categoryName != null) playImgSound(categoryName)
 
+
+////
+//        val holder =
+//            binding.rvTitle.findViewHolderForLayoutPosition(position) as LearnAdapter.LearnViewHolder
+////        v = !v
+//        mAdapter.initAnimationTouchView(holder)
+
+
         Log.d("LearnFragment", "clicked: $position")
     }
-
-//    from work date 13/7/2021 *****************
 
 
 //    private fun changeOrientation() {
@@ -208,6 +224,7 @@ class LearnActivity : AppCompatActivity(), LearnAdapter.ItemClickListener {
         }
         return str
     }
+
 
 //
 //    override fun onConfigurationChanged(newConfig: Configuration) {

@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">ResponsiveStories</string>
     <string name="kids_story">Kids Story</string>
-    <string name="lovely">Lovely Stories</string>
+    <string name="lovely">Children Education</string>
     <string name="enjoy">Enjoy time</string>
 
     <string name="lorem_s1">educational kids story build to teach children what is important to do</string>
-    <string name="lorem_s2">we will make children love to teach because we intrduous our story with love</string>
+    <string name="lorem_s2">Teaching Children what they need before the primary stage</string>
     <string name="lorem_s3">kids will enjoy in using the app</string>
     <!-- TODO: Remove or change this placeholder text -->
     <!-- TODO: Remove or change this placeholder text -->
@@ -55,5 +55,14 @@
     <string name="cancel">Rate</string>
     <string name="share_app_with_your_friend">share app with your friend</string>
     <string name="if_you_like_app_you_can_pay_cup_of_coffee_for_me">if you like app you can pay cup of coffee for me</string>
+    <string name="bird">bird</string>
+    <string name="update_now">update now</string>
+    <string name="update_app">Update</string>
+    <string name="dialog_update_available_message">new Update Available</string>
+    <string name="later">Later</string>
+    <string name="share_app">Hey Check out this Great app:</string>
+    <string name="string_ok">ok</string>
+    <string name="need_permission">need permission</string>
+    <string name="desc_toast">descinding</string>
 
 </resources>

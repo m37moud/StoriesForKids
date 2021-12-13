@@ -1,6 +1,7 @@
 package com.m37moud.responsivestories.viewmodel
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
@@ -60,7 +61,7 @@ class VideosViewModel @ViewModelInject constructor(
 
     fun saveLoadingStatus(loadingStatus: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
-            dataStoreRepository.saveDownloadStatus(loadingStatus)
+            dataStoreRepository.saveLoadingStatus(loadingStatus)
         }
 
 
@@ -76,16 +77,20 @@ class VideosViewModel @ViewModelInject constructor(
 
 
     fun applyQuery(): String {
+        Log.d("videosViewModel", "applyQuery called")
+
         viewModelScope.launch {
             readCategoriesType.collect { value ->
 
-                categoryType = if (value.selectedCategoryType == "all") {
-                    ""
+                categoryType = if (value.selectedCategoryType == "all" || value.selectedCategoryType =="الكل") {
+                    Constants.DEFAULT_CATEGORY_TYPE
                 } else
                     value.selectedCategoryType
 
             }
         }
+        Log.d("videosViewModel", "applyQuery categoryType : $categoryType")
+
 
         return categoryType
     }

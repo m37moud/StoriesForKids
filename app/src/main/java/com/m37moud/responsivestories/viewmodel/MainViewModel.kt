@@ -12,6 +12,7 @@ import com.google.firebase.database.*
 import com.m37moud.responsivestories.data.Repository
 import com.m37moud.responsivestories.data.database.entity.CategoriesEntity
 import com.m37moud.responsivestories.data.database.entity.VideoEntity
+import com.m37moud.responsivestories.models.AdsModel
 import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.models.VideoModel
 import com.m37moud.responsivestories.util.NetworkResult
@@ -19,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
-class MainViewModel @ViewModelInject constructor(
+class   MainViewModel @ViewModelInject constructor(
     private val repository: Repository,
     application: Application
 ) : AndroidViewModel(application) {
@@ -39,6 +40,9 @@ class MainViewModel @ViewModelInject constructor(
 
     }
 
+    var videosDatabase: MutableLiveData<NetworkResult<ArrayList<VideoEntity>>> = MutableLiveData()
+
+
     fun insertVideos(videoEntity: VideoEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertVideos(videoEntity)
@@ -48,10 +52,18 @@ class MainViewModel @ViewModelInject constructor(
     val readCategories: LiveData<List<CategoriesEntity>> =
         repository.local.readCategories().asLiveData()
 
+    val readCategoriesFromVideos: LiveData<List<CategoriesEntity>> =
+        repository.local.readCategoriesFromVideos().asLiveData()
+
 
     fun insertCategories(categoriesEntity: CategoriesEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertCategories(categoriesEntity)
+        }
+
+    fun deleteCategories() =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.deleteCategories()
         }
 
 
@@ -80,6 +92,7 @@ class MainViewModel @ViewModelInject constructor(
 
     // firebase response
     var videosResponse: MutableLiveData<NetworkResult<ArrayList<VideoModel>>> = MutableLiveData()
+    var adsFolderResponse: MutableLiveData<NetworkResult<AdsModel>> = MutableLiveData()
     var categoriesResponse: MutableLiveData<NetworkResult<ArrayList<CategoriesModel>>> =
         MutableLiveData()
 
@@ -89,6 +102,10 @@ class MainViewModel @ViewModelInject constructor(
 
     fun getCategories() = viewModelScope.launch {
         loadCategoriesFromFirebase()
+    }
+
+    fun getAdsFolder() = viewModelScope.launch {
+        loadAdsFolderFromFirebase()
     }
 
     //after update room database update firebase property back it to false
@@ -212,6 +229,51 @@ class MainViewModel @ViewModelInject constructor(
         }
 
     }
+
+    private suspend fun loadAdsFolderFromFirebase() {
+        adsFolderResponse.value = NetworkResult.Loading()
+        if (hasInternetConnection()) {
+            try {
+                //init array list before adding data
+
+
+                val dbRef = FirebaseDatabase.getInstance().getReference("AdsFolder")
+
+                dbRef?.addValueEventListener(object : ValueEventListener {
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d("showAdsFromRemoteConfig", "Value is: " + error.message)
+
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        //clear the list before adding data
+                        val list: ArrayList<AdsModel> = ArrayList()
+                        var modelAdsFolder: AdsModel = snapshot.getValue(AdsModel::class.java)!!
+
+                        Log.d("showAdsFromRemoteConfig", "Value is: " + modelAdsFolder)
+
+
+
+                        adsFolderResponse.value = NetworkResult.Success(modelAdsFolder)
+
+                    }
+
+                })
+
+            } catch (e: Exception) {
+
+                adsFolderResponse.value = NetworkResult.Error("Videos not found.")
+//                fragment.hideLoading()
+//                fragment.offline()
+
+            }
+        } else {
+            adsFolderResponse.value = NetworkResult.Error("No Internet Connection.")
+        }
+
+    }
+
 
 
     private suspend fun updateComplete(model: VideoModel) {

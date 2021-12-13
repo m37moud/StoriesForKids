@@ -2,7 +2,11 @@ package com.m37moud.responsivestories.ui.activities.story
 
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -14,9 +18,13 @@ import com.google.android.exoplayer2.offline.DownloadHelper
 import com.google.android.exoplayer2.offline.DownloadRequest
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.*
+import com.google.android.exoplayer2.ui.PlayerControlView
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.video.VideoRendererEventListener
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -26,74 +34,76 @@ import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.nativetemplates.NativeTemplateStyle
 import com.m37moud.responsivestories.nativetemplates.TemplateView
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
-import com.m37moud.responsivestories.util.RemoteConfigUtils
+import com.m37moud.responsivestories.util.Constants.Companion.interstitialAds
+import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteConfig
 import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
+import kotlinx.android.synthetic.main.offline_player_custom_control.*
+import java.util.*
 import javax.inject.Inject
 
+
 const val AD_InterstitialAd_ID = "ca-app-pub-3940256099942544/1033173712"
+const val AD_NATIVE_ID = "ca-app-pub-3940256099942544/2247696110"
+
 @AndroidEntryPoint
-class OfflinePlayerActivity : AppCompatActivity() {
-    private lateinit var player: SimpleExoPlayer
+class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRendererEventListener,
+    PlaybackPreparer, PlayerControlView.VisibilityListener {
+    private var simpleExoPlayer: SimpleExoPlayer? = null
+
+//  private var playerView: PlayerView? = null
     private lateinit var videoUri: Uri
     private lateinit var dataSourceFactory: DataSource.Factory
+    private lateinit var handler: Handler
+    private lateinit var mFormatBuilder: StringBuilder
+    private lateinit var mFormatter: Formatter
     lateinit var adLoader: AdLoader
 
     private var shouldPlay = false
-    private var showAdsFromRemoteConfig: Boolean = false
-
 
 
     @Inject
     lateinit var audioManager: AudioManager
 
 
-    private val KEY_POSITION = "position"
     private var position = 0L
 
     //ads refrence
-    private var mInterstitialAd: InterstitialAd ? = null
+    private var mInterstitialAd: InterstitialAd? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setFullScreen()
         setContentView(R.layout.activity_offline_player)
-
+        img_back_player.setOnClickListener(this)
+//        playerView = findViewById(R.id.OfflinePlayerView)
         dataSourceFactory = buildDataSourceFactory()!!
-        hideActionBar()
-        initializePlayer()
+//        initExoplayer()
+        prepareView()
 //        showAdsFromRemoteConfig = RemoteConfigUtils.getAdsState()
         Log.d("OfflinePlayerActivity", "showAdsFromRemoteConfig: $showAdsFromRemoteConfig ")
 
         if (showAdsFromRemoteConfig)
-                 loadAd()
+            loadAd()
 
     }
 
-    private fun initializePlayer() {
+    private fun initExoplayer() {
 
         playVideo()
     }
-
-    private fun hideActionBar() {
-        supportActionBar!!.hide()
-    }
-
-    private fun setFullScreen() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-    }
+//
 
     private fun playVideo() {
         try {
+            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
+            val videoTrackSelectionFactory: TrackSelection.Factory =
+                AdaptiveTrackSelection.Factory(bandwidthMeter)
+            val trackSelector: TrackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
+
 //
-            player = SimpleExoPlayer.Builder(this)
-                .build()
+//            simpleExoPlayer = SimpleExoPlayer.Builder(this).build()
             val intent = intent
             val url = intent.getStringExtra("videoUri")
             videoUri = Uri.parse(url)
@@ -103,12 +113,15 @@ class OfflinePlayerActivity : AppCompatActivity() {
                 DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
             )
 
-            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-            val videoTrackSelectionFactory: TrackSelection.Factory =
-                AdaptiveTrackSelection.Factory(bandwidthMeter)
-            val trackSelector: TrackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
 
-            player = ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector)
+            simpleExoPlayer =
+                ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector)
+//            playerView.useController = true
+//            playerView.requestFocus()
+//            playerView.player = simpleExoPlayer
+            simpleExoPlayer?.repeatMode = Player.REPEAT_MODE_ONE
+            simpleExoPlayer?.playWhenReady = true //run file/link when ready to play.
+            simpleExoPlayer?.setVideoDebugListener(this) //for listening to resolution change and  outputing the resolution
 
             val downloadRequest: DownloadRequest =
                 AdaptiveExoplayer.getInstance(this).downloadTracker
@@ -116,9 +129,9 @@ class OfflinePlayerActivity : AppCompatActivity() {
             val mediaSource =
                 DownloadHelper.createMediaSource(downloadRequest, dataSourceFactory)
 
-            player.prepare(mediaSource, false, true)
+            simpleExoPlayer?.prepare(mediaSource, false, true)
 
-            player.addListener(object : Player.EventListener {
+            simpleExoPlayer?.addListener(object : Player.EventListener {
 
                 override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 }
@@ -162,12 +175,14 @@ class OfflinePlayerActivity : AppCompatActivity() {
                             OfflinePlayerView.keepScreenOn = true
                             Log.d("FragmentActivity.TAG", "playbackState : " + "STATE_READY")
                             loading_exoplayer_offline.visibility = View.GONE
-                            if (player.isPlaying) {
+                            if (simpleExoPlayer?.isPlaying!!) {
 
 //                                showAds()
                                 my_template.visibility = View.GONE
 
                             } else {
+                                OfflinePlayerView.keepScreenOn = false
+
                                 showNativeAds()
 //                                hideAds()
 
@@ -194,9 +209,9 @@ class OfflinePlayerActivity : AppCompatActivity() {
                 override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
                 override fun onPlayerError(error: ExoPlaybackException) {
                     Log.v("FragmentActivity.TAG", "Listener-onPlayerError...")
-                    player.stop()
-                    player.prepare(mediaSource)
-                    player.playWhenReady = true
+                    simpleExoPlayer?.stop()
+                    simpleExoPlayer?.prepare(mediaSource)
+                    simpleExoPlayer?.playWhenReady = true
                 }
 
                 override fun onPositionDiscontinuity(reason: Int) {}
@@ -214,8 +229,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
             })
 
             OfflinePlayerView.keepScreenOn = true
-            OfflinePlayerView.player = player
-            player.playWhenReady = true
+            OfflinePlayerView.player = simpleExoPlayer
+            simpleExoPlayer?.playWhenReady = true
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -226,8 +241,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
-        player.playWhenReady = false
-        player.release()
+        simpleExoPlayer?.playWhenReady = false
+        simpleExoPlayer?.release()
     }
 
     private fun buildDataSourceFactory(): DataSource.Factory? {
@@ -250,8 +265,10 @@ class OfflinePlayerActivity : AppCompatActivity() {
 //    }
 
     private fun showNativeAds() {
+        Log.d("showNativeAds", "showNativeAds: called")
 
-        adLoader = AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+//        MobileAds.initialize(this)
+        adLoader = AdLoader.Builder(this, AD_NATIVE_ID)
             .forNativeAd { ad: NativeAd ->
                 // Show the ad.
 
@@ -263,6 +280,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
 
                 if (adLoader.isLoading) {
+                    Log.d("showNativeAds", "showNativeAds: error if true")
+
                     // The AdLoader is still loading ads.
                     // Expect more adLoaded or onAdFailedToLoad callbacks.
                     val styles: NativeTemplateStyle =
@@ -301,11 +320,16 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
 
     private fun loadAd() {
+        val mInterstitialAdsID = if (TextUtils.isEmpty(interstitialAds))
+            AD_InterstitialAd_ID
+        else
+            interstitialAds.toString()
 
         var adRequest = AdRequest.Builder().build()
 
+
         InterstitialAd.load(
-            this, AD_InterstitialAd_ID, adRequest,
+            this, mInterstitialAdsID, adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     Log.d("loadAd", adError?.message)
@@ -376,40 +400,150 @@ class OfflinePlayerActivity : AppCompatActivity() {
 
 
     }
+//
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        position = simpleExoPlayer?.currentPosition!!
+//        outState.putLong(KEY_POSITION, position)
+////        outState.putBoolean(KEY_PLAYER_PLAY_WHEN_READY, player.playWhenReady)
+//    }
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//        savedInstanceState.let {
+//            simpleExoPlayer?.seekTo(it.getLong(KEY_POSITION))
+////            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
+//        }
+//    }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        position = player.currentPosition
-        outState.putLong(KEY_POSITION, position)
-//        outState.putBoolean(KEY_PLAYER_PLAY_WHEN_READY, player.playWhenReady)
+//
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+////            hideAds()
+//            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+////            showAds()
+//            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+
+
+//
+
+
+    override fun onClick(view: View?) {
+        if (view!!.id == R.id.img_back_player) {
+            onBackPressed()
+        }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState.let {
-            player.seekTo(it.getLong(KEY_POSITION))
-//            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
+    override fun preparePlayback() {
+        initExoplayer()
+    }
+
+    override fun onVisibilityChange(visibility: Int) {
+    }
+
+    private fun finishActivity() {
+        this.finish()
+    }
+
+    private fun prepareView() {
+        setProgress()
+    }
+
+    private fun setProgress() {
+        handler = Handler(Looper.getMainLooper())
+        //Make sure you update Seekbar on UI thread
+        handler.post(object : Runnable {
+            override fun run() {
+                if (simpleExoPlayer != null) {
+                    tv_player_current_time.text =
+                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+                    handler.postDelayed(this, 1000)
+                }
+            }
+        })
+    }
+
+    private fun stringForTime(timeMs: Int): String? {
+        mFormatBuilder = StringBuilder()
+        mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
+        val totalSeconds = timeMs / 1000
+        val seconds = totalSeconds % 60
+        val minutes = totalSeconds / 60 % 60
+        val hours = totalSeconds / 3600
+        mFormatBuilder.setLength(0)
+        return if (hours > 0) {
+            mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString()
+        } else {
+            mFormatter.format("%02d:%02d", minutes, seconds).toString()
         }
     }
 
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            hideAds()
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show()
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            showAds()
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show()
+    private fun releasePlayer() {
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer?.stop()
+            simpleExoPlayer?.playWhenReady = false
+            simpleExoPlayer?.release()
+//            simpleExoPlayer = null
         }
     }
 
+
+//    override fun onStart() {
+//        super.onStart()
+//        if (Util.SDK_INT > 23) {
+//            initExoplayer()
+////            if (playerView != null) {
+////                playerView.onResume()
+////            }
+//        }
+//    }
+//    public override fun onResume() {
+//        super.onResume()
+////        initializePlayer()
+//        ad_viewOffline.resume()
+//    }
+
+    // Called when returning to the activity
+
+    override fun onResume() {
+        super.onResume()
+        ad_viewOffline.resume()
+//        if (Util.SDK_INT <= 23 || playerView == null) {
+        initExoplayer()
+//            if (simpleExoPlayer != null) {
+//                initExoplayer()
+//                simpleExoPlayer.onResume()
+//            }
+//        }
+//
+//        FullScreencall()
+        if(simpleExoPlayer != null) {
+            simpleExoPlayer?.seekTo(position);
+            simpleExoPlayer?.playWhenReady = true;
+        }
+    }
 
     override fun onPause() {
 //        hideAds()
-        player.playWhenReady = false
-        player.release()
+//        if (Util.SDK_INT <= 23) {
+////            if (playerView != null) {
+////                playerView.onPause();
+////            }
+            if(simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
+                position = simpleExoPlayer?.currentPosition!!
+                simpleExoPlayer?.playWhenReady = false
+            }
+//            simpleExoPlayer?.stop()
+//            simpleExoPlayer?.release()
+//        }
+
         super.onPause()
 
     }
@@ -422,18 +556,16 @@ class OfflinePlayerActivity : AppCompatActivity() {
             this.audioManager.getAudioService()?.pauseMusic()
 
         }
-        player.playWhenReady = false
+        if (Util.SDK_INT > 23) {
+//            if (playerView != null) {
+//                playerView.onPause();
+//            }
+            simpleExoPlayer?.playWhenReady = false
 
-        player.release()
+            simpleExoPlayer?.release()
+        }
+
         super.onStop()
-    }
-//
-
-    // Called when returning to the activity
-    public override fun onResume() {
-        super.onResume()
-//        initializePlayer()
-        ad_viewOffline.resume()
     }
 
 
@@ -443,7 +575,8 @@ class OfflinePlayerActivity : AppCompatActivity() {
             mInterstitialAd = null
         }
         ad_viewOffline.destroy()
-        player.release()
+//        simpleExoPlayer.release()
+        releasePlayer()
         super.onDestroy()
     }
 

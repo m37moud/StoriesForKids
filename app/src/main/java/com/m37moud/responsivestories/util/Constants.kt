@@ -11,6 +11,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.R
 import kotlinx.android.synthetic.main.activity_start.*
@@ -23,6 +24,14 @@ class Constants {
          var activateSetting = false
          var disableNextSound = false
          var disablePreviousSound = false
+         var doOnce = false
+
+        //Ads
+         var showAdsFromRemoteConfig: Boolean = false
+        var addRewardAds : String? = ""
+        var bannerAds : String? = ""
+        var interstitialAds : String? = ""
+
 
 
         val img = listOf<String>("animals", "colors", "shapes", "numbers", "alphabets")
@@ -66,10 +75,10 @@ class Constants {
         const val DEFAULT_CATEGORY_TYPE = ""
 
 
-        fun getRandomColor(): Int {
-            val rnd = Random()
-            return Color.argb(255, rnd.nextInt(256), rnd.nextInt(56), rnd.nextInt(256))
-        }
+//        fun getRandomColor(): Int {
+//            val rnd = Random()
+//            return Color.argb(255, rnd.nextInt(256), rnd.nextInt(56), rnd.nextInt(256))
+//        }
          fun initBackgroundColor(frame: FrameLayout? , context :Context) {
              val androidColors = context.resources.getIntArray(R.array.androidcolors)
              val randomAndroidColor = androidColors[Random().nextInt(androidColors.size)]
@@ -83,6 +92,13 @@ class Constants {
 //
 //             val color: Int = generator.getRandomColor()
 //             frame.background = color
+        }
+
+        fun initBackgroundColor(frame: RelativeLayout? , context :Context) {
+            val androidColors = context.resources.getIntArray(R.array.androidcolors)
+            val randomAndroidColor = androidColors[Random().nextInt(androidColors.size)]
+            frame!!.setBackgroundColor(randomAndroidColor)
+
         }
 
 
@@ -184,59 +200,59 @@ class Constants {
 
         }
 
-        fun buttonAppearSound(context :Context) {
-            var path: String?
+//        fun buttonAppearSound(context :Context) {
+//            var path: String?
+//
+//            try {
+////                val newName = removeLastChar(name)
+//
+//                path = "sound/sfx/pop2.mp3"
+//
+//                Log.d("soundmd", "play: " + path)
+//                val mediaPlayer = MediaPlayer()
+//
+//                val descriptor = context.assets?.openFd(path)
+//                if (descriptor != null) {
+//                    mediaPlayer.setDataSource(
+//                        descriptor.fileDescriptor,
+//                        descriptor.startOffset,
+//                        descriptor.length
+//                    )
+//
+//                    descriptor.close()
+//                }
+//
+//                mediaPlayer.prepare()
+//                mediaPlayer.setVolume(2f, 2f)
+//                mediaPlayer.isLooping = false
+//                mediaPlayer.start()
+//            } catch (e: Exception) {
+//                Log.d("soundmd", "play: " + e)
+//                e.printStackTrace()
+//            }
+//
+//        }
+//        fun removeLastChar(str: String?): String? {
+//            var str = str
+//            if (str != null && str.isNotEmpty() && str[str.length - 1] == 's') {
+//                str = str.substring(0, str.length - 1)
+//            }
+//            return str
+//        }
 
-            try {
-//                val newName = removeLastChar(name)
-
-                path = "sound/sfx/pop2.mp3"
-
-                Log.d("soundmd", "play: " + path)
-                val mediaPlayer = MediaPlayer()
-
-                val descriptor = context.assets?.openFd(path)
-                if (descriptor != null) {
-                    mediaPlayer.setDataSource(
-                        descriptor.fileDescriptor,
-                        descriptor.startOffset,
-                        descriptor.length
-                    )
-
-                    descriptor.close()
-                }
-
-                mediaPlayer.prepare()
-                mediaPlayer.setVolume(2f, 2f)
-                mediaPlayer.isLooping = false
-                mediaPlayer.start()
-            } catch (e: Exception) {
-                Log.d("soundmd", "play: " + e)
-                e.printStackTrace()
-            }
-
-        }
-
-        fun removeLastChar(str: String?): String? {
-            var str = str
-            if (str != null && str.isNotEmpty() && str[str.length - 1] == 's') {
-                str = str.substring(0, str.length - 1)
-            }
-            return str
-        }
 
     }
 
-    object Listeners {
-        val onTouch = View.OnTouchListener { v: View, p1: MotionEvent ->
-            //Do anything with view here and check event type
-
-            if (p1?.action == MotionEvent.ACTION_DOWN) {
-                v?.animate()?.setInterpolator(DecelerateInterpolator())?.scaleX(.7f)?.scaleY(.7f)
-            } else if (p1?.action == MotionEvent.ACTION_UP) {
-                v?.animate()?.setInterpolator(OvershootInterpolator(10f))?.scaleX(1f)?.scaleY(1f)
-            }
-            return@OnTouchListener false
-        }
-    }
+//    object Listeners {
+//        val onTouch = View.OnTouchListener { v: View, p1: MotionEvent ->
+//            //Do anything with view here and check event type
+//
+//            if (p1?.action == MotionEvent.ACTION_DOWN) {
+//                v?.animate()?.setInterpolator(DecelerateInterpolator())?.scaleX(.7f)?.scaleY(.7f)
+//            } else if (p1?.action == MotionEvent.ACTION_UP) {
+//                v?.animate()?.setInterpolator(OvershootInterpolator(10f))?.scaleX(1f)?.scaleY(1f)
+//            }
+//            return@OnTouchListener false
+//        }
+//    }
 }

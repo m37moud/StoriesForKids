@@ -4,7 +4,7 @@
 
     <!-- regular -->
     <font
-        android:font="@font/arab_type"
+        android:font="@font/fedra_arabic_bold_beta"
         android:fontStyle="normal"
         android:fontWeight="700"
         />

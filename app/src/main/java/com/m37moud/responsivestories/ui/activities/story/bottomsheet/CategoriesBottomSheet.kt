@@ -35,11 +35,18 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
     private var categoryChip = DEFAULT_CATEGORY_TYPE
     private var categoryChipId = 0
+    private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
+    private lateinit var listCategory: ArrayList<CategoriesModel>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        listCategory = ArrayList()
+
         videosViewModel = ViewModelProvider(requireActivity()).get(VideosViewModel::class.java)
+        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
     }
 
     override fun onCreateView(
@@ -47,13 +54,13 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+//        readCategoriesFromVideos()
+
         val mView = inflater.inflate(R.layout.categories_bottom_sheet, container, false)
-//        val data = arguments?.getParcelableArrayList("myListCategory")
-        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         val data =
             arguments?.getParcelableArrayList<CategoriesModel>("myListCategory") as ArrayList<CategoriesModel>
-        Log.d("CategoriesBottomSheet", "initChip: " + data)
+        Log.d("CategoriesBottomSheet", "initChip:$data  size: ${data.size}"  )
 
         initChip(data, mView.categories_chipGroub)
 
@@ -69,7 +76,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
             val selectedCategoryType = chip.text.toString().toLowerCase(Locale.ROOT)
             categoryChip = selectedCategoryType
 
-            if (selectedCategoryType == "all") {
+            if (selectedCategoryType == "all" || selectedCategoryType== "الكل") {
                 categoryChip = DEFAULT_CATEGORY_TYPE
             }
 
@@ -102,9 +109,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
                 videosViewModel.saveExitStatus(true)
             }
-//            arguments?.putString("chipCategory" , categoryChip)
 
+
+//            arguments?.putString("chipCategory" , categoryChip)
 //            mainViewModel.readVideosWithCategory(categoryChip)
+
+
             this.dismiss()
 //            //do search
 //            recipesViewModel.saveSearch(true)
@@ -115,6 +125,14 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
         }
 
         return mView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
+
     }
 
     override fun onStart() {
@@ -137,8 +155,9 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     }
 
 
+
     private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
-        Log.d("initChip", "initChip: called")
+        Log.d("initChip", "initChip: called list size : ${list?.size}")
 
         if (list is ArrayList<CategoriesModel>) {
             if (list.isNotEmpty()) {
@@ -159,20 +178,25 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
                         0,
                         R.style.CustomChipStyle
                     )
-                    chip.setOnCheckedChangeListener { compoundButton, b ->
-                        chip.setTextColor(resources.getColor(R.color.white))
 
-                    }
-//                        chip.setOnClickListener {
-//                            chip.setTextColor(resources.getColor(R.color.white))
+//                    chip.setOnCheckedChangeListener { compoundButton, b ->
+//                        chip.setTextColor(resources.getColor(R.color.white))
 //
-//                        }
+//                    }
+////                        chip.setOnClickListener {
+////                            chip.setTextColor(resources.getColor(R.color.white))
+////
+////                        }
+
                     chip.setChipDrawable(drawable)
-                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
-                        chip.setTextColor(resources.getColor(R.color.white))
-                        Log.i("checkedChipIds","${buttonView.id} $isChecked")
-                    }
+
+//                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
+//                        chip.setTextColor(resources.getColor(R.color.white))
+//                        Log.i("checkedChipIds","${buttonView.id} $isChecked")
+//                    }
 //                    chip.setTextAppearance(R.style.CustomChipStyle)
+
+
                     chipGroup.addView(chip)
 
                 }
@@ -184,17 +208,77 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     }
+    private fun readCategoriesFromVideos() {
+        Log.d("readCategoriesVideos", " called!")
+        lifecycleScope.launch {
+            mainViewModel.readCategoriesFromVideos.observe(this@CategoriesBottomSheet, Observer { database ->
+                if (database.isNotEmpty()) {
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        Constants.fabCloseSound(requireContext())
-        videosViewModel.saveCategoryType(
-            "",
-            0
+                    Log.d("readCategoriesVideos", "if statement true")
 
-        )
-        arguments?.putString("chipCategory", categoryChip)
+//                    listCategory = database as ArrayList<CategoriesModel>
+                    listCategoriesReadDatabase = database as java.util.ArrayList
+                    listCategoriesReadDatabase.forEach {
+                        val categoryModel =
+                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+                        listCategory.add(categoryModel)
+
+                    }
+
+
+                    Log.d("readCategoriesVideos", "list is " + listCategory)
+
+                } else {
+
+                    Log.d("readCategoriesVideos", "if statement is false ...")
+//                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+                    mainViewModel.readCategoriesFromVideos.removeObservers(this@CategoriesBottomSheet)
+                }
+            })
+        }
     }
+
+
+//    private fun readCategoriesFromVideos() {
+//        Log.d("readCategoriesVideos", " called!")
+//        lifecycleScope.launch {
+//            mainViewModel.readCategoriesFromVideos.observe(requireActivity(), Observer { database ->
+//                if (database.isNotEmpty()) {
+//
+//                    Log.d("readCategoriesVideos", "if statement true")
+//
+////                    listCategory = database as ArrayList<CategoriesModel>
+//                    listCategoriesReadDatabase = database as ArrayList
+//                    listCategoriesReadDatabase.forEach {
+//                        val categoryModel =
+//                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+//                        listCategory.add(categoryModel)
+//
+//                    }
+//
+//
+//                    Log.d("readCategoriesVideos", "list is " + listCategory)
+//
+//                } else {
+//                    Log.d("readCategoriesVideos", "if statement is false ...")
+////                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+//                    mainViewModel.readCategories.removeObservers(requireActivity())
+//                }
+//            })
+//        }
+//    }
+
+//
+//    override fun onDismiss(dialog: DialogInterface) {
+//        super.onDismiss(dialog)
+//        Constants.fabCloseSound(requireContext())
+//        videosViewModel.saveCategoryType(
+//            "",
+//            0
+//
+//        )
+//        arguments?.putString("chipCategory", categoryChip)
+//    }
 
 
 }

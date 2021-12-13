@@ -12,8 +12,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.m37moud.responsivestories.MainActivity
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.ui.activities.started.MainActivity
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 

@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@color/yellow"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.activities.started.onboarding.SplashActivity">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:clipChildren="false"
 
-<FrameLayout
-    android:id="@+id/splash_cow_frame"
-    android:layout_width="220dp"
-    android:layout_height="200dp"
-    android:background="@drawable/splash_cow_background"
+    tools:context=".ui.activities.started.SplashActivity">
 
-    >
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/bay_face_lottie"
+    <FrameLayout
+        android:id="@+id/splash_cow_frame"
         android:layout_width="wrap_content"
+        android:clipChildren="false"
+
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="invisible"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/splashbabyface" />
 
-</FrameLayout>
+        >
+        <ImageView
+            android:id="@+id/splash_img_background"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="@dimen/_160sdp"
+            android:layout_gravity="center"
+
+            android:src="@drawable/splash_cow_background"
+            />
+<!--        <ImageView-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            app:tint="@color/blue"-->
+<!--            android:src="@drawable/ic_child"/>-->
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/bay_face_lottie"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="@dimen/_170sdp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/splashbabyface" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/splash_txt"
@@ -35,14 +53,9 @@
         android:layout_height="wrap_content"
         android:duplicateParentState="true"
         android:elevation="10dp"
-        android:shadowColor="@color/black"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="3"
+        style="@style/text_views"
         android:text="@string/responsive_stories"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        />
+        android:textSize="@dimen/_25ssp"
+         />
 
 </LinearLayout>

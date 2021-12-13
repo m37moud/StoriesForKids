@@ -1,4 +1,4 @@
-package com.m37moud.responsivestories
+package com.m37moud.responsivestories.ui.activities.started
 
 import android.app.AlertDialog
 import android.content.Context
@@ -6,39 +6,32 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.analytics.ktx.logEvent
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
+import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
-import com.m37moud.responsivestories.ui.activities.started.onboarding.StartActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
-import com.m37moud.responsivestories.util.FirebaseService
+import com.m37moud.responsivestories.util.Logger
 import com.m37moud.responsivestories.util.media.AudioManager
-import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
-const val TOPIC = "/topics/myTopic2"
+private const val TAG = "MainActivity"
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -47,11 +40,6 @@ class MainActivity : AppCompatActivity() {
     private var isResumeAnim = false
     private var shouldPlay = false
     private var shouldAllowBack = false
-
-
-    private var isStory = false
-    private var isLearn = false
-    private var isFinish = false
 
 
     @Inject
@@ -170,27 +158,16 @@ class MainActivity : AppCompatActivity() {
     }
     private var clicked = false
 
-    private lateinit var videosViewModel: VideosViewModel
 
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
-
-    val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setFullScreen()
+//        setFullScreen()
+
         setContentView(R.layout.activity_main)
 
 
-        //play background music
-//        shouldPlay = true
-//        this.audioManager.getAudioService()?.playMusic()
-
-
-//        if (!shouldPlay) {
-//            shouldPlay = true
-//            Constants.startService(this)
-//        }
-
+        // hide views to prepare animation
+        initViewToHide()
         Log.d("MainActivity", "onCreate: called $shouldPlay")
 
 
@@ -199,7 +176,10 @@ class MainActivity : AppCompatActivity() {
 
         animInvoked = 0
 
-        Handler().postDelayed(
+
+//        supportActionBar?.hide()
+
+        Handler(Looper.getMainLooper()).postDelayed(
             {
                 main_loading.visibility = View.GONE
                 main_parent_frame.visibility = View.VISIBLE
@@ -207,7 +187,7 @@ class MainActivity : AppCompatActivity() {
 
                 //set animation
                 initMainActivityAnimation(
-                    learn_main_linearLayout,
+                    learn_main_backgroundImg,
                     learn_main_txt,
                     learn_main_img,
                     learnLinearLayoutAnim,
@@ -216,7 +196,7 @@ class MainActivity : AppCompatActivity() {
                     500
                 )
                 initMainActivityAnimation(
-                    story_main_linearLayout,
+                    story_main_backgroundImg,
                     story_main_txt,
                     story_main_img,
                     storyLinearLayoutAnim,
@@ -226,9 +206,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }, 2500
         )
-        supportActionBar?.hide()
-        // Obtain the FirebaseAnalytics instance.
-        firebaseAnalytics = Firebase.analytics
 
 
         //fab menu
@@ -238,12 +215,6 @@ class MainActivity : AppCompatActivity() {
 
         facebook_fab.setOnClickListener { getOpenFacebookIntent() }
         gmail_fab.setOnClickListener { getOpenMailIntent() }
-
-
-//        learn_main_img.setOnTouchListener(Constants.Listeners.onTouch)
-//        story_main_img.setOnTouchListener(Constants.Listeners.onTouch)
-//        img_main_home.setOnTouchListener(Constants.Listeners.onTouch)
-//        img_main_setting.setOnTouchListener(Constants.Listeners.onTouch)
 
 
         //start story activity
@@ -260,7 +231,7 @@ class MainActivity : AppCompatActivity() {
 
 
         }
-
+        //start learn activity
         learn_main_img.setOnClickListener {
             Constants.clickSound(this)
             learn_main_img.isClickable = false
@@ -274,72 +245,159 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                // Get new FCM registration token
-                val token = task.result
-                FirebaseService.token = token
-                Log.d(TAG, "token: ${token.toString()}")
-                val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
-                referenceVideos.child("client").setValue(token)
-                    .addOnSuccessListener {
-                        Log.d("Fetching", "sendRegistrationToServer :  successful ")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.d(
-                            "Fetching",
-                            " sendRegistrationToServer :  err " + e.message.toString()
-                        )
-
-                        //failed to add info to database
-                    }
-                // Log and toast
-                val msg = getString(R.string.msg_token_fmt, token)
-                Log.d(TAG, msg)
-//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-            } else {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-            }
-
-
-        }
-
-
-
-        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
-            .addOnCompleteListener { task ->
-                Log.d("subscribet", "succ ")
-                if (!task.isSuccessful) {
-                    Log.d("subscribe", "faild ")
-                }
-
-                Toast.makeText(baseContext, "subscribeToTopic is Successful", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        MobileAds.initialize(this)
-        MobileAds.setRequestConfiguration(
-            RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
-                .build()
-        )
-
-//
-
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-            param(FirebaseAnalytics.Param.ITEM_ID, "id")
-            param(FirebaseAnalytics.Param.ITEM_NAME, "name")
-            param(FirebaseAnalytics.Param.CONTENT_TYPE, "image")
-        }
-
-        videosViewModel = ViewModelProvider(this@MainActivity).get(VideosViewModel::class.java)
 
 
         //init background
         main_scroll.visibility = View.VISIBLE
 
     }
+
+
+    override fun onStart() {
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.playMusic()
+
+
+
+        Log.d("MainActivity", "onStart: called $shouldPlay")
+
+        super.onStart()
+    }
+
+
+
+
+
+
+
+    override fun onResume() {
+        Log.d(TAG, "onResume: called")
+        animInvoked = 0
+
+        if (!activateSetting)
+            this.audioManager.getAudioService()?.resumeMusic()
+
+        if (isResumeAnim) {
+
+            learn_main_img.isClickable = true
+            story_main_img.isClickable = true
+            main_loading.visibility = View.VISIBLE
+            main_parent_frame.visibility = View.INVISIBLE
+//
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    main_loading.visibility = View.GONE
+                    main_parent_frame.visibility = View.VISIBLE
+
+                    initMainActivityAnimation(
+                        learn_main_backgroundImg,
+                        learn_main_txt,
+                        learn_main_img,
+                        learnLinearLayoutAnim,
+                        learnTxtAnim,
+                        learnImgAnim,
+                        500
+                    )
+
+                    initMainActivityAnimation(
+                        story_main_backgroundImg,
+                        story_main_txt,
+                        story_main_img,
+                        storyLinearLayoutAnim,
+                        storyTxtAnim,
+                        storyImgAnim,
+                        700
+                    )
+
+                }, 2500
+            )
+
+        }
+        super.onResume()
+
+    }
+
+
+
+
+
+    override fun onPause() {
+//        Log.d(TAG, "onPause: called")
+        Log.d("MainActivity", "onPause: called $shouldPlay")
+
+        isResumeAnim = false
+//        shouldPlay = false
+//        initViewToHide()
+        super.onPause()
+    }
+
+    override fun onStop() {
+//        Log.d(TAG, "onStop: called")
+        Log.d("MainActivity", "onPause: called $shouldPlay")
+
+        showLoading = false
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+//            Constants.stopService(this)
+        }
+
+        super.onStop()
+    }
+
+    override fun onBackPressed() {
+        showLoading = true
+//        this.shouldPlay = true
+
+        if (shouldAllowBack)
+            exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
+
+    }
+    override fun onDestroy() {
+//        when app end download status = false
+        Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
+        super.onDestroy()
+    }
+
+
+    fun settingMainButton(view: View) {
+        img_main_setting.isClickable = false
+        Constants.clickSound(this)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                showSettingDialog()
+
+            }.doAction()
+
+    }
+
+    fun homeMainButton(view: View) {
+        img_main_home.isClickable = false
+
+        Constants.clickSound(this)
+        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+            .setOnFinishListener {
+                shouldPlay = true
+
+                startActivity(
+                    Intent(
+                        this@MainActivity,
+                        StartActivity::class.java
+                    )
+                )
+                finish()
+            }.doAction()
+
+
+    }
+//
+//    private fun setFullScreen() {
+//        requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        )
+//    }
+
 
     private fun onAddButtonClicked() {
         fabButtonSound(clicked)
@@ -363,10 +421,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fabButtonSound(clicked :Boolean){
+    private fun fabButtonSound(clicked: Boolean) {
         if (!clicked) {
             Constants.fabOpenSound(this)
-        }else{
+        } else {
             Constants.fabCloseSound(this)
 
         }
@@ -395,51 +453,6 @@ class MainActivity : AppCompatActivity() {
             gmail_fab.isClickable = false
             facebook_fab.isClickable = false
         }
-    }
-
-    override fun onStart() {
-        if (!Constants.activateSetting)
-            this.audioManager.getAudioService()?.playMusic()
-
-        videosViewModel.saveDownloadStatus(false)
-        Log.d("MainActivity", "onStart: called $shouldPlay")
-
-        super.onStart()
-    }
-
-    override fun onDestroy() {
-//        when app end download status = false
-        Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
-        videosViewModel.saveDownloadStatus(false)
-        super.onDestroy()
-    }
-
-    fun settingMainButton(view: View) {
-        Constants.clickSound(this)
-        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
-            .setOnFinishListener {
-                showSettingDialog()
-
-            }.doAction()
-
-    }
-
-    fun homeMainButton(view: View) {
-        Constants.clickSound(this)
-        ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
-            .setOnFinishListener {
-                shouldPlay = true
-
-                startActivity(
-                    Intent(
-                        this@MainActivity,
-                        StartActivity::class.java
-                    )
-                )
-                finish()
-            }.doAction()
-
-
     }
 
     private fun getOpenFacebookIntent(): Intent? = try {
@@ -494,86 +507,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onResume() {
-        Log.d(TAG, "onResume: called")
-        animInvoked = 0
-
-        if (!Constants.activateSetting)
-            this.audioManager.getAudioService()?.resumeMusic()
-
-//        Constants.startService(this)
-//        shouldPlay = false
-
-        if (isResumeAnim) {
-
-            learn_main_img.isClickable = true
-            story_main_img.isClickable = true
-            main_loading.visibility = View.VISIBLE
-            main_parent_frame.visibility = View.INVISIBLE
-//
-            Handler().postDelayed(
-                {
-                    main_loading.visibility = View.GONE
-                    main_parent_frame.visibility = View.VISIBLE
-
-                    initMainActivityAnimation(
-                        learn_main_linearLayout,
-                        learn_main_txt,
-                        learn_main_img,
-                        learnLinearLayoutAnim,
-                        learnTxtAnim,
-                        learnImgAnim,
-                        500
-                    )
-
-                    initMainActivityAnimation(
-                        story_main_linearLayout,
-                        story_main_txt,
-                        story_main_img,
-                        storyLinearLayoutAnim,
-                        storyTxtAnim,
-                        storyImgAnim,
-                        700
-                    )
-
-                }, 2500
-            )
-
-        }
-        super.onResume()
-
-    }
-
-
-    override fun onBackPressed() {
-        showLoading = true
-//        this.shouldPlay = true
-
-        if (shouldAllowBack)
-            exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
-
-    }
-
-    private fun setFullScreen() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-    }
-
-    override fun onPause() {
-//        Log.d(TAG, "onPause: called")
-        Log.d("MainActivity", "onPause: called $shouldPlay")
-
-        isResumeAnim = false
-//        shouldPlay = false
-//        initViewToHide()
-        super.onPause()
-    }
-
     private fun initMainActivityAnimation(
-        layout: LinearLayout,
+        backgroundImg: ImageView,
         textView: TextView,
         imageView: ImageView,
         layoutAnim: Animation,
@@ -581,13 +516,7 @@ class MainActivity : AppCompatActivity() {
         imgAnim: Animation,
         delay: Long
     ) {
-        shouldAllowBack = false
-        learn_main_img.isClickable = false
-        story_main_img.isClickable = false
-        img_main_setting.isClickable = false
-        img_main_home.isClickable = false
-        open_menu_fab.isClickable = false
-        main_scroll.start()
+        startInitButtons()
 
 
 //        val translateAnimation =
@@ -632,13 +561,10 @@ class MainActivity : AppCompatActivity() {
                 }.withEndAction {
 
 
-//                    Toast.makeText(this@MainActivity, "start", Toast.LENGTH_SHORT).show()
-
                     img_main_home.apply {
 
                         visibility = View.VISIBLE
                         img_main_setting.visibility = View.VISIBLE
-
                         animate().apply {
                             startDelay = 300
                             buttonsAnim.duration = 300
@@ -664,14 +590,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        layout.apply {
+        backgroundImg.apply {
             visibility = View.VISIBLE
             animate().apply {
                 startDelay = 1200
                 layoutAnim.duration = 300
 //                Toast.makeText(this@MainActivity, "layoutAnim", Toast.LENGTH_SHORT).show()
                 layoutAnim.startOffset = delay
-                layout.startAnimation(layoutAnim)
+                backgroundImg.startAnimation(layoutAnim)
 
 //                Constants.buttonAppearSound(this@MainActivity)
 
@@ -714,12 +640,7 @@ class MainActivity : AppCompatActivity() {
                         imageView.startAnimation(txtAndImgInfiniteAnim)
                         textView.startAnimation(txtAndImgInfiniteAnim)
 
-                        shouldAllowBack = true
-                        learn_main_img.isClickable = true
-                        story_main_img.isClickable = true
-                        img_main_setting.isClickable = true
-                        img_main_home.isClickable = true
-                        open_menu_fab.isClickable = true
+                        finishInitButtons()
 
                     }.start()
                 }.start()
@@ -730,18 +651,31 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun exitMainActivityAnimation(
-        isStory: Boolean,
-        isLearn: Boolean,
-        isFinish: Boolean
-    ) {
+    private fun startInitButtons() {
         shouldAllowBack = false
         learn_main_img.isClickable = false
         story_main_img.isClickable = false
         img_main_setting.isClickable = false
         img_main_home.isClickable = false
         open_menu_fab.isClickable = false
+        main_scroll.start()
+    }
 
+    private fun finishInitButtons() {
+        shouldAllowBack = true
+        learn_main_img.isClickable = true
+        story_main_img.isClickable = true
+        img_main_setting.isClickable = true
+        img_main_home.isClickable = true
+        open_menu_fab.isClickable = true
+    }
+
+    private fun exitMainActivityAnimation(
+        isStory: Boolean,
+        isLearn: Boolean,
+        isFinish: Boolean
+    ) {
+        startInitButtons()
 
         this.shouldPlay = true
 
@@ -801,6 +735,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         finish()
+
                     }
 
                     isLearn -> {
@@ -813,29 +748,25 @@ class MainActivity : AppCompatActivity() {
                         finish()
                     }
                     isFinish -> {
-                        startActivity(
-                            Intent(
-                                this@MainActivity,
-                                StartActivity::class.java
-                            )
-                        )
-                        finish()
+//                        startActivity(
+//                            Intent(
+//                                this@MainActivity,
+//                                StartActivity::class.java
+//                            )
+//                        )
+//                        finish()
                         super.onBackPressed()
                     }
                 }
 
                 isResumeAnim = true
                 isAnimFinish = true
-                shouldAllowBack = true
 
                 initViewToHide()
-                learn_main_img.isClickable = true
-                story_main_img.isClickable = true
-                img_main_setting.isClickable = true
-                img_main_home.isClickable = true
-                open_menu_fab.isClickable = true
-                Constants.fabCloseSound(this)
 
+                finishInitButtons()
+
+                Constants.fabCloseSound(this)
 
             }.start()
 
@@ -843,8 +774,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViewToHide() {
         Log.d(TAG, "initViewToHide: called")
-        learn_main_linearLayout.visibility = View.INVISIBLE
-        story_main_linearLayout.visibility = View.INVISIBLE
+        learn_main_backgroundImg.visibility = View.INVISIBLE
+        story_main_backgroundImg.visibility = View.INVISIBLE
         story_main_img.visibility = View.INVISIBLE
         learn_main_img.visibility = View.INVISIBLE
         img_main_home.visibility = View.INVISIBLE
@@ -852,35 +783,23 @@ class MainActivity : AppCompatActivity() {
         learn_main_txt.visibility = View.INVISIBLE
         story_main_txt.visibility = View.INVISIBLE
         open_menu_fab.visibility = View.INVISIBLE
+        main_grass.visibility = View.INVISIBLE
     }
 
-    override fun onStop() {
-//        Log.d(TAG, "onStop: called")
-        Log.d("MainActivity", "onPause: called $shouldPlay")
-
-        showLoading = false
-        if (!shouldPlay) {
-            this.audioManager.getAudioService()?.pauseMusic()
-//            Constants.stopService(this)
-        }
-
-        super.onStop()
-    }
 
     private fun showSettingDialog() {
         val builder = AlertDialog.Builder(this)
 
         val itemView = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
 
-        if(activateSetting){
+        if (activateSetting) {
 
             itemView.play_sound_setting.visibility = View.VISIBLE
             itemView.pause_sound_setting.visibility = View.INVISIBLE
-        }else{
+        } else {
             itemView.play_sound_setting.visibility = View.INVISIBLE
             itemView.pause_sound_setting.visibility = View.VISIBLE
         }
-
 
 
 //        val popUp = PopupWindow(
@@ -897,47 +816,112 @@ class MainActivity : AppCompatActivity() {
         settingsDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         val window = settingsDialog.window
         window?.setGravity(Gravity.CENTER)
-        window?.attributes?.windowAnimations = R.style.DalogAnimation
+        window?.attributes?.windowAnimations = R.style.DialogAnimation
 
 //        settingsDialog.setCancelable(false)
 //        settingsDialog.setCanceledOnTouchOutside(false)
         itemView.previous_sound_setting.setOnClickListener {
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+
 //            if(itemView.play_sound_setting.isVisible)
-                itemView.play_sound_setting.visibility = View.INVISIBLE
-            itemView.pause_sound_setting.visibility = View.VISIBLE
+                    itemView.play_sound_setting.visibility = View.INVISIBLE
+                    itemView.pause_sound_setting.visibility = View.VISIBLE
 
 
-            this.audioManager.getAudioService()?.previousMusic()
+                    this.audioManager.getAudioService()?.previousMusic()
+                }.doAction()
+
 
         }
 
         itemView.play_sound_setting.setOnClickListener {
-            Constants.activateSetting = false
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
-            this.audioManager.getAudioService()?.playMusic()
-            itemView.play_sound_setting.visibility = View.INVISIBLE
-            itemView.pause_sound_setting.visibility = View.VISIBLE
+                    activateSetting = false
+
+                    this.audioManager.getAudioService()?.playMusic()
+                    itemView.play_sound_setting.visibility = View.INVISIBLE
+                    itemView.pause_sound_setting.visibility = View.VISIBLE
+                }.doAction()
+
 
         }
 
         itemView.pause_sound_setting.setOnClickListener {
-            Constants.activateSetting = true
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
-            this.audioManager.getAudioService()?.pauseMusic()
-            itemView.play_sound_setting.visibility = View.VISIBLE
-            itemView.pause_sound_setting.visibility = View.INVISIBLE
+                    activateSetting = true
+
+                    this.audioManager.getAudioService()?.pauseMusic()
+                    itemView.play_sound_setting.visibility = View.VISIBLE
+                    itemView.pause_sound_setting.visibility = View.INVISIBLE
+                }.doAction()
+
 
         }
 
         itemView.next_sound_setting.setOnClickListener {
+            Constants.clickSound(this)
 
-            itemView.play_sound_setting.visibility = View.INVISIBLE
-            itemView.pause_sound_setting.visibility = View.VISIBLE
-            this.audioManager.getAudioService()?.nextMusic()
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    itemView.play_sound_setting.visibility = View.INVISIBLE
+                    itemView.pause_sound_setting.visibility = View.VISIBLE
+                    this.audioManager.getAudioService()?.nextMusic()
+                }.doAction()
+
 
         }
-        settingsDialog.show()
+        itemView.share_container.setOnClickListener {
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
 
+
+                    share()
+                }.doAction()
+
+        }
+
+        itemView.donate_container.setOnClickListener {
+            Constants.clickSound(this)
+            ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
+                .setOnFinishListener {
+                    val intent = Intent(this, WebViewActivity::class.java)
+                    startActivity(intent)
+                }.doAction()
+
+        }
+
+        settingsDialog.show()
+        settingsDialog.setOnDismissListener {
+            Constants.fabCloseSound(this)
+            img_main_setting.isClickable = true
+
+        }
+
+
+    }
+    private fun share() {
+//
+
+
+        val applicationNameId: Int = this.applicationInfo.labelRes
+        val appPackageName: String = this.packageName
+        val i = Intent(Intent.ACTION_SEND)
+        i.type = "text/plain"
+        i.putExtra(Intent.EXTRA_SUBJECT, this.getString(applicationNameId))
+        val text = R.string.share_app
+        val link = getOpenLink().plus(appPackageName) // get store link
+        Logger.d(text.toString())
+        i.putExtra(Intent.EXTRA_TEXT, "$text /n $link")
+        startActivity(Intent.createChooser(i, "Share link:"))
     }
 
 

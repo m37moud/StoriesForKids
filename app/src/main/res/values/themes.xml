@@ -5,59 +5,98 @@
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="fontFamily">@font/english</item>
+        <item name="fontFamily">@font/courgette</item>
         <!-- Secondary brand color. -->
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
     </style>
 
     <style name="SplashScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowDisablePreview">true</item>
+
     </style>
 
-    <style name="StartScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="text_views">
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowDy">3</item>
+        <item name="android:shadowDx">3</item>
+        <item name="android:shadowRadius">3</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textDirection">locale</item>
+    </style>
+
+
+    <style name="Exoplayer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+
+    </style>
+    <style name="StartScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowFullscreen">true</item>
+
+    </style>
+    <style name="MainScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowFullscreen">true</item>
+
+    </style>
+    <style name="WebViewActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowFullscreen">true</item>
+
     </style>
 
     <style name="ViewPagerScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+
     </style>
 
     <style name="StoryScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+
     </style>
 
     <style name="LearnScreenStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="fontFamily">@font/courgette</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
+        <item name="android:windowFullscreen">true</item>
 
-    <style name="HomePageStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
-        <item name="android:statusBarColor">@color/colorPrimary</item>
-        <item name="fontFamily">@font/english</item>
     </style>
 
     <style name="Theme.ResponsiveStories.NoActionBar">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
-        <item name="fontFamily">@font/english</item>
+        <item name="fontFamily">@font/courgette</item>
     </style>
 
     <style name="Wallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
-        <item name="fontFamily">@font/english</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="fontFamily">@font/courgette</item>
     </style>
 
     <style name="Theme.ResponsiveStories.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -65,6 +104,7 @@
     <style name="Theme.ResponsiveStories.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="fontFamily">@font/courgette</item>
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
         <item name="checkedIconTint">@color/chip_text_color</item>
@@ -72,6 +112,7 @@
 
 
     <style name="CustomTabLayoutStyle" parent="Widget.Design.TabLayout">
+        <item name="fontFamily">@font/courgette</item>
 
         <item name="background">@color/actionBarBackgroundColor</item>
         <item name="tabIndicatorColor">@color/white</item>
@@ -79,13 +120,19 @@
         <item name="tabSelectedTextColor">@color/white</item>
     </style>
     <style name="CustomTabTextStyle" parent="TextAppearance.Design.Tab">
+
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="DalogAnimation">
-
+    <style name="DialogAnimation">
+        <item name="fontFamily">@font/courgette</item>
         <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
         <item name="android:windowExitAnimation">@anim/dialog_slide_bottom</item>
     </style>
 
+
+    <style name="Loading" parent="Theme.MaterialComponents.DayNight.NoActionBar"
+        >
+        <item name="android:windowBackground">@drawable/loading_theme</item>
+    </style>
 </resources>
