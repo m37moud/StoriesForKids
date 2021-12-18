@@ -52,7 +52,7 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     PlaybackPreparer, PlayerControlView.VisibilityListener {
     private var simpleExoPlayer: SimpleExoPlayer? = null
 
-//  private var playerView: PlayerView? = null
+    //  private var playerView: PlayerView? = null
     private lateinit var videoUri: Uri
     private lateinit var dataSourceFactory: DataSource.Factory
     private lateinit var handler: Handler
@@ -182,14 +182,15 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
                             } else {
                                 OfflinePlayerView.keepScreenOn = false
-
-                                showNativeAds()
+                                if (showAdsFromRemoteConfig)
+                                    showNativeAds()
 //                                hideAds()
 
                             }
                         }
                         ExoPlayer.STATE_ENDED -> {
-                            showNativeAds()
+                            if (showAdsFromRemoteConfig)
+                                showNativeAds()
                             OfflinePlayerView.keepScreenOn = false
 //                            hideAds()
                             Log.d(
@@ -495,36 +496,16 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     }
 
 
-//    override fun onStart() {
-//        super.onStart()
-//        if (Util.SDK_INT > 23) {
-//            initExoplayer()
-////            if (playerView != null) {
-////                playerView.onResume()
-////            }
-//        }
-//    }
-//    public override fun onResume() {
-//        super.onResume()
-////        initializePlayer()
-//        ad_viewOffline.resume()
-//    }
+//
 
     // Called when returning to the activity
 
     override fun onResume() {
         super.onResume()
         ad_viewOffline.resume()
-//        if (Util.SDK_INT <= 23 || playerView == null) {
         initExoplayer()
-//            if (simpleExoPlayer != null) {
-//                initExoplayer()
-//                simpleExoPlayer.onResume()
-//            }
-//        }
 //
-//        FullScreencall()
-        if(simpleExoPlayer != null) {
+        if (simpleExoPlayer != null) {
             simpleExoPlayer?.seekTo(position);
             simpleExoPlayer?.playWhenReady = true;
         }
@@ -532,16 +513,10 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
     override fun onPause() {
 //        hideAds()
-//        if (Util.SDK_INT <= 23) {
-////            if (playerView != null) {
-////                playerView.onPause();
-////            }
-            if(simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
-                position = simpleExoPlayer?.currentPosition!!
-                simpleExoPlayer?.playWhenReady = false
-            }
-//            simpleExoPlayer?.stop()
-//            simpleExoPlayer?.release()
+        if (simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
+            position = simpleExoPlayer?.currentPosition!!
+            simpleExoPlayer?.playWhenReady = false
+        }
 //        }
 
         super.onPause()

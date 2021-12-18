@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -60,8 +61,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private var _binding: ActivityStoryBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var videosViewModel: VideosViewModel
+    private val mainViewModel: MainViewModel by viewModels()
+    private val videosViewModel: VideosViewModel by viewModels()
 
     //network
     private lateinit var networkListener: NetworkListener
@@ -107,8 +108,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         if (!Constants.activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
-        videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
+//        mainViewModel = ViewModelProvider(this@StoryActivity).get(MainViewModel::class.java)
+//        videosViewModel = ViewModelProvider(this@StoryActivity).get(VideosViewModel::class.java)
 
         listVid = ArrayList()
         roomList = ArrayList()
@@ -198,7 +199,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         })
 
-        dataSourceFactory = buildDataSourceFactory()!!
+//        dataSourceFactory = buildDataSourceFactory()!!
 
         //from database
 //        readCategoriesFromDatabase()
@@ -215,7 +216,6 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 binding.selectCategoryFab.isClickable = true
                 val bottomSheetFragment = CategoriesBottomSheet()
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-//                bottomSheetFragment.apply_btn.isPressed
                 val bundle = Bundle()
                 bundle.putParcelableArrayList("myListCategory", listCategory)
                 bottomSheetFragment.arguments = bundle
@@ -443,12 +443,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         }
     }
 
-    private fun buildDataSourceFactory(): DataSource.Factory? {
-        return AdaptiveExoplayer.getInstance(this@StoryActivity).buildDataSourceFactory()
-    }
+//    private fun buildDataSourceFactory(): DataSource.Factory? {
+//        return AdaptiveExoplayer.getInstance(applicationContext).buildDataSourceFactory()
+//    }
 
     private fun initManagers() {
-        val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(this@StoryActivity)
+        val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(applicationContext)
         downloadTracker = application.downloadTracker!!
         downloadManager = application.downloadManager!!
     }
@@ -457,7 +457,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun loadVideos() {
         downloadedList = ArrayList()
 
-        AdaptiveExoplayer.getInstance(this@StoryActivity)
+        AdaptiveExoplayer.getInstance(applicationContext)
             .downloadTracker.downloads.entries.forEach { (keyUri, download) ->
                 Log.d("TAG", "loadVideos: " + download.toString())
                 downloadedList.add(download)

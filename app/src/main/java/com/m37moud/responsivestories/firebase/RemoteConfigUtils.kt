@@ -16,8 +16,6 @@ object RemoteConfigUtils {
 
     private const val TAG = "RemoteConfigUtils"
 
-    private const val NEXT_BUTTON_TEXT = "NEXT_BUTTON_TEXT"
-    private const val NEXT_BUTTON_COLOR = "NEXT_BUTTON_COLOR"
     private const val min_version_of_app = "min_version_of_app"
     private const val latest_version_of_app = "latest_version_of_app"
     private const val GOOGLE_PLAY_STATUS = "uploaded_to_google"
@@ -25,53 +23,27 @@ object RemoteConfigUtils {
 
     private val DEFAULTS: HashMap<String, Any> =
         hashMapOf(
-            NEXT_BUTTON_TEXT to "NEXT",
-            NEXT_BUTTON_COLOR to "#0091FF"
+
+            min_version_of_app to "1.0",
+            latest_version_of_app to "1.0",
+            GOOGLE_PLAY_STATUS to false ,
+            STORE_LINK to "http://play.google.com/store/apps/details?id="
+
         )
 
-    private lateinit var remoteConfig: FirebaseRemoteConfig
+    private var remoteConfig: FirebaseRemoteConfig? = null
 
     fun init() {
         try {
 //            remoteConfig = getFirebaseRemoteConfig(context)
             remoteConfig = getFirebaseRemoteConfig()
 
-        }catch (e :Exception){
+        } catch (e: Exception) {
             e.stackTrace
             Log.d(TAG, "init: ${e.message}")
         }
     }
 
-//    private fun getFirebaseRemoteConfig(context: Context): FirebaseRemoteConfig {
-//        try {
-//            FirebaseApp.initializeApp(context)
-//
-//            remoteConfig =  FirebaseRemoteConfig.getInstance().apply {
-//                //set this during development
-//                val configSettings = FirebaseRemoteConfigSettings.Builder()
-//                    .setMinimumFetchIntervalInSeconds(0)
-//                    .build()
-//                setConfigSettingsAsync(configSettings)
-//                //set this during development
-//                setDefaultsAsync(R.xml.remote_config_defaults)
-//                fetchAndActivate().addOnCompleteListener { task ->
-//                    val updated = task.result
-//                    if (task.isSuccessful) {
-//                        val updated = task.result
-//                        Log.d("TAG", "Config params updated: $updated")
-//                    } else {
-//                        Log.d("TAG", "Config params updated: $updated")
-//                    }
-//                }
-//            }
-//        }catch (e :Exception){
-//            e.stackTrace
-//            Log.d(TAG, "init: ${e.message}")
-//        }
-//
-//
-//        return remoteConfig
-//    }
 
     private fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
 
@@ -93,23 +65,47 @@ object RemoteConfigUtils {
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(DEFAULTS)
 
-        remoteConfig.fetchAndActivate().addOnCompleteListener {task ->
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             val updated = task.result
-                    if (task.isSuccessful) {
-                        val updated = task.result
-                        Log.d(TAG, "Config params updated: $updated")
-                    } else {
-                        Log.d(TAG, "Config params updated: $updated")
-                    }
+            if (task.isSuccessful) {
+                val updated = task.result
+                Log.d(TAG, "Config params updated: $updated")
+            } else {
+                Log.d(TAG, "Config params updated: $updated")
+            }
         }
 
         return remoteConfig
     }
-    fun getNextButtonText(): String = remoteConfig.getString(NEXT_BUTTON_TEXT)
-    fun getNextButtonColor(): String = remoteConfig.getString(NEXT_BUTTON_COLOR)
-    fun getMinVersionOfApp(): String = remoteConfig.getString(min_version_of_app)
-    fun getLatestVersionOfApp(): String = remoteConfig.getString(latest_version_of_app)
-    fun isUploadToGooglePlay(): Boolean = remoteConfig.getBoolean(GOOGLE_PLAY_STATUS)
-    fun getOpenLink(): String = remoteConfig.getString(STORE_LINK)
+
+
+
+    fun getMinVersionOfApp(): String = try {
+        remoteConfig!!.getString(min_version_of_app)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "1.0"
+    }
+
+    fun getLatestVersionOfApp(): String = try {
+        remoteConfig!!.getString(latest_version_of_app)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "1.0"
+    }
+
+    fun isUploadToGooglePlay(): Boolean = try {
+        remoteConfig!!.getBoolean(GOOGLE_PLAY_STATUS)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+
+    fun getOpenLink(): String = try {
+        remoteConfig!!.getString(STORE_LINK)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "http://play.google.com/store/apps/details?id="
+    }
 
 }

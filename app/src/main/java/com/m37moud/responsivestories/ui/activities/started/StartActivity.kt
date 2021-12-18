@@ -32,7 +32,7 @@ import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.isUploadToGooglePlay
-import com.m37moud.responsivestories.util.Constants
+import com.m37moud.responsivestories.util.*
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.addRewardAds
 import com.m37moud.responsivestories.util.Constants.Companion.bannerAds
@@ -41,9 +41,6 @@ import com.m37moud.responsivestories.util.Constants.Companion.fabCloseSound
 import com.m37moud.responsivestories.util.Constants.Companion.interstitialAds
 import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteConfig
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
-import com.m37moud.responsivestories.util.FirebaseService
-import com.m37moud.responsivestories.util.NetworkListener
-import com.m37moud.responsivestories.util.NetworkResult
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.m37moud.responsivestories.viewmodel.MainViewModel
 import com.m37moud.responsivestories.viewmodel.VideosViewModel
@@ -94,10 +91,6 @@ class StartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        window.setFlags(
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN
-//        )
         setContentView(R.layout.activity_start)
         videosViewModel = ViewModelProvider(this@StartActivity).get(VideosViewModel::class.java)
         mainViewModel = ViewModelProvider(this@StartActivity).get(MainViewModel::class.java)
@@ -111,9 +104,7 @@ class StartActivity : AppCompatActivity() {
         //check for internet connection
         //
 
-
         // Obtain the FirebaseAnalytics instance.
-
 
         Log.d("StartActivity", "onCreate: $shouldPlay ")
 
@@ -447,7 +438,8 @@ class StartActivity : AppCompatActivity() {
                     startAllAnim()
 
                     exitDialog.dismiss()
-                    Toast.makeText(this, "Rate APP", Toast.LENGTH_SHORT).show()
+                    Logger.d("Rate APP")
+//                    Toast.makeText(this, "Rate APP", Toast.LENGTH_SHORT).show()
                 }.doAction()
 
 
@@ -507,11 +499,12 @@ class StartActivity : AppCompatActivity() {
                         "mah AdsFolderFromFirebase error! \n" + response.toString()
                     )
 
-                    Toast.makeText(
-                        this@StartActivity,
-                        response.message.toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Logger.e(response.message.toString())
+//                    Toast.makeText(
+//                        this@StartActivity,
+//                        response.message.toString(),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                 }
                 is NetworkResult.Loading -> {
 
@@ -625,7 +618,8 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun moveForward() {
-        Toast.makeText(this, "Next Page Intent", Toast.LENGTH_SHORT).show()
+        Logger.d("Next Page Intent")
+//        Toast.makeText(this, "Next Page Intent", Toast.LENGTH_SHORT).show()
     }
 
     private fun openAppOnPlayStore(ctx: Context, package_name: String?) {
@@ -648,7 +642,8 @@ class StartActivity : AppCompatActivity() {
         if (ctx.packageManager.queryIntentActivities(i, 0).size > 0) {
             ctx.startActivity(i)
         } else if (error_msg != null) {
-            Toast.makeText(this, error_msg, Toast.LENGTH_SHORT).show()
+            Logger.e(error_msg)
+//            Toast.makeText(this, error_msg, Toast.LENGTH_SHORT).show()
         }
     }
 

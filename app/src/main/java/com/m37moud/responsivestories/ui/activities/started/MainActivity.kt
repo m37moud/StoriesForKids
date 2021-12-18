@@ -13,6 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ShareCompat
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
@@ -909,19 +910,26 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun share() {
-//
-
-
         val applicationNameId: Int = this.applicationInfo.labelRes
         val appPackageName: String = this.packageName
+        val appName = this.getString(R.string.app_name)
         val i = Intent(Intent.ACTION_SEND)
         i.type = "text/plain"
-        i.putExtra(Intent.EXTRA_SUBJECT, this.getString(applicationNameId))
-        val text = R.string.share_app
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val text = this.getString(R.string.share_app)
         val link = getOpenLink().plus(appPackageName) // get store link
         Logger.d(text.toString())
-        i.putExtra(Intent.EXTRA_TEXT, "$text /n $link")
-        startActivity(Intent.createChooser(i, "Share link:"))
+        i.putExtra(Intent.EXTRA_SUBJECT, appName)
+        i.putExtra(Intent.EXTRA_TEXT, "\n$appName \n\n$text \n\n $link \n\n")
+        startActivity(Intent.createChooser(i, text))
+//
+
+//
+//        ShareCompat.IntentBuilder.from(this)
+//            .setType("text/plain")
+//            .setChooserTitle("Chooser title")
+//            .setText("http://play.google.com/store/apps/details?id=$appPackageName")
+//            .startChooser();
     }
 
 
