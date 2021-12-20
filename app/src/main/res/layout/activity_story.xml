@@ -132,18 +132,56 @@
                     app:layout_constraintStart_toStartOf="@+id/noNetConnection_img"
                     app:layout_constraintTop_toBottomOf="@+id/noNetConnection_img" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/select_category_fab"
+                <com.github.jorgecastilloprz.FABProgressCircle
+                    android:id="@+id/fabProgressCircle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:arcColor="@color/white"
+                    app:arcWidth="5dp"
                     android:layout_marginStart="@dimen/_24sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:focusable="true"
-                    android:src="@drawable/ic_menu"
-                    app:backgroundTint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:tint="@color/white" />
+                    app:finalIcon="@drawable/ic_bookmark_complete"
+                    >
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/select_category_fab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:focusable="true"
+                        android:src="@drawable/ic_menu"
+                        app:backgroundTint="@color/colorPrimary"
+
+                        app:tint="@color/white" />
+
+
+                </com.github.jorgecastilloprz.FABProgressCircle>
+
+<!--                <View-->
+<!--                    android:id="@+id/fab_view"-->
+<!--                    android:layout_width="@dimen/_50sdp"-->
+<!--                    android:layout_height="@dimen/_50sdp"-->
+<!--                    android:layout_marginStart="@dimen/_24sdp"-->
+<!--                    android:background="@color/colorPrimary"-->
+<!--                    android:foreground="@drawable/btn_foreground"-->
+<!--                    android:layout_marginBottom="@dimen/_16sdp"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"/>-->
+
+<!--                <androidx.core.widget.ContentLoadingProgressBar-->
+<!--                    android:id="@+id/progress_fab_view"-->
+<!--                    android:layout_width="@dimen/_40sdp"-->
+<!--                    android:layout_height="@dimen/_40sdp"-->
+<!--                    android:layout_marginStart="@dimen/_24sdp"-->
+<!--                    android:layout_marginBottom="@dimen/_16sdp"-->
+<!--                    app:tint="@color/white"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    />-->
+
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
