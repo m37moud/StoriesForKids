@@ -36,6 +36,8 @@ import com.google.android.exoplayer2.util.Util;
 import com.m37moud.responsivestories.R;
 import com.m37moud.responsivestories.models.VideoModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -60,6 +62,7 @@ public class DemoDownloadService extends DownloadService implements DownloadTrac
     }
 
 
+    @NotNull
     @Override
     protected DownloadManager getDownloadManager() {
         // This will only happen once, because getDownloadManager is guaranteed to be called only once

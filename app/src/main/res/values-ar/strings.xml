@@ -41,4 +41,5 @@
     <string name="dialog_update_available_message">يوجد نسخة جديدة من البرنامج</string>
     <string name="later">لاحقا</string>
     <string name="share_app">برنامج تعليمى مفيد للاطفال</string>
+    <string name="string_ok">حسنا</string>
 </resources>

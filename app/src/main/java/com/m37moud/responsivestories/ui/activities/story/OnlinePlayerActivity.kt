@@ -49,7 +49,7 @@ import javax.inject.Inject
 class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRendererEventListener,
     PlaybackPreparer, PlayerControlView.VisibilityListener {
 
-    private lateinit var simpleExoPlayer : SimpleExoPlayer
+    private var simpleExoPlayer: SimpleExoPlayer? = null
     private lateinit var videoUri : Uri
     private lateinit var handler: Handler
     private lateinit var mFormatBuilder: StringBuilder
@@ -117,8 +117,8 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
             OnlinePlayerView.keepScreenOn = true
             OnlinePlayerView.player = simpleExoPlayer
 
-            simpleExoPlayer.prepare(mediaSource)
-            simpleExoPlayer.addListener(object : Player.EventListener {
+            simpleExoPlayer?.prepare(mediaSource)
+            simpleExoPlayer?.addListener(object : Player.EventListener {
 
                 override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 }
@@ -175,9 +175,9 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
                 override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
                 override fun onPlayerError(error: ExoPlaybackException) {
                     Log.v("FragmentActivity.TAG", "Listener-onPlayerError...")
-                    simpleExoPlayer.stop()
-                    simpleExoPlayer.prepare(mediaSource)
-                    simpleExoPlayer.setPlayWhenReady(true)
+                    simpleExoPlayer?.stop()
+                    simpleExoPlayer?.prepare(mediaSource)
+                    simpleExoPlayer?.setPlayWhenReady(true)
                 }
 
                 override fun onPositionDiscontinuity(reason: Int) {}
@@ -192,7 +192,7 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
                  */
                 override fun onSeekProcessed() {}
             })
-            simpleExoPlayer.playWhenReady = true
+            simpleExoPlayer?.playWhenReady = true
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -333,7 +333,7 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        position = simpleExoPlayer.currentPosition
+        position = simpleExoPlayer?.currentPosition!!
         outState.putLong(KEY_POSITION, position)
 //        outState.putBoolean(KEY_PLAYER_PLAY_WHEN_READY, player.playWhenReady)
     }
@@ -341,13 +341,18 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         savedInstanceState.let {
-            simpleExoPlayer.seekTo(it.getLong(KEY_POSITION))
+            simpleExoPlayer?.seekTo(it.getLong(KEY_POSITION))
 //            player.playWhenReady = it.getBoolean(KEY_PLAYER_PLAY_WHEN_READY)
         }
     }
     override fun onResume() {
         super.onResume()
         ad_viewOffline.resume()
+        initExoplayer()
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer?.seekTo(position);
+            simpleExoPlayer?.playWhenReady = true;
+        }
 //        if (Util.SDK_INT <= 23 || playerView == null) {
 //        initExoplayer()
 ////            if (playerView != null) {
@@ -359,10 +364,14 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
     }
 
     override fun onPause() {
-        super.onPause()
-        simpleExoPlayer.release()
+        //        hideAds()
 
-        simpleExoPlayer.playWhenReady =false
+        if(simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
+            position = simpleExoPlayer?.currentPosition!!
+            simpleExoPlayer?.playWhenReady = false
+        }
+        super.onPause()
+
     }
     override fun onStop() {
 //        hideAds()
@@ -371,17 +380,17 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
             this.audioManager.getAudioService()?.pauseMusic()
 
         }
-        simpleExoPlayer.playWhenReady = false
+        simpleExoPlayer?.playWhenReady = false
 
-        simpleExoPlayer.release()
+        simpleExoPlayer?.release()
         super.onStop()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        simpleExoPlayer.playWhenReady =false
+        simpleExoPlayer?.playWhenReady =false
         shouldPlay = true
-        simpleExoPlayer.release()
+        simpleExoPlayer?.release()
     }
     override fun onClick(view: View?) {
         if (view!!.id == R.id.img_back_player) {
@@ -410,8 +419,8 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
             override fun run() {
                 if (simpleExoPlayer != null) {
                     tv_player_current_time.text =
-                        stringForTime(simpleExoPlayer.currentPosition.toInt())
-                    tv_player_end_time.text = stringForTime(simpleExoPlayer.duration.toInt())
+                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
                     handler.postDelayed(this, 1000)
                 }
             }
@@ -431,5 +440,25 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
         } else {
             mFormatter.format("%02d:%02d", minutes, seconds).toString()
         }
+    }
+    private fun releasePlayer() {
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer?.stop()
+            simpleExoPlayer?.playWhenReady = false
+            simpleExoPlayer?.release()
+//            simpleExoPlayer = null
+        }
+    }
+
+
+    // Called before the activity is destroyed
+    public override fun onDestroy() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd = null
+        }
+        ad_viewOffline.destroy()
+//        simpleExoPlayer.release()
+        releasePlayer()
+        super.onDestroy()
     }
 }

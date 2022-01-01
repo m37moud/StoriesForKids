@@ -175,8 +175,6 @@ class   MainViewModel @ViewModelInject constructor(
         if (hasInternetConnection()) {
             try {
                 //init array list before adding data
-
-
                 val dbRef = FirebaseDatabase.getInstance().getReference("Categories")
 
                 dbRef.addValueEventListener(object : ValueEventListener {
