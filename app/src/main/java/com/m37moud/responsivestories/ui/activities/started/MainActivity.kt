@@ -894,6 +894,12 @@ class MainActivity : AppCompatActivity() {
             Constants.clickSound(this)
             ElasticAnimation(it).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
                 .setOnFinishListener {
+//
+//                    String url = ¨https://paul.kinlan.me/¨;
+//                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//                    CustomTabsIntent customTabsIntent = builder.build();
+//                    customTabsIntent.launchUrl(this, Uri.parse(url));
+
                     val intent = Intent(this, WebViewActivity::class.java)
                     startActivity(intent)
                 }.doAction()

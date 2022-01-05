@@ -66,12 +66,12 @@ object RemoteConfigUtils {
         remoteConfig.setDefaultsAsync(DEFAULTS)
 
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            val updated = task.result
+//            val updated = task.result
             if (task.isSuccessful) {
                 val updated = task.result
                 Log.d(TAG, "Config params updated: $updated")
             } else {
-                Log.d(TAG, "Config params updated: $updated")
+                Log.d(TAG, "Config params updated: ${task.exception}")
             }
         }
 

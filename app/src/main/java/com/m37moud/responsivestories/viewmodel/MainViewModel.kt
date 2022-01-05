@@ -15,6 +15,7 @@ import com.m37moud.responsivestories.data.database.entity.VideoEntity
 import com.m37moud.responsivestories.models.AdsModel
 import com.m37moud.responsivestories.models.CategoriesModel
 import com.m37moud.responsivestories.models.VideoModel
+import com.m37moud.responsivestories.util.Logger
 import com.m37moud.responsivestories.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -115,6 +116,8 @@ class   MainViewModel @ViewModelInject constructor(
 
 
     private suspend fun loadVideosFromFirebase() {
+        Logger.d("mainviewmodel", "loadVideosFromFirebase called!")
+
         videosResponse.value = NetworkResult.Loading()
         if (hasInternetConnection()) {
             try {
@@ -123,7 +126,7 @@ class   MainViewModel @ViewModelInject constructor(
                 dbRef.addValueEventListener(object : ValueEventListener {
 
                     override fun onCancelled(error: DatabaseError) {
-                        Log.d("errore", "Value is: " + error.message)
+                        Logger.d("mainviewmodel", "Value is: " + error.message)
 
                     }
 
@@ -151,6 +154,8 @@ class   MainViewModel @ViewModelInject constructor(
                         }
 //                        sendVideoListToCheck(list)
                         videosResponse.value = NetworkResult.Success(list)
+                        Logger.d("mainviewmodel", "loadVideosFromFirebase succsess $list!")
+
 //                        fragment.successDashboardItemsList(list)
 
                     }
@@ -160,6 +165,8 @@ class   MainViewModel @ViewModelInject constructor(
             } catch (e: Exception) {
 
                 videosResponse.value = NetworkResult.Error("Videos not found.")
+                Logger.d("mainviewmodel", "loadVideosFromFirebase ${e.message}!")
+
 //                fragment.hideLoading()
 //                fragment.offline()
 

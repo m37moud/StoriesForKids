@@ -3,6 +3,7 @@ package com.m37moud.responsivestories.ui.activities.started
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -21,17 +22,18 @@ class WebViewActivity : AppCompatActivity() {
         webView1!!.settings.javaScriptEnabled = true
 
         webView1.settings.builtInZoomControls = true
+        webView1.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
         val activity: Activity = this
-        webView1.setWebViewClient(object : WebViewClient() {
+        webView1.webViewClient = object : WebViewClient() {
             override fun onReceivedError(
-                view: WebView,
+                view: WebView, 
                 errorCode: Int,
                 description: String,
                 failingUrl: String
             ) {
                 Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
             }
-        })
+        }
         webView1.loadUrl("https://www.patreon.com/m37moud")
 
         backbutn.setOnClickListener {
