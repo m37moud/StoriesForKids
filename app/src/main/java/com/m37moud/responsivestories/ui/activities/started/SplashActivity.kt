@@ -29,7 +29,7 @@ class SplashActivity : AppCompatActivity() {
     lateinit var audioManager: AudioManager
 
     // corotine
-    val activityScope = CoroutineScope(Dispatchers.Main)
+    private val activityScope by lazy { CoroutineScope(Dispatchers.Main) }
 
 
     private var shouldPlay = false

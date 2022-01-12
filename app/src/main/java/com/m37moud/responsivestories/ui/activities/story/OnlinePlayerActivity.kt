@@ -347,7 +347,7 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
     }
     override fun onResume() {
         super.onResume()
-        ad_viewOffline.resume()
+//        ad_viewOffline.resume()
         initExoplayer()
         if (simpleExoPlayer != null) {
             simpleExoPlayer?.seekTo(position);
@@ -456,7 +456,7 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
         if (mInterstitialAd != null) {
             mInterstitialAd = null
         }
-        ad_viewOffline.destroy()
+//        ad_viewOffline.destroy()
 //        simpleExoPlayer.release()
         releasePlayer()
         super.onDestroy()

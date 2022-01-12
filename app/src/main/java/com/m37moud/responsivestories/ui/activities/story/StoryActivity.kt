@@ -237,9 +237,10 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                         val bundle = Bundle()
                         bundle.putParcelableArrayList("myListCategory", listCategory)
                         bottomSheetFragment.arguments = bundle
+                        videosViewModel.readShouldLoad.removeObservers(this@StoryActivity)
 
-                        val category = bottomSheetFragment.arguments?.getString("chipCategory")
-                        Log.d("selectCategoryFab", "selectCategoryFab: $category")
+//                        val category = bottomSheetFragment.arguments?.getString("chipCategory")
+//                        Log.d("selectCategoryFab", "selectCategoryFab: $category")
 
 //                category?.let { it1 -> readVideosWithCategories(it1) }
 
@@ -476,6 +477,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
             }
             STATE_FAILED -> {
+                Toast.makeText(this@StoryActivity, "video Download faild .", Toast.LENGTH_SHORT)
+                    .show()
+                Logger.d(
+                    "mah onDownloadsChanged",
+                    "STATE_FAILED faild  "
+                )
 
             }
         }
@@ -587,6 +594,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     adapterReadDatabase.setData(listReadDatabase)
                     binding.rcStory.adapter = adapterReadDatabase
                     Log.d("mah readDatabase", "list is " + listReadDatabase.toString())
+                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
 
                 } else {
                     Logger.d("mah readDatabase", "if statement is false ...")

@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -32,17 +34,16 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     private lateinit var videosViewModel: VideosViewModel
     private lateinit var mainViewModel: MainViewModel
 
-
     private var categoryChip = DEFAULT_CATEGORY_TYPE
     private var categoryChipId = 0
     private lateinit var listCategoriesReadDatabase: ArrayList<CategoriesEntity>
-    private lateinit var listCategory: ArrayList<CategoriesModel>
+//    private lateinit var listCategory: ArrayList<CategoriesModel>
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        listCategory = ArrayList()
+//        listCategory = ArrayList()
 
         videosViewModel = ViewModelProvider(requireActivity()).get(VideosViewModel::class.java)
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
@@ -64,12 +65,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
         initChip(data, mView.categories_chipGroub)
 
-        videosViewModel.readCategoriesType.asLiveData().observe(viewLifecycleOwner) { value ->
-            Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
-
-            categoryChip = value.selectedCategoryType
-            updateChip(value.selectedCategoryTypeId, mView.categories_chipGroub)
-        }
+//        videosViewModel.readCategoriesType.asLiveData().observe(viewLifecycleOwner) { value ->
+//            Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
+//
+//            categoryChip = value.selectedCategoryType
+//            updateChip(value.selectedCategoryTypeId, mView.categories_chipGroub)
+//        }
 //
         mView.categories_chipGroub.setOnCheckedChangeListener { group, selectedChipId ->
             val chip = group.findViewById<Chip>(selectedChipId)
@@ -130,7 +131,12 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        videosViewModel.readCategoriesType.asLiveData().observe(viewLifecycleOwner) { value ->
+            Log.d("mah RecipesBottomSheet", "requestApiData success!" + value.toString())
 
+            categoryChip = value.selectedCategoryType
+            updateChip(value.selectedCategoryTypeId, view.categories_chipGroub)
+        }
 
 
     }
@@ -157,6 +163,7 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     private fun initChip(list: ArrayList<CategoriesModel>?, chipGroup: ChipGroup) {
+
         Log.d("initChip", "initChip: called list size : ${list?.size}")
 
         if (list is ArrayList<CategoriesModel>) {
@@ -208,35 +215,35 @@ class CategoriesBottomSheet : BottomSheetDialogFragment() {
 
 
     }
-    private fun readCategoriesFromVideos() {
-        Log.d("readCategoriesVideos", " called!")
-        lifecycleScope.launch {
-            mainViewModel.readCategoriesFromVideos.observe(this@CategoriesBottomSheet, Observer { database ->
-                if (database.isNotEmpty()) {
-
-                    Log.d("readCategoriesVideos", "if statement true")
-
-//                    listCategory = database as ArrayList<CategoriesModel>
-                    listCategoriesReadDatabase = database as java.util.ArrayList
-                    listCategoriesReadDatabase.forEach {
-                        val categoryModel =
-                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
-                        listCategory.add(categoryModel)
-
-                    }
-
-
-                    Log.d("readCategoriesVideos", "list is " + listCategory)
-
-                } else {
-
-                    Log.d("readCategoriesVideos", "if statement is false ...")
-//                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                    mainViewModel.readCategoriesFromVideos.removeObservers(this@CategoriesBottomSheet)
-                }
-            })
-        }
-    }
+//    private fun readCategoriesFromVideos() {
+//        Log.d("readCategoriesVideos", " called!")
+//        lifecycleScope.launch {
+//            mainViewModel.readCategoriesFromVideos.observe(this@CategoriesBottomSheet, Observer { database ->
+//                if (database.isNotEmpty()) {
+//
+//                    Log.d("readCategoriesVideos", "if statement true")
+//
+////                    listCategory = database as ArrayList<CategoriesModel>
+//                    listCategoriesReadDatabase = database as java.util.ArrayList
+//                    listCategoriesReadDatabase.forEach {
+//                        val categoryModel =
+//                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+////                        listCategory.add(categoryModel)
+//
+//                    }
+//
+//
+//                    Log.d("readCategoriesVideos", "list is " + listCategory)
+//
+//                } else {
+//
+//                    Log.d("readCategoriesVideos", "if statement is false ...")
+////                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+//                    mainViewModel.readCategoriesFromVideos.removeObservers(this@CategoriesBottomSheet)
+//                }
+//            })
+//        }
+//    }
 
 
 //    private fun readCategoriesFromVideos() {

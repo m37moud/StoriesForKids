@@ -40,6 +40,8 @@ import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
 import kotlinx.android.synthetic.main.offline_player_custom_control.*
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.util.*
 import javax.inject.Inject
 
@@ -61,6 +63,9 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     lateinit var adLoader: AdLoader
 
     private var shouldPlay = false
+
+
+    private val activityScope by lazy { CoroutineScope(Dispatchers.Main) }
 
 
     @Inject
@@ -456,18 +461,29 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     }
 
     private fun setProgress() {
-        handler = Handler(Looper.getMainLooper())
-        //Make sure you update Seekbar on UI thread
-        handler.post(object : Runnable {
-            override fun run() {
-                if (simpleExoPlayer != null) {
-                    tv_player_current_time.text =
-                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
-                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
-                    handler.postDelayed(this, 1000)
-                }
+//        handler = Handler(Looper.getMainLooper())
+//        //Make sure you update Seekbar on UI thread
+//
+//        handler.post(object : Runnable {
+//            override fun run() {
+//                if (simpleExoPlayer != null) {
+//                    tv_player_current_time.text =
+//                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+//                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+//                    handler.postDelayed(this, 1000)
+//                }
+//            }
+//        })
+
+        activityScope.launch {
+            if (simpleExoPlayer != null) {
+                tv_player_current_time.text =
+                    stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+                tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+                delay(1000)
+//                handler.postDelayed(this, 1000)
             }
-        })
+        }
     }
 
     private fun stringForTime(timeMs: Int): String? {
@@ -513,6 +529,7 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
     override fun onPause() {
 //        hideAds()
+        activityScope.cancel()
         if (simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
             position = simpleExoPlayer?.currentPosition!!
             simpleExoPlayer?.playWhenReady = false
