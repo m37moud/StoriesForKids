@@ -36,6 +36,7 @@ import com.m37moud.responsivestories.nativetemplates.TemplateView
 import com.m37moud.responsivestories.util.AdaptiveExoplayer
 import com.m37moud.responsivestories.util.Constants.Companion.interstitialAds
 import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteConfig
+import com.m37moud.responsivestories.util.Logger
 import com.m37moud.responsivestories.util.media.AudioManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_offline_player.*
@@ -461,29 +462,38 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     }
 
     private fun setProgress() {
-//        handler = Handler(Looper.getMainLooper())
-//        //Make sure you update Seekbar on UI thread
-//
-//        handler.post(object : Runnable {
-//            override fun run() {
-//                if (simpleExoPlayer != null) {
-//                    tv_player_current_time.text =
-//                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
-//                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
-//                    handler.postDelayed(this, 1000)
-//                }
-//            }
-//        })
+        handler = Handler(Looper.getMainLooper())
+        //Make sure you update Seekbar on UI thread
 
-        activityScope.launch {
-            if (simpleExoPlayer != null) {
-                tv_player_current_time.text =
-                    stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
-                tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
-                delay(1000)
-//                handler.postDelayed(this, 1000)
+        handler.post(object : Runnable {
+            override fun run() {
+                if (simpleExoPlayer != null) {
+                    tv_player_current_time.text =
+                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+                    handler.postDelayed(this, 1000)
+                }
             }
-        }
+        })
+
+//        activityScope.launch {
+//            delay(1000)
+//            Logger.d(
+//                "setProgress",
+//                "setProgress : called "
+//            )
+//            if (simpleExoPlayer != null) {
+//                Logger.d(
+//                    "setProgress",
+//                    "simpleExoPlayer : not null "
+//                )
+//                tv_player_current_time.text =
+//                    stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+//                tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+//
+////                handler.postDelayed(this, 1000)
+//            }
+//        }
     }
 
     private fun stringForTime(timeMs: Int): String? {
