@@ -9,6 +9,7 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getDonateLink
 import kotlinx.android.synthetic.main.activity_webview.*
 
 
@@ -34,7 +35,10 @@ class WebViewActivity : AppCompatActivity() {
                 Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
             }
         }
-        webView1.loadUrl("https://www.patreon.com/m37moud")
+        val donateLink: String? = intent.getStringExtra("donateLink")
+
+        donateLink?.let { webView1.loadUrl(it) }
+
 
         backbutn.setOnClickListener {
             finish()

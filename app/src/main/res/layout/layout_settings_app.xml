@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="@dimen/_10sdp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/_10sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="@dimen/_300sdp"
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_round"
-        android:gravity="center"
+        android:layout_weight="3"
 
+        android:gravity="center"
 
         >
 
@@ -45,8 +46,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:rotation="@integer/locale_mirror_flip"
                     android:backgroundTint="@android:color/transparent"
+                    android:rotation="@integer/locale_mirror_flip"
                     android:src="@android:drawable/ic_media_previous"
                     android:tint="@color/green" />
 
@@ -54,10 +55,10 @@
                     android:id="@+id/play_sound_setting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:rotationY="@integer/locale_mirror_flip"
                     android:layout_toStartOf="@+id/previous_sound_setting"
                     android:layout_toEndOf="@+id/next_sound_setting"
                     android:backgroundTint="@android:color/transparent"
+                    android:rotationY="@integer/locale_mirror_flip"
                     android:src="@android:drawable/ic_media_play"
                     android:tint="@color/green"
                     android:visibility="invisible" />
@@ -80,9 +81,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:rotation="@integer/locale_mirror_flip"
-
                     android:backgroundTint="@android:color/transparent"
+
+                    android:rotation="@integer/locale_mirror_flip"
                     android:src="@android:drawable/ic_media_next"
 
                     android:tint="@color/green"
@@ -100,7 +101,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
             android:backgroundTint="@color/lightGray"
             app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toTopOf="@+id/setting_container_donate"
@@ -128,16 +131,15 @@
 
 
                 <TextView
+                    style="@style/text_views"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/share_app_with_your_friend"
                     android:textColor="@color/green"
-                    style="@style/text_views"
 
-                    android:textSize="@dimen/_20ssp"
-                     />
+                    android:textSize="@dimen/_20ssp" />
 
 
             </LinearLayout>
@@ -146,9 +148,9 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/setting_container_donate"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_gravity="bottom"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
@@ -180,15 +182,14 @@
 
 
                 <TextView
+                    style="@style/text_views"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/if_you_like_app_you_can_pay_cup_of_coffee_for_me"
                     android:textColor="@color/green"
-                    style="@style/text_views"
-                    android:textSize="@dimen/_20ssp"
-                    />
+                    android:textSize="@dimen/_20ssp" />
 
 
             </LinearLayout>
@@ -197,10 +198,6 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
 
 </LinearLayout>

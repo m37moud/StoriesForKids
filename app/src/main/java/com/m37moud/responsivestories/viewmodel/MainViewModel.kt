@@ -199,12 +199,12 @@ class   MainViewModel @ViewModelInject constructor(
                             ds.let {
 
                                 //get data as model
-                                val modelCAtegory: CategoriesModel? =
+                                val modelCategory: CategoriesModel? =
                                     ds.getValue(CategoriesModel::class.java)
                                 //add to array list
-                                if (modelCAtegory != null) {
+                                if (modelCategory != null) {
 
-                                    list.add(modelCAtegory)
+                                    list.add(modelCategory)
 //                                    saveVideoData(modelVideo)
                                 } else {
                                     categoriesResponse.value =

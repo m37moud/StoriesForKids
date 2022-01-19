@@ -21,7 +21,7 @@
                 android:padding="5dp">
 
                 <TextView
-                    android:id="@+id/tv_player_current_time"
+                    android:id="@+id/exo_position"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -47,7 +47,7 @@
 
 
                 <TextView
-                    android:id="@+id/tv_player_end_time"
+                    android:id="@+id/exo_duration"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"

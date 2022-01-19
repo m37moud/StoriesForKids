@@ -58,15 +58,12 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     //  private var playerView: PlayerView? = null
     private lateinit var videoUri: Uri
     private lateinit var dataSourceFactory: DataSource.Factory
-    private lateinit var handler: Handler
+//    private lateinit var handler: Handler
     private lateinit var mFormatBuilder: StringBuilder
     private lateinit var mFormatter: Formatter
     lateinit var adLoader: AdLoader
 
     private var shouldPlay = false
-
-
-    private val activityScope by lazy { CoroutineScope(Dispatchers.Main) }
 
 
     @Inject
@@ -458,43 +455,43 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
     }
 
     private fun prepareView() {
-        setProgress()
+//        setProgress()
     }
 
-    private fun setProgress() {
-        handler = Handler(Looper.getMainLooper())
-        //Make sure you update Seekbar on UI thread
-
-        handler.post(object : Runnable {
-            override fun run() {
-                if (simpleExoPlayer != null) {
-                    tv_player_current_time.text =
-                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
-                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
-                    handler.postDelayed(this, 1000)
-                }
-            }
-        })
-
-//        activityScope.launch {
-//            delay(1000)
-//            Logger.d(
-//                "setProgress",
-//                "setProgress : called "
-//            )
-//            if (simpleExoPlayer != null) {
-//                Logger.d(
-//                    "setProgress",
-//                    "simpleExoPlayer : not null "
-//                )
-//                tv_player_current_time.text =
-//                    stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
-//                tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+//    private fun setProgress() {
+//        handler = Handler(Looper.getMainLooper())
+//        //Make sure you update Seekbar on UI thread
 //
-////                handler.postDelayed(this, 1000)
+//        handler.post(object : Runnable {
+//            override fun run() {
+//                if (simpleExoPlayer != null) {
+//                    tv_player_current_time.text =
+//                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+//                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+//                    handler.postDelayed(this, 1000)
+//                }
 //            }
-//        }
-    }
+//        })
+//
+////        activityScope.launch {
+////            delay(1000)
+////            Logger.d(
+////                "setProgress",
+////                "setProgress : called "
+////            )
+////            if (simpleExoPlayer != null) {
+////                Logger.d(
+////                    "setProgress",
+////                    "simpleExoPlayer : not null "
+////                )
+////                tv_player_current_time.text =
+////                    stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+////                tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+////
+//////                handler.postDelayed(this, 1000)
+////            }
+////        }
+//    }
 
     private fun stringForTime(timeMs: Int): String? {
         mFormatBuilder = StringBuilder()
@@ -539,7 +536,6 @@ class OfflinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRe
 
     override fun onPause() {
 //        hideAds()
-        activityScope.cancel()
         if (simpleExoPlayer != null && simpleExoPlayer?.playWhenReady!!) {
             position = simpleExoPlayer?.currentPosition!!
             simpleExoPlayer?.playWhenReady = false

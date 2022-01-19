@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import com.m37moud.responsivestories.R
+import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
@@ -802,6 +803,11 @@ class MainActivity : AppCompatActivity() {
             itemView.pause_sound_setting.visibility = View.VISIBLE
         }
 
+        val donateLink = RemoteConfigUtils.getDonateLink()
+        if(donateLink.isNullOrBlank()){
+            itemView.setting_container_donate.visibility = View.GONE
+        }
+
 
 //        val popUp = PopupWindow(
 //            itemView, LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -900,7 +906,10 @@ class MainActivity : AppCompatActivity() {
 //                    CustomTabsIntent customTabsIntent = builder.build();
 //                    customTabsIntent.launchUrl(this, Uri.parse(url));
 
+
                     val intent = Intent(this, WebViewActivity::class.java)
+                    intent.putExtra("donateLink" ,donateLink )
+
                     startActivity(intent)
                 }.doAction()
 

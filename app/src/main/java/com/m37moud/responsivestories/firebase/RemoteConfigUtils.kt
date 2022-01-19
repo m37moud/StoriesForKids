@@ -20,6 +20,7 @@ object RemoteConfigUtils {
     private const val latest_version_of_app = "latest_version_of_app"
     private const val GOOGLE_PLAY_STATUS = "uploaded_to_google"
     private const val STORE_LINK = "store_link"
+    private const val DONATE_LINK = "donate_link"
 
     private val DEFAULTS: HashMap<String, Any> =
         hashMapOf(
@@ -106,6 +107,13 @@ object RemoteConfigUtils {
     } catch (e: Exception) {
         e.printStackTrace()
         "http://play.google.com/store/apps/details?id="
+    }
+
+    fun getDonateLink(): String = try {
+        remoteConfig!!.getString(STORE_LINK)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
     }
 
 }

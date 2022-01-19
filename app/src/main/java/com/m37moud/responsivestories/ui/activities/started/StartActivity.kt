@@ -390,6 +390,12 @@ class StartActivity : AppCompatActivity() {
 
         exitDialog.setCancelable(false)
         exitDialog.setCanceledOnTouchOutside(false)
+
+//        if(!isUploadToGooglePlay()){
+//            itemView.rate.visibility = View.GONE
+//            itemView.exit_app.gravity = Gravity.CENTER
+//        }
+
         itemView.exit_app.setOnClickListener {
             Constants.clickSound(this)
 
@@ -432,7 +438,9 @@ class StartActivity : AppCompatActivity() {
                 .setOnFinishListener {
                     shouldPlay = false
                     //check for upload to google play
-                    if (isUploadToGooglePlay()) rate(this)
+                    if (isUploadToGooglePlay()){
+                        rate(this)
+                    }
 
                     //resume animation
                     startAllAnim()

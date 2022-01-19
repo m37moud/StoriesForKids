@@ -72,6 +72,7 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
         setFullScreen()
         setContentView(R.layout.activity_player)
 //        initializePlayer()
+        img_back_player.setOnClickListener(this)
         prepareView()
         if (Constants.showAdsFromRemoteConfig)
             loadAd()
@@ -409,23 +410,23 @@ class OnlinePlayerActivity : AppCompatActivity(), View.OnClickListener, VideoRen
         this.finish()
     }
     private fun prepareView() {
-        setProgress()
+//        setProgress()
     }
 
-    private fun setProgress() {
-        handler = Handler(Looper.getMainLooper())
-        //Make sure you update Seekbar on UI thread
-        handler.post(object : Runnable {
-            override fun run() {
-                if (simpleExoPlayer != null) {
-                    tv_player_current_time.text =
-                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
-                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
-                    handler.postDelayed(this, 1000)
-                }
-            }
-        })
-    }
+//    private fun setProgress() {
+//        handler = Handler(Looper.getMainLooper())
+//        //Make sure you update Seekbar on UI thread
+//        handler.post(object : Runnable {
+//            override fun run() {
+//                if (simpleExoPlayer != null) {
+//                    tv_player_current_time.text =
+//                        stringForTime(simpleExoPlayer?.currentPosition!!.toInt())
+//                    tv_player_end_time.text = stringForTime(simpleExoPlayer?.duration!!.toInt())
+//                    handler.postDelayed(this, 1000)
+//                }
+//            }
+//        })
+//    }
 
     private fun stringForTime(timeMs: Int): String? {
         mFormatBuilder = StringBuilder()
