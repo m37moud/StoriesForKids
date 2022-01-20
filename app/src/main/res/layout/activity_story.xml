@@ -136,8 +136,10 @@
                     android:id="@+id/fabProgressCircle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:arcColor="@color/white"
+                    app:reusable="true"
+                    app:arcColor="@color/red"
                     app:arcWidth="5dp"
+                    app:circleSize="mini"
                     android:layout_marginStart="@dimen/_24sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -149,11 +151,12 @@
                         android:id="@+id/select_category_fab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        app:rippleColor="@color/colorPrimary"
+                        app:elevation="1dp"
+                        app:borderWidth="0dp"
                         android:focusable="true"
                         android:src="@drawable/ic_menu"
-                        app:backgroundTint="@color/colorPrimary"
-
+                        app:backgroundTint="@color/colorPrimaryDark"
                         app:tint="@color/white" />
 
 

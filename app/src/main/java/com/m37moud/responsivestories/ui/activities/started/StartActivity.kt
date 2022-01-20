@@ -17,6 +17,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -391,10 +393,10 @@ class StartActivity : AppCompatActivity() {
         exitDialog.setCancelable(false)
         exitDialog.setCanceledOnTouchOutside(false)
 
-//        if(!isUploadToGooglePlay()){
-//            itemView.rate.visibility = View.GONE
-//            itemView.exit_app.gravity = Gravity.CENTER
-//        }
+        if(!isUploadToGooglePlay()){
+            itemView.rate.visibility = View.GONE
+           ( itemView.exit_app.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.CENTER
+        }
 
         itemView.exit_app.setOnClickListener {
             Constants.clickSound(this)
