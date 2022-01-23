@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.view.animation.Animation
@@ -14,9 +15,18 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
+import com.m37moud.responsivestories.ui.activities.learn.AD_REWARDEDAD_ID
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
@@ -32,6 +42,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 private const val TAG = "MainActivity"
+const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
+
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -42,6 +54,11 @@ class MainActivity : AppCompatActivity() {
     private var isResumeAnim = false
     private var shouldPlay = false
     private var shouldAllowBack = false
+    //ad video reward
+    private var mRewardedAd: RewardedAd? = null
+    private var mAdIsLoading: Boolean = false
+
+
 
 
     @Inject
@@ -328,6 +345,10 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "onPause: called $shouldPlay")
 
         isResumeAnim = false
+        if (!shouldPlay) {
+            this.audioManager.getAudioService()?.pauseMusic()
+//            Constants.stopService(this)
+        }
 //        shouldPlay = false
 //        initViewToHide()
         super.onPause()
@@ -338,10 +359,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "onPause: called $shouldPlay")
 
         showLoading = false
-        if (!shouldPlay) {
-            this.audioManager.getAudioService()?.pauseMusic()
-//            Constants.stopService(this)
-        }
+
 
         super.onStop()
     }
@@ -792,7 +810,7 @@ class MainActivity : AppCompatActivity() {
     private fun showSettingDialog() {
         val builder = AlertDialog.Builder(this)
 
-        val itemView = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
+        val itemView: View = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
 
         if (activateSetting) {
 
@@ -804,8 +822,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         val donateLink = RemoteConfigUtils.getDonateLink()
+        Logger.d("donateLink" , donateLink)
         if(donateLink.isNullOrBlank()){
-            itemView.setting_container_donate.visibility = View.GONE
+            val txt =this.getString(R.string.donate_by_watch_vid)
+            itemView.donate_txt.text = txt
+            loadAd()
         }
 
 
@@ -906,11 +927,20 @@ class MainActivity : AppCompatActivity() {
 //                    CustomTabsIntent customTabsIntent = builder.build();
 //                    customTabsIntent.launchUrl(this, Uri.parse(url));
 
+//
+                    if(donateLink.isNullOrBlank()){
+                        showRewardAd()
+                    }else{
+                        //https://www.patreon.com/m37moud
+                        val intent = Intent(this, WebViewActivity::class.java)
+                        intent.putExtra("donateLink" ,donateLink )
 
-                    val intent = Intent(this, WebViewActivity::class.java)
-                    intent.putExtra("donateLink" ,donateLink )
+                        startActivity(intent)
+                    }
 
-                    startActivity(intent)
+
+
+
                 }.doAction()
 
         }
@@ -919,6 +949,8 @@ class MainActivity : AppCompatActivity() {
         settingsDialog.setOnDismissListener {
             Constants.fabCloseSound(this)
             img_main_setting.isClickable = true
+            mRewardedAd = null
+            mAdIsLoading = false
 
         }
 
@@ -945,6 +977,100 @@ class MainActivity : AppCompatActivity() {
 //            .setChooserTitle("Chooser title")
 //            .setText("http://play.google.com/store/apps/details?id=$appPackageName")
 //            .startChooser();
+    }
+    private fun loadAd() {
+
+        val mRewardID = if (TextUtils.isEmpty(Constants.addRewardAds))
+            AD_REWARDEDAD_ID
+        else
+            Constants.addRewardAds.toString()
+
+        Logger.d("load",Constants.addRewardAds.toString())
+
+        try {
+            val adRequest = AdRequest.Builder().build()
+
+
+            RewardedAd.load(
+                this, mRewardID, adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d("loadAd", adError?.message)
+                        mRewardedAd = null
+                        mAdIsLoading = false
+                        val error = "domain: ${adError.domain}, code: ${adError.code}, " +
+                                "message: ${adError.message}"
+                        Toast.makeText(
+                            this@MainActivity,
+                            "onAdFailedToLoad() with error $error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onAdLoaded(rewardedAd: RewardedAd) {
+
+                        Log.d("loadAd", "Ad was loaded.")
+                        mRewardedAd = rewardedAd
+                        mAdIsLoading = false
+
+
+                    }
+                }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("showAds", " : catch " + e)
+        }
+
+
+    }
+
+    private fun showRewardAd(){
+        if (mRewardedAd != null) {
+//            shouldPlay = false
+            mRewardedAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d("loadAd", "showInterstitial Ad was dismissed.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+//                        mRewardedAd = null
+                        mAdIsLoading = false
+//                                shouldPlay = true
+//                                loadAd()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                        Log.d("loadAd", "showInterstitial Ad failed to show.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+//                        mRewardedAd = null
+//                        shouldPlay = true
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+
+                        Log.d("loadAd", "showInterstitial Ad showed fullscreen content.")
+                        // Called when ad is dismissed.
+//                        mRewardedAd = null
+                        mAdIsLoading = true
+
+                    }
+                }
+//            mAdIsLoading = true
+            mRewardedAd?.show(this, OnUserEarnedRewardListener() {
+
+                fun onUserEarnedReward(rewardItem: RewardItem) {
+//                    var rewardAmount = rewardItem.getReward()
+                    var rewardType = rewardItem.type
+                    Log.d("loadAd", "User earned the reward.")
+                }
+            })
+
+        } else {
+//            shouldPlay = true
+            Toast.makeText(this, "Ad wasn't loaded.", Toast.LENGTH_SHORT).show()
+        }
     }
 
 

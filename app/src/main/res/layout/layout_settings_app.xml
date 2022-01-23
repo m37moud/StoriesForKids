@@ -174,7 +174,6 @@
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp"
                     android:layout_gravity="center"
-
                     android:background="@color/white"
                     android:elevation="10dp"
                     android:src="@drawable/ic_money"
@@ -182,6 +181,7 @@
 
 
                 <TextView
+                    android:id="@+id/donate_txt"
                     style="@style/text_views"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

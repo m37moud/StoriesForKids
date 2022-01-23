@@ -110,7 +110,7 @@ object RemoteConfigUtils {
     }
 
     fun getDonateLink(): String = try {
-        remoteConfig!!.getString(STORE_LINK)
+        remoteConfig!!.getString(DONATE_LINK)
     } catch (e: Exception) {
         e.printStackTrace()
         ""

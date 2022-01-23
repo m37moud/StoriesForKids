@@ -102,7 +102,7 @@
         </service> <!-- Sample AdMob App ID: ca-app-pub-9331212887639574~2078263925 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-9331212887639574~2078263925" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
