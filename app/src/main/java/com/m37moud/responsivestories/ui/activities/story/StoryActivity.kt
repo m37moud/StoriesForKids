@@ -87,6 +87,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
     //    private var savedRecipeId = 0
+
     private var savedRecipeId = ""
     private var counter = 0
     private var firstSavedVideos = 0
@@ -904,7 +905,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
 
             //refresh the list again
-            if (counter == size) {
+            if (counter == size-1) {
                 readDatabase()
                 videosViewModel.saveLoadingStatus(true)
                 fabProgressCircle.beginFinalAnimation()

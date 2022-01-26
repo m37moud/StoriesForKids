@@ -26,7 +26,6 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
-import com.m37moud.responsivestories.ui.activities.learn.AD_REWARDEDAD_ID
 import com.m37moud.responsivestories.ui.activities.learn.LearnActivity
 import com.m37moud.responsivestories.ui.activities.story.StoryActivity
 import com.m37moud.responsivestories.util.Constants
@@ -57,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     //ad video reward
     private var mRewardedAd: RewardedAd? = null
     private var mAdIsLoading: Boolean = false
+    private lateinit var donateLink :String
 
 
 
@@ -277,7 +277,11 @@ class MainActivity : AppCompatActivity() {
             this.audioManager.getAudioService()?.playMusic()
 
 
-
+         donateLink = RemoteConfigUtils.getDonateLink()
+        Logger.d("donateLink" , donateLink)
+        if(donateLink.isNullOrBlank()){
+            loadAd()
+        }
         Log.d("MainActivity", "onStart: called $shouldPlay")
 
         super.onStart()
@@ -375,6 +379,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
 //        when app end download status = false
         Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
+        mRewardedAd = null
         super.onDestroy()
     }
 
@@ -821,12 +826,10 @@ class MainActivity : AppCompatActivity() {
             itemView.pause_sound_setting.visibility = View.VISIBLE
         }
 
-        val donateLink = RemoteConfigUtils.getDonateLink()
         Logger.d("donateLink" , donateLink)
         if(donateLink.isNullOrBlank()){
             val txt =this.getString(R.string.donate_by_watch_vid)
             itemView.donate_txt.text = txt
-            loadAd()
         }
 
 
