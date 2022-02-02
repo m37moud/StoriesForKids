@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -51,6 +50,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
+const val TAG = "StoryActivity"
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -63,10 +63,11 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private val videosViewModel: VideosViewModel by viewModels()
 
     //network
-    private lateinit var networkListener: NetworkListener
+
+//    private lateinit var networkListener: NetworkListener
     private lateinit var downloadTracker: DownloadTracker
     private lateinit var downloadManager: DownloadManager
-    private lateinit var dataSourceFactory: DataSource.Factory
+//    private lateinit var dataSourceFactory: DataSource.Factory
 
     private lateinit var listVid: ArrayList<VideoModel>
     private lateinit var listCategory: ArrayList<CategoriesModel>
@@ -143,13 +144,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         videosViewModel.readCategoriesType.asLiveData().observe(this@StoryActivity) { category ->
             val c = category.selectedCategoryType
-            Log.d("readCategoriesType", "category: $c")
+            Logger.d("readCategoriesType", "category: $c")
             if (TextUtils.isEmpty(c)) {
-                Log.d("readCategoriesType", "if true: ")
+                Logger.d("readCategoriesType", "if true: ")
                 readDatabase()
 
             } else {
-                Log.d("readCategoriesType", "if false: $category")
+                Logger.d("readCategoriesType", "if false: $category")
                 readVideosWithCategories2()
 
 
@@ -191,7 +192,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         //check if is there new videos **
         videosViewModel.readShouldDownload.observe(this@StoryActivity, Observer {
-            Log.d("mah firstCheck", " called! + it = $it ")
+            Logger.d(TAG, "readShouldDownload called! + it = $it ")
             if (!it) {
 
                 firstCheck()
@@ -204,7 +205,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //        dataSourceFactory = buildDataSourceFactory()!!
         //.........................................................
 
-        //from database
+        //readCategories from database
         readCategoriesFromDatabase()
 
         //.........................................................
@@ -226,12 +227,19 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //
 
         binding.selectCategoryFab.setOnClickListener {
+            Logger.d("mah btn", " clicked! ")
+
             Constants.clickSound(this)
             videosViewModel.readShouldLoad.observe(this@StoryActivity, Observer {
-                Log.d("mah readShouldLoad", " called! + it = $it ")
+                Logger.d("mah btn", " called! + it = $it ")
+
                 if (it) {
+                    Logger.d("mah btn", " check from category list ")
+
                     if (listCategory.isNotEmpty()) {
-                        Log.d("selectCategoryFab", "selectCategoryFab: $listCategory")
+                        Logger.d("mah btn", " check from category list result is true")
+
+                        Logger.d("selectCategoryFab", "selectCategoryFab: $listCategory")
                         binding.selectCategoryFab.isClickable = true
                         val bottomSheetFragment = CategoriesBottomSheet()
                         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
@@ -251,8 +259,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //
 //                     bottomSheetFragment.dismiss()
 //                }
+                    } else {
+                        Logger.d("mah btn", " check from category list result is false")
+
                     }
                 } else {
+                    videosViewModel.readShouldLoad.removeObservers(this@StoryActivity)
                     Toast.makeText(
                         this@StoryActivity,
                         "try to fetch Categories",
@@ -343,12 +355,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         fabProgressCircle.show()
         videosViewModel.saveLoadingStatus(false)
         //*********************************************************
-        Log.d("mah startDownload", " called! + list = $downloadList.toString()")
+        Logger.d("mah startDownload", " called! + list = ${downloadList.toString()}")
         startService()
 //        downloadTracker!!.addListener(this)
         if (!downloadList.isNullOrEmpty()) {
             downloadList.forEach { model ->
-                Log.d("EXO  DOWNLOADING ", "finish" + downloadList.toString())
+                Logger.d("EXO  DOWNLOADING ", "finish" + downloadList.toString())
                 val myDownloadRequest = DownloadRequest(
                     model.id!!,
                     DownloadRequest.TYPE_PROGRESSIVE,
@@ -363,19 +375,19 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             //after download all videos in the list but download status = true
         } else {
-            Log.d("EXO  DOWNLOADING ", "finishlist" + listVid.toString())
+            Logger.d("EXO  DOWNLOADING ", "finishlist" + listVid.toString())
         }
 
     }
 
     private fun removeDownload(removeList: ArrayList<VideoModel>) {
 
-        Log.d("mah removeDownload", " called! + list = " + removeList.toString())
+        Logger.d("mah removeDownload", " called! + list = " + removeList.toString())
         startService()
 //        downloadTracker!!.addListener(this)
         if (!removeList.isNullOrEmpty()) {
             removeList.forEach { model ->
-                Log.d("EXO removeDownload ", "finish" + removeList.toString())
+                Logger.d("EXO removeDownload ", "finish" + removeList.toString())
 
                 //  downloadManager.addDownload(myDownloadRequest)
 
@@ -385,7 +397,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             //after download all videos in the list but download status = true
 //            videosViewModel.saveDownloadStatus(true)
         } else {
-            Log.d("EXO  removeDownload ", "finishlist" + listVid.toString())
+            Logger.d("EXO  removeDownload ", "finishlist" + listVid.toString())
         }
 
     }
@@ -398,6 +410,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             STATE_DOWNLOADING -> {
 
+                Logger.d("Downloading ", "finishlist" + download.request.id.toString())
 
                 Toast.makeText(this@StoryActivity, "Downloading started .", Toast.LENGTH_SHORT)
                     .show()
@@ -422,7 +435,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
                     val vidId = roomList[it].id.toString()
-                    Log.d(
+                    Logger.d(
                         "mah DownloadREMOVING",
                         "DownloadREMOVING sucsess!download = " + id + "\n " + vidId
                     )
@@ -440,6 +453,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             //job work 4/8
             STATE_COMPLETED -> {
+                Logger.d("Downloading ", "finish list ${download.request.id.toString()}")
+
                 Toast.makeText(this@StoryActivity, "Downloading finished .", Toast.LENGTH_SHORT)
                     .show()
 //                Log.d("EXO  DOWNLOADING ", "finish" + download.toString())
@@ -452,24 +467,36 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
                     Logger.d(
-                        "mah onDownloadsChanged",
-                        "STATE_COMPLETED sucsess!download = " + id + "\n " + vidId
+                        "Downloading",
+                        "video ( ${listVid[it].title} ) STATE_COMPLETED succsess!download = $it \n $id  \\n  $vidId "
+                    )
+                    Logger.d(
+                        "Downloading",
+                        "wil check if this ( ${listVid[it].title} ) is already download to save its data in database "
                     )
                     if (vidId!! == id) {
+                        Logger.d(
+                            "Downloading",
+                            "wil check  ${listVid[it].title} result is true"
+                        )
 //                        savedRecipeId = vidId.toInt()
                         saveVideoData(listVid[it])
 
-
-                        Logger.d(
-                            "mah onDownloadsChanged",
-                            "counter " + "\n " + counter
-                        )
+//                        Logger.d(
+//                            "Downloading",
+//                            "counter " + "\n " + counter
+//                        )
                         //refresh the list again
 //                        if (counter == size) {
 //                            readDatabase()
 //                        }
 
 
+                    } else {
+                        Logger.d(
+                            "Downloading",
+                            "wil check  ${listVid[it].title} result is false"
+                        )
                     }
 
 
@@ -481,7 +508,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 Toast.makeText(this@StoryActivity, "video Download faild .", Toast.LENGTH_SHORT)
                     .show()
                 Logger.d(
-                    "mah onDownloadsChanged",
+                    "Downloading",
                     "STATE_FAILED faild  "
                 )
 
@@ -494,6 +521,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //    }
 
     private fun initManagers() {
+        Logger.d(TAG, "initManagers called!")
+
         val application: AdaptiveExoplayer = AdaptiveExoplayer.getInstance(applicationContext)
         downloadTracker = application.downloadTracker!!
         downloadManager = application.downloadManager!!
@@ -501,11 +530,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
     private fun loadVideos() {
+        Logger.d(TAG, "loadVideos: called")
+
         downloadedList = ArrayList()
 
         AdaptiveExoplayer.getInstance(applicationContext)
             .downloadTracker.downloads.entries.forEach { (keyUri, download) ->
-                Log.d("TAG", "loadVideos: " + download.toString())
+                Logger.d(TAG, "loadVideos: ${download.toString()}")
                 downloadedList.add(download)
             }
 
@@ -513,14 +544,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     private fun readVideosWithCategories2() {
-        Log.d("readVideosCategories", "readVideosWithCategories called!")
+        Logger.d("readVideosCategories2", "readVideosWithCategories called!")
 
         hideLoading()
 
         mainViewModel.readVideosWithCategory(videosViewModel.applyQuery())
             .observe(this@StoryActivity, { database ->
                 if (database.isNotEmpty()) {
-                    Log.d(
+                    Logger.d(
                         "readVideosCategories",
                         "readVideosWithCategories called! applyQuery= ${videosViewModel.applyQuery()}"
                     )
@@ -542,7 +573,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     private fun readAllVideosWithCategories() {
-        Log.d("readVideosCategories", "readVideosWithCategories called!")
+        Logger.d("readVideosCategories", "readVideosWithCategories called!")
 
         hideLoading()
         lifecycleScope.launch {
@@ -552,7 +583,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
                     if (database.isNotEmpty()) {
 
-                        Log.d("readVideosCategories", "if statement true")
+                        Logger.d("readVideosCategories", "if statement true")
 
                         listReadDatabase = database as ArrayList
                         //room change
@@ -561,13 +592,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                         )
                         adapterReadDatabase.setData(listReadDatabase)
                         binding.rcStory.adapter = adapterReadDatabase
-                        Log.d(
+                        Logger.d(
                             "readVideosCategories",
                             "list is " + listReadDatabase.toString()
                         )
 
                     } else {
-                        Log.d("readVideosCategories", "if statement is false ...")
+                        Logger.d("readVideosCategories", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
 //                        mainViewModel.readVideos.removeObservers(this@StoryActivity)
                     }
@@ -581,7 +612,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun readDatabase() {
         Logger.d("mah readDatabase", "readDatabase called!")
         hideLoading()
-        lifecycleScope.launch {
+//        lifecycleScope.launch {
             mainViewModel.readVideos.observe(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
@@ -594,7 +625,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     )
                     adapterReadDatabase.setData(listReadDatabase)
                     binding.rcStory.adapter = adapterReadDatabase
-                    Log.d("mah readDatabase", "list is " + listReadDatabase.toString())
+                    Logger.d("mah readDatabase", "list is " + listReadDatabase.toString())
                     mainViewModel.readVideos.removeObservers(this@StoryActivity)
 
                 } else {
@@ -604,14 +635,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     firstRequestApiData()
                 }
             })
-        }
+//        } // life scope end
     }
 
 
     //take online requested list and compare it with room list
     private fun onlineListToCheck(newData: ArrayList<VideoModel>) {
 
-        Log.d("mah onlineListToCheck", " called!")
+        Logger.d("mah onlineListToCheck", " called!")
         //compare method to define the deferance between two lists then download it
 
         //read database to get details
@@ -621,14 +652,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             newData.size >
                     /**room (offline)) list*/
                     roomList.size -> {
-                Log.d("mah onlineListToCheck", " if statement true!  will add the new video")
+                Logger.d("mah onlineListToCheck", " if statement true!  will add the new video")
 
                 // to do will make compare method to define the deference between two lists then download it
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     "  online list : " + newData.toString() + newData.size
                 )
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     "  offline list : " + roomList.toString() + roomList.size
                 )
@@ -652,29 +683,29 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     roomList.size -> {
 
                 // to do will make compare method to define the dafrence between two lists then download it
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     "  will delete the video "
                 )
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     "  online list : " + newData.toString() + newData.size
                 )
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     "  offline list : " + roomList.toString() + roomList.size
                 )
                 //second list should be the bigger
                 val difference = backStrangeItem(newData, roomList)
 
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     " difference " + difference.toString() + difference.size
                 )
 
                 val listV = difference as ArrayList<VideoModel>
 
-                Log.d(
+                Logger.d(
                     "mah onlineListToCheck",
                     "  list after delete :- " + listV[0].title.toString() + " :  " + listV.toString() + "  : " + listV.size
                 )
@@ -693,7 +724,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         if (!list.isNullOrEmpty()) {
 
-            Log.d("mah Videos", "shouldDownloadNewList sucsess! start download")
+            Logger.d("mah Videos", "shouldDownloadNewList sucsess! start download")
             startDownload(listVid)
 
         }
@@ -703,7 +734,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
         if (!list.isNullOrEmpty()) {
 
-            Log.d("mah Videos", "shouldRemoveDownloaded sucsess! start download")
+            Logger.d("mah Videos", "shouldRemoveDownloaded sucsess! start download")
             removeDownload(list)
 
         }
@@ -713,26 +744,26 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun requestApiData() {
         listVid = ArrayList()
         listVid.clear()
-        Log.d("requestApiData", "method calle is ")
+        Logger.d("requestApiData", "method called is ")
 
         mainViewModel.getVideos()
         mainViewModel.videosResponse.observe(this@StoryActivity, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
-                    Log.d("mah requestApiData", "requestApiData sucsess!")
+                    Logger.d("mah requestApiData", "requestApiData sucsess!")
 
                     response.data?.let {
                         listVid = it
 
                         if (!listVid.isNullOrEmpty()) { // check online list
-                            Log.d("mah requestApiData", "online list is " + listVid)
+                            Logger.d("mah requestApiData", "online list is " + listVid)
 //                            check for updates
                             updateCheck(listVid)
 
                             //get offline list
                             getDatabaseList()
                             if (!roomList.isNullOrEmpty()) {// check offline list
-                                Log.d(
+                                Logger.d(
                                     "mah requestApiData",
                                     "offline list is " + roomList.toString()
                                 )
@@ -740,14 +771,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                             }
 
                         }
-                        Log.d(
+                        Logger.d(
                             "mah requestApiData",
                             "requestApiData sucsess! + list is " + listVid.toString()
                         )
                     }
                 }
                 is NetworkResult.Error -> {
-                    Log.d(
+                    Logger.d(
                         "Videos",
                         "mah requestApiData error! \n" + response.toString()
                     )
@@ -758,7 +789,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     ).show()
                 }
                 is NetworkResult.Loading -> {
-                    Log.d("Videos", "requestApiData Loading!")
+                    Logger.d("Videos", "requestApiData Loading!")
                 }
             }
         })
@@ -766,11 +797,11 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
     private fun updateCheck(listVid: ArrayList<VideoModel>) {
-        Log.d("mah updateCheck", "method called")
+        Logger.d("mah updateCheck", "method called")
         listVid.forEach {
 
             if (it.update) {
-                Log.d("mah updateCheck", "method called" + it.update)
+                Logger.d("mah updateCheck", "method called" + it.update)
                 updateVideo(it)
             }
         }
@@ -778,7 +809,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     private fun getDatabaseList() {
-        Log.d("mah getDatabaseList", "method called")
+        Logger.d("mah getDatabaseList", "method called")
         roomList = ArrayList()
         roomList.clear()
 
@@ -864,7 +895,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 
     private fun saveVideoData(model: VideoModel) {
-        Log.d("saveVideoData", "videoData!" + model)
+        Logger.d("saveVideoData", "video name is  ( ${model.title} )")
         val id = model.id!!
 
         val videoData: VideoEntity = VideoEntity(
@@ -880,10 +911,16 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             model.update
         )
         mainViewModel.insertVideos(videoData).invokeOnCompletion {
-            counter++
-            val size = listVid.size
-            Log.d("saveVideoData", "isert all videos !" + size)
-            Log.d("saveVideoData", " numbre iserted videos !" + counter)
+
+            lifecycleScope.launch {
+                Logger.d("saveVideoData", "video name is  ( ${model.title} ) is inserted !")
+
+                counter++
+                Logger.d("saveVideoData", "counter is inceresed by one ")
+
+                val size = listVid.size
+                Logger.d("saveVideoData", " number of videos should download is = $size !")
+                Logger.d("saveVideoData", "counter number of  videos ! $counter")
 
 //            firstSavedVideos++
 //            Logger.d("downloaded firstSavedVideos = $firstSavedVideos")
@@ -895,28 +932,52 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 //                }
 //            }
 
-            val vidCategory = model.videoCategory
+                val vidCategory = model.videoCategory
+                Logger.d(
+                    "saveVideoData",
+                    "start to check if video category is one in the chickedListCategory $vidCategory will check now!"
+                )
 
-            chickedListCategory.let {
-                it.forEach { category ->
-                    if (category.categoryName == vidCategory) saveCategoriesData(category)
-                    return@forEach
+
+                chickedListCategory.let {
+                    Logger.d("saveVideoData", "chickedListCategory size is ${it.size}")
+
+                    it.forEach { category: CategoriesModel ->
+                        Logger.d("saveVideoData", "chickedListCategory is ${category.categoryName}")
+
+                        if (category.categoryName == vidCategory) {
+                            Logger.d(
+                                "saveVideoData",
+                                "chickedListCategory result for ${category.categoryName} is one of main categories = true"
+                            )
+
+                            saveCategoriesData(category)
+                            return@forEach
+                        }
+                    }
                 }
+                Logger.d("saveVideoData", "check if all video is completed")
+
+                //refresh the list again
+                if (counter == size) {
+                    Logger.d("saveVideoData", "check if all video is completed result is true")
+
+                    readDatabase()
+                    videosViewModel.saveLoadingStatus(true)
+                    fabProgressCircle.beginFinalAnimation()
+                } else {
+                    Logger.d("saveVideoData", "check if all video is completed result is false")
+
+                }
+                createNotification(model)
             }
 
-            //refresh the list again
-            if (counter == size-1) {
-                readDatabase()
-                videosViewModel.saveLoadingStatus(true)
-                fabProgressCircle.beginFinalAnimation()
-            }
-            createNotification(model)
         }
 
     }
 
     private fun createNotification(model: VideoModel) {
-        Log.d("createNotification", "notify called")
+        Logger.d("createNotification", "notify called")
         val notificationManager =
             this@StoryActivity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = AppUtil.createExoDownloadNotificationChannel(this@StoryActivity)
@@ -967,8 +1028,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             model.update
         )
 
-        Log.d("updateVideo", "entity!" + videoData.toString())
-        Log.d("updateVideo", "model!" + model.title.toString())
+        Logger.d("updateVideo", "entity!" + videoData.toString())
+        Logger.d("updateVideo", "model!" + model.title.toString())
 
         //update all fields in room database
         mainViewModel.updateVideo(videoData).invokeOnCompletion {
@@ -1051,32 +1112,32 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         })
     }
 
-    private fun prepareSaveCategoriesData(list: ArrayList<CategoriesModel>) {
-
-        Logger.d("prepareSaveCategories", "CategoriesModel! called")
-
-        if (list.isNotEmpty()) {
-            if (list.size != listCategory.size) {
-                Logger.d("prepareSaveCategories", "if ! true")
-
-                mainViewModel.deleteCategories()
-            }
-
-            var countSaver = 0
-            list.forEach {
-                saveCategoriesData(it)
-                countSaver++
-            }
-            // read offline categories again
-            Logger.d("prepareSaveCategories", "countSaver = $countSaver")
-
-            if (countSaver == list.size) readCategoriesFromVideos()
-        }
-
-    }
+//    private fun prepareSaveCategoriesData(list: ArrayList<CategoriesModel>) {
+//
+//        Logger.d("prepareSaveCategories", "CategoriesModel! called")
+//
+//        if (list.isNotEmpty()) {
+//            if (list.size != listCategory.size) {
+//                Logger.d("prepareSaveCategories", "if ! true")
+//
+//                mainViewModel.deleteCategories()
+//            }
+//
+//            var countSaver = 0
+//            list.forEach {
+//                saveCategoriesData(it)
+//                countSaver++
+//            }
+//            // read offline categories again
+//            Logger.d("prepareSaveCategories", "countSaver = $countSaver")
+//
+//            if (countSaver == list.size) readCategoriesFromVideos()
+//        }
+//
+//    }
 
     private fun saveCategoriesData(model: CategoriesModel) {
-        Log.d("saveCategoriesData", "videoData!" + model)
+        Logger.d("saveCategoriesData", "category! = ${model.categoryName} prepare to save")
         val id = model.categoryId!!
 
         val categoryData: CategoriesEntity = CategoriesEntity(
@@ -1086,49 +1147,49 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         )
         mainViewModel.insertCategories(categoryData).invokeOnCompletion {
             val size = listCategory.size
-            Log.d("saveVideoData", "isert all videos !" + size)
+            Logger.d("saveCategoriesData", "category ( ${model.categoryName} ) is inserted !")
 
         }
 
     }
 
     //bring categories from videos were downloaded
-    private fun readCategoriesFromVideos() {
-
-        Logger.d("readCategoriesVideos", " called!")
-//        lifecycleScope.launch {
-//        if (roomList.size > 0)
-        mainViewModel.readCategoriesFromVideos.observe(
-            this@StoryActivity,
-            Observer { database ->
-                if (database.isNotEmpty()) {
-
-                    Logger.d("readCategoriesVideos", "if statement true")
-
-//                    listCategory = database as ArrayList<CategoriesModel>
-                    listCategoriesReadDatabase = database as java.util.ArrayList
-                    listCategoriesReadDatabase.forEach {
-                        val categoryModel =
-                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
-                        listCategory.add(categoryModel)
-
-                    }
-
-
-                    Logger.d("readCategoriesVideos", "list is " + listCategory)
-
-                    mainViewModel.readCategoriesFromVideos.removeObservers(this@StoryActivity)
-
-                } else {
-                    mainViewModel.readCategoriesFromVideos.removeObservers(this@StoryActivity)
-//                        getCategoriesFromFirebase()
-
-                    Logger.d("readCategoriesVideos", "if statement is false ...")
-//                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                }
-            })
-//        }
-    }
+//    private fun readCategoriesFromVideos() {
+//
+//        Logger.d("readCategoriesVideos", " called!")
+////        lifecycleScope.launch {
+////        if (roomList.size > 0)
+//        mainViewModel.readCategoriesFromVideos.observe(
+//            this@StoryActivity,
+//            Observer { database ->
+//                if (database.isNotEmpty()) {
+//
+//                    Logger.d("readCategoriesVideos", "if statement true")
+//
+////                    listCategory = database as ArrayList<CategoriesModel>
+//                    listCategoriesReadDatabase = database as java.util.ArrayList
+//                    listCategoriesReadDatabase.forEach {
+//                        val categoryModel =
+//                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+//                        listCategory.add(categoryModel)
+//
+//                    }
+//
+//
+//                    Logger.d("readCategoriesVideos", "list is " + listCategory)
+//
+//                    mainViewModel.readCategoriesFromVideos.removeObservers(this@StoryActivity)
+//
+//                } else {
+//                    mainViewModel.readCategoriesFromVideos.removeObservers(this@StoryActivity)
+////                        getCategoriesFromFirebase()
+//
+//                    Logger.d("readCategoriesVideos", "if statement is false ...")
+////                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
+//                }
+//            })
+////        }
+//    }
 
     //read all inserted category
     private fun readCategoriesFromDatabase() {
@@ -1137,7 +1198,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             mainViewModel.readCategories.observe(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
-                    Log.d("readCategoriesDatabase", "if statement true")
+                    Logger.d("readCategoriesDatabase", "if statement true")
 
 //                    listCategory = database as ArrayList<CategoriesModel>
                     listCategoriesReadDatabase = database as ArrayList
@@ -1154,7 +1215,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     mainViewModel.readCategories.removeObservers(this@StoryActivity)
 
                 } else {
-                    Log.d("readCategoriesDatabase", "if statement is false ...")
+                    Logger.d("readCategoriesDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
                     mainViewModel.readCategories.removeObservers(this@StoryActivity)
                 }
@@ -1182,7 +1243,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onStop() {
-        Log.d("StoryActivity", "onStop: ")
+        Logger.d("StoryActivity", "onStop: ")
 
 
         if (!shouldPlay) {
@@ -1212,7 +1273,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     }
 
     override fun onDestroy() {
-        Log.d("StoryActivity", "onDestroy: ")
+        Logger.d("StoryActivity", "onDestroy: ")
         //prepare for check downloads to story
 
 

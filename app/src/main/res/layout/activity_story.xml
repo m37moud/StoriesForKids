@@ -13,7 +13,6 @@
         android:id="@+id/parent_story_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
         tools:context=".ui.activities.story.StoryActivity">
 
 
@@ -93,9 +92,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    app:arcColor="@color/red"
+                    android:layout_marginBottom="@dimen/_4sdp"
+
+                    app:arcColor="@color/white"
                     app:arcWidth="2dp"
+
                     app:finalIcon="@drawable/ic_bookmark_complete"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +106,8 @@
                         android:id="@+id/select_category_fab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/_5sdp"
+                        android:padding="@dimen/_8sdp"
+
                         android:focusable="true"
                         android:src="@drawable/ic_menu"
                         app:backgroundTint="@color/colorPrimaryDark"
