@@ -410,7 +410,9 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             STATE_DOWNLOADING -> {
 
-                Logger.d("Downloading ", "finishlist" + download.request.id.toString())
+              var precent =  download.percentDownloaded
+
+                Logger.d("Downloading ", "in progress : " + download.request.id.toString())
 
                 Toast.makeText(this@StoryActivity, "Downloading started .", Toast.LENGTH_SHORT)
                     .show()
@@ -468,7 +470,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
                     Logger.d(
                         "Downloading",
-                        "video ( ${listVid[it].title} ) STATE_COMPLETED succsess!download = $it \n $id  \\n  $vidId "
+                        "video ( ${listVid[it].title} ) STATE_COMPLETED succsess!download = $it \n $id  \n  $vidId "
                     )
                     Logger.d(
                         "Downloading",
@@ -612,8 +614,8 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun readDatabase() {
         Logger.d("mah readDatabase", "readDatabase called!")
         hideLoading()
-//        lifecycleScope.launch {
-            mainViewModel.readVideos.observe(this@StoryActivity, Observer { database ->
+        lifecycleScope.launch {
+            mainViewModel.readVideos.observeOnce(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     Logger.d("mah readDatabase", "if statement true")
@@ -626,16 +628,16 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     adapterReadDatabase.setData(listReadDatabase)
                     binding.rcStory.adapter = adapterReadDatabase
                     Logger.d("mah readDatabase", "list is " + listReadDatabase.toString())
-                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
+//                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
 
                 } else {
                     Logger.d("mah readDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
+//                    mainViewModel.readVideos.removeObservers(this@StoryActivity)
                     firstRequestApiData()
                 }
             })
-//        } // life scope end
+        } // life scope end
     }
 
 
@@ -939,23 +941,25 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 )
 
 
-                chickedListCategory.let {
-                    Logger.d("saveVideoData", "chickedListCategory size is ${it.size}")
+             run lit@{
+                 chickedListCategory.let  {
+                     Logger.d("saveVideoData", "chickedListCategory size is ${it.size}")
 
-                    it.forEach { category: CategoriesModel ->
-                        Logger.d("saveVideoData", "chickedListCategory is ${category.categoryName}")
+                     it.forEach { category: CategoriesModel ->
+                         Logger.d("saveVideoData", "chickedListCategory is ${category.categoryName}")
 
-                        if (category.categoryName == vidCategory) {
-                            Logger.d(
-                                "saveVideoData",
-                                "chickedListCategory result for ${category.categoryName} is one of main categories = true"
-                            )
+                         if (category.categoryName == vidCategory) {
+                             Logger.d(
+                                 "saveVideoData",
+                                 "chickedListCategory result for ${category.categoryName} is one of main categories = true"
+                             )
 
-                            saveCategoriesData(category)
-                            return@forEach
-                        }
-                    }
-                }
+                             saveCategoriesData(category)
+                             return@lit
+                         }
+                     }
+                 }
+             }
                 Logger.d("saveVideoData", "check if all video is completed")
 
                 //refresh the list again
@@ -963,6 +967,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     Logger.d("saveVideoData", "check if all video is completed result is true")
 
                     readDatabase()
+                    readCategoriesFromDatabase()
                     videosViewModel.saveLoadingStatus(true)
                     fabProgressCircle.beginFinalAnimation()
                 } else {
@@ -1195,7 +1200,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun readCategoriesFromDatabase() {
         Logger.d("readCategoriesDatabase", "readCategoriesFromDatabase called!")
         lifecycleScope.launch {
-            mainViewModel.readCategories.observe(this@StoryActivity, Observer { database ->
+            mainViewModel.readCategories.observeOnce(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     Logger.d("readCategoriesDatabase", "if statement true")
@@ -1212,12 +1217,13 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
 //                    Log.d("readCategoriesDatabase", "list is " + listCategory)
 
-                    mainViewModel.readCategories.removeObservers(this@StoryActivity)
+//                    mainViewModel.readCategories.removeObservers(this@StoryActivity)
 
                 } else {
                     Logger.d("readCategoriesDatabase", "if statement is false ...")
 //                    Log.d("mah readDatabase", "if statement is false ...listVid = " + listVid.toString())
-                    mainViewModel.readCategories.removeObservers(this@StoryActivity)
+
+//                    mainViewModel.readCategories.removeObservers(this@StoryActivity)
                 }
             })
         }
