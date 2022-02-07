@@ -93,11 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
-
-                    app:arcColor="@color/white"
-                    app:arcWidth="2dp"
-
-                    app:finalIcon="@drawable/ic_bookmark_complete"
+                    app:arcWidth="3dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:reusable="true">
@@ -106,10 +102,9 @@
                         android:id="@+id/select_category_fab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/_8sdp"
-
-                        android:focusable="true"
                         android:src="@drawable/ic_menu"
+                        app:borderWidth="0dp"
+                        app:rippleColor="@color/colorPrimary"
                         app:backgroundTint="@color/colorPrimaryDark"
                         app:tint="@color/white" />
 
