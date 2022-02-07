@@ -483,7 +483,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                         if (vidId!! == id) {
                             Logger.d(
                                 "Downloading",
-                                "wil check  ${listVid[it].title} result is true"
+                                "wil check  ( ${listVid[it].title} ) result is true"
                             )
 //                        savedRecipeId = vidId.toInt()
                             saveVideoData(listVid[it])
@@ -641,7 +641,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         Logger.d("loadDBOnce", "loadDBOnce called!")
         hideLoading()
 //        lifecycleScope.launch {// strt life cycle scope
-            mainViewModel.readVideos.observe(this@StoryActivity, Observer { database ->
+            mainViewModel.readVideos.observeOnce(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     Logger.d("loadDBOnce", "if statement true")
@@ -1159,12 +1159,14 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
             //refresh the list again
             if (counter == size) {
-                Logger.d("saveCategoriesData", "check if all video is completed result is true")
+                lifecycleScope.launch {
+                    Logger.d("saveCategoriesData", "check if all video is completed result is true")
+                    loadDBOnce()
+                    readCategoriesDBOnceAgain()
+                    videosViewModel.saveLoadingStatus(true)
+                    fabProgressCircle.beginFinalAnimation()
+                }
 
-                loadDBOnce()
-                readCategoriesDBOnceAgain()
-                videosViewModel.saveLoadingStatus(true)
-                fabProgressCircle.beginFinalAnimation()
             } else {
                 Logger.d("saveCategoriesData", "check if all video is completed result is false")
 
@@ -1251,7 +1253,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun readCategoriesDBOnceAgain() {
         Logger.d("readCategoriesDBOnceAgain", "readCategoriesDBOnceAgain called!")
 //        lifecycleScope.launch {// life cycle scope
-            mainViewModel.readCategories.observe(this@StoryActivity, Observer { database ->
+            mainViewModel.readCategories.observeOnce(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
 
                     Logger.d("readCategoriesDBOnceAgain", "if statement true")
