@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
-                    app:arcWidth="3dp"
+                    app:arcWidth="2dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:reusable="true">
