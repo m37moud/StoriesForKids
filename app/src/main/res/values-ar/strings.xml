@@ -43,4 +43,14 @@
     <string name="share_app">برنامج تعليمى مفيد للاطفال</string>
     <string name="string_ok">حسنا</string>
     <string name="donate_by_watch_vid">لو عجبك البرنامج ممكن تدعمنى بمشاهدة اعلان</string>
+    <string name="CATEGORY_EMPTY">لا يوجد فديوهات</string>
+    <string name="DOWNLOAD_FAILED">فشل تحميل الفديو</string>
+    <string name="DOWNLOAD_FINISH">تم تحميل الفديو</string>
+    <string name="VIDEO_REMOVED">تم مسح الفديو</string>
+    <string name="START_DOWNLOAD">جارى التحميل</string>
+    <string name="CATEGORY_FETCH">جارى اعداد الكتالوج</string>
+    <string name="VIDEOS_CHECK">التحقق من وجود فديوهات جديدة</string>
+    <string name="ERROR_MSG">حدث خطا</string>
+    <string name="NO_CONNECTION">لا يوجد اتصال بالانترنت</string>
+    <string name="OK">حسنا</string>
 </resources>

@@ -15,11 +15,8 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
@@ -37,7 +34,9 @@ import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "MainActivity"
@@ -53,12 +52,11 @@ class MainActivity : AppCompatActivity() {
     private var isResumeAnim = false
     private var shouldPlay = false
     private var shouldAllowBack = false
+
     //ad video reward
     private var mRewardedAd: RewardedAd? = null
     private var mAdIsLoading: Boolean = false
-    private lateinit var donateLink :String
-
-
+    private lateinit var donateLink: String
 
 
     @Inject
@@ -195,7 +193,6 @@ class MainActivity : AppCompatActivity() {
 
         animInvoked = 0
 
-
 //        supportActionBar?.hide()
 
         Handler(Looper.getMainLooper()).postDelayed(
@@ -223,6 +220,7 @@ class MainActivity : AppCompatActivity() {
                     storyImgAnim,
                     700
                 )
+
             }, 2500
         )
 
@@ -264,8 +262,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-
         //init background
         main_scroll.visibility = View.VISIBLE
 
@@ -276,21 +272,19 @@ class MainActivity : AppCompatActivity() {
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-
-         donateLink = RemoteConfigUtils.getDonateLink()
-        Logger.d("donateLink" , donateLink)
-        if(donateLink.isNullOrBlank()){
-            loadAd()
+        lifecycleScope.launch(Dispatchers.IO) {
+            donateLink = RemoteConfigUtils.getDonateLink()
+            Logger.d("donateLink", donateLink)
+//            if (donateLink.isNullOrBlank()) {
+//                loadAd()
+//            }
         }
+
+
         Log.d("MainActivity", "onStart: called $shouldPlay")
 
         super.onStart()
     }
-
-
-
-
-
 
 
     override fun onResume() {
@@ -336,12 +330,13 @@ class MainActivity : AppCompatActivity() {
             )
 
         }
+        Logger.d("donateLink", donateLink)
+        if (donateLink.isNullOrBlank()) {
+            loadAd()
+        }
         super.onResume()
 
     }
-
-
-
 
 
     override fun onPause() {
@@ -376,6 +371,7 @@ class MainActivity : AppCompatActivity() {
             exitMainActivityAnimation(isStory = false, isLearn = false, isFinish = true)
 
     }
+
     override fun onDestroy() {
 //        when app end download status = false
         Log.d("mainAcc", "onDestroy! -> saveDownloadStatus = false")
@@ -389,7 +385,11 @@ class MainActivity : AppCompatActivity() {
         Constants.clickSound(this)
         ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
             .setOnFinishListener {
+                MobileAds.initialize(this)
                 showSettingDialog()
+
+
+
 
             }.doAction()
 
@@ -667,6 +667,9 @@ class MainActivity : AppCompatActivity() {
 
                         finishInitButtons()
 
+//                        donateLink = RemoteConfigUtils.getDonateLink()
+
+
                     }.start()
                 }.start()
             }.start()
@@ -813,6 +816,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun showSettingDialog() {
+
         val builder = AlertDialog.Builder(this)
 
         val itemView: View = LayoutInflater.from(this).inflate(R.layout.layout_settings_app, null)
@@ -826,9 +830,9 @@ class MainActivity : AppCompatActivity() {
             itemView.pause_sound_setting.visibility = View.VISIBLE
         }
 
-        Logger.d("donateLink" , donateLink)
-        if(donateLink.isNullOrBlank()){
-            val txt =this.getString(R.string.donate_by_watch_vid)
+        Logger.d("donateLink", donateLink)
+        if (donateLink.isNullOrBlank()) {
+            val txt = this.getString(R.string.donate_by_watch_vid)
             itemView.donate_txt.text = txt
         }
 
@@ -931,17 +935,17 @@ class MainActivity : AppCompatActivity() {
 //                    customTabsIntent.launchUrl(this, Uri.parse(url));
 
 //
-                    if(donateLink.isNullOrBlank()){
+                    if (donateLink.isNullOrBlank()) {
                         showRewardAd()
-                    }else{
+                        Log.d("loadAd", "mRewardedAd = $mRewardedAd")
+
+                    } else {
                         //https://www.patreon.com/m37moud
                         val intent = Intent(this, WebViewActivity::class.java)
-                        intent.putExtra("donateLink" ,donateLink )
+                        intent.putExtra("donateLink", donateLink)
 
                         startActivity(intent)
                     }
-
-
 
 
                 }.doAction()
@@ -953,12 +957,13 @@ class MainActivity : AppCompatActivity() {
             Constants.fabCloseSound(this)
             img_main_setting.isClickable = true
             mRewardedAd = null
-            mAdIsLoading = false
+//            mAdIsLoading = false
 
         }
 
 
     }
+
     private fun share() {
         val applicationNameId: Int = this.applicationInfo.labelRes
         val appPackageName: String = this.packageName
@@ -981,14 +986,15 @@ class MainActivity : AppCompatActivity() {
 //            .setText("http://play.google.com/store/apps/details?id=$appPackageName")
 //            .startChooser();
     }
-    private fun loadAd() {
+
+    private  fun loadAd() {
 
         val mRewardID = if (TextUtils.isEmpty(Constants.addRewardAds))
             AD_REWARDEDAD_ID
         else
             Constants.addRewardAds.toString()
 
-        Logger.d("load",Constants.addRewardAds.toString())
+        Logger.d("load", Constants.addRewardAds.toString())
 
         try {
             val adRequest = AdRequest.Builder().build()
@@ -998,7 +1004,7 @@ class MainActivity : AppCompatActivity() {
                 this, mRewardID, adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.d("loadAd", adError?.message)
+                        Log.d("loadAd", adError.message)
                         mRewardedAd = null
                         mAdIsLoading = false
                         val error = "domain: ${adError.domain}, code: ${adError.code}, " +
@@ -1028,7 +1034,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun showRewardAd(){
+    private fun showRewardAd() {
         if (mRewardedAd != null) {
 //            shouldPlay = false
             mRewardedAd?.fullScreenContentCallback =
@@ -1039,6 +1045,8 @@ class MainActivity : AppCompatActivity() {
                         // don't show the ad a second time.
 //                        mRewardedAd = null
                         mAdIsLoading = false
+                        loadAd()
+
 //                                shouldPlay = true
 //                                loadAd()
                     }
@@ -1049,6 +1057,7 @@ class MainActivity : AppCompatActivity() {
                         // don't show the ad a second time.
 //                        mRewardedAd = null
 //                        shouldPlay = true
+
                     }
 
                     override fun onAdShowedFullScreenContent() {

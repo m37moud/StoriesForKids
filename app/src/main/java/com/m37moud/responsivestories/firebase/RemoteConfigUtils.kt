@@ -109,7 +109,7 @@ object RemoteConfigUtils {
         "http://play.google.com/store/apps/details?id="
     }
 
-    fun getDonateLink(): String = try {
+   suspend fun getDonateLink(): String = try {
         remoteConfig!!.getString(DONATE_LINK)
     } catch (e: Exception) {
         e.printStackTrace()

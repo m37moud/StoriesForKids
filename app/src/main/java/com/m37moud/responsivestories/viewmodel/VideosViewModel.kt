@@ -26,7 +26,7 @@ class VideosViewModel @ViewModelInject constructor(
 
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
     val readShouldDownload = dataStoreRepository.readDownloadStatus.asLiveData()
-    val readShouldLoad = dataStoreRepository.readLoadingStatus.asLiveData()
+    val readShouldOpenCategoryFab = dataStoreRepository.readLoadingStatus.asLiveData()//fab category btn status
     val readBottomSheetExitStatus = dataStoreRepository.readExitStatus.asLiveData()
 
 
@@ -58,8 +58,8 @@ class VideosViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveDownloadStatus(downloadStatus)
         }
-
-    fun saveLoadingStatus(loadingStatus: Boolean) =
+// fab category button
+    fun saveFabCategoryStatus(loadingStatus: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveLoadingStatus(loadingStatus)
         }

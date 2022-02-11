@@ -18,8 +18,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,7 +27,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.m37moud.responsivestories.R
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils.getOpenLink
@@ -61,7 +58,7 @@ private const val TAG = "StartActivity"
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class StartActivity : AppCompatActivity() {
+class StartActivity : AppCompatActivity()  {
 
 
     @Inject
@@ -146,7 +143,7 @@ class StartActivity : AppCompatActivity() {
 
 
                             } else {
-                                showSnackBar("No internet Connection Please Connect Internet")
+                                showSnackBar(getString(R.string.NO_CONNECTION))
                             }
                         }
                 }
@@ -709,7 +706,7 @@ class StartActivity : AppCompatActivity() {
             view,
             msg,
             Snackbar.LENGTH_LONG
-        ).setAction("okay") {}
+        ).setAction(getString(R.string.OK)) {}
             .show()
     }
 
@@ -727,6 +724,8 @@ class StartActivity : AppCompatActivity() {
 
 
     }
+
+    //move download job to start activity
 
 
 }
