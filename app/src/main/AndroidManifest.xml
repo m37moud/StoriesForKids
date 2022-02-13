@@ -27,6 +27,8 @@
         <activity
             android:name=".ui.activities.started.SplashActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/SplashScreenStyle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,44 +39,62 @@
         <activity
             android:name=".ui.activities.started.onboarding.ViewPagerActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/ViewPagerScreenStyle" />
         <activity
             android:name=".ui.activities.story.StoryActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/StoryScreenStyle" />
         <activity
             android:name=".ui.activities.learn.LearnActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/LearnScreenStyle" />
         <activity
             android:name=".ui.activities.started.MainActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/MainScreenStyle" />
 
         <activity android:name=".ui.activities.started.WebViewActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/WebViewActivity"/>
 
 
         <activity
             android:name=".ui.activities.started.StartActivity"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/StartScreenStyle" />
         <activity
             android:name=".ui.activities.learn.EnteredLearnActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:label="@string/title_activity_entered_learen"
             android:screenOrientation="landscape"
+            android:hardwareAccelerated="true"
+
             android:theme="@style/Theme.ResponsiveStories.NoActionBar" />
         <activity
             android:name=".ui.activities.story.OfflinePlayerActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:theme="@style/Exoplayer"
+            android:hardwareAccelerated="true"
+
             android:screenOrientation="landscape" />
         <activity
             android:name=".ui.activities.story.OnlinePlayerActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             android:theme="@style/Exoplayer"
+            android:hardwareAccelerated="true"
+
             android:screenOrientation="landscape" />
 
         <service

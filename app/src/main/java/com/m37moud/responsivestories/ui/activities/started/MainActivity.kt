@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private var animInvoked: Int = 0
     private var isAnimFinish = false
     private var isResumeAnim = false
+    private var repeatLoadAD = false
     private var shouldPlay = false
     private var shouldAllowBack = false
 
@@ -189,40 +190,25 @@ class MainActivity : AppCompatActivity() {
 
 
         main_loading.visibility = View.VISIBLE
-        main_parent_frame.visibility = View.INVISIBLE
+        main_parent_frame.visibility = View.GONE
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            donateLink = RemoteConfigUtils.getDonateLink()
+            Logger.d("donateLink", donateLink)
+        }
+
+
 
         animInvoked = 0
 
 //        supportActionBar?.hide()
 
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                main_loading.visibility = View.GONE
-                main_parent_frame.visibility = View.VISIBLE
-
-
-                //set animation
-                initMainActivityAnimation(
-                    learn_main_backgroundImg,
-                    learn_main_txt,
-                    learn_main_img,
-                    learnLinearLayoutAnim,
-                    learnTxtAnim,
-                    learnImgAnim,
-                    500
-                )
-                initMainActivityAnimation(
-                    story_main_backgroundImg,
-                    story_main_txt,
-                    story_main_img,
-                    storyLinearLayoutAnim,
-                    storyTxtAnim,
-                    storyImgAnim,
-                    700
-                )
-
-            }, 2500
-        )
+//        Handler(Looper.getMainLooper()).postDelayed(
+//            {
+//                activityIntro()
+//
+//            }, 2500
+//        )
 
 
         //fab menu
@@ -272,13 +258,10 @@ class MainActivity : AppCompatActivity() {
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            donateLink = RemoteConfigUtils.getDonateLink()
-            Logger.d("donateLink", donateLink)
-//            if (donateLink.isNullOrBlank()) {
-//                loadAd()
-//            }
+        if (donateLink.isNullOrBlank()) {
+            loadAd()
         }
+
 
 
         Log.d("MainActivity", "onStart: called $shouldPlay")
@@ -303,38 +286,40 @@ class MainActivity : AppCompatActivity() {
 //
             Handler(Looper.getMainLooper()).postDelayed(
                 {
-                    main_loading.visibility = View.GONE
-                    main_parent_frame.visibility = View.VISIBLE
-
-                    initMainActivityAnimation(
-                        learn_main_backgroundImg,
-                        learn_main_txt,
-                        learn_main_img,
-                        learnLinearLayoutAnim,
-                        learnTxtAnim,
-                        learnImgAnim,
-                        500
-                    )
-
-                    initMainActivityAnimation(
-                        story_main_backgroundImg,
-                        story_main_txt,
-                        story_main_img,
-                        storyLinearLayoutAnim,
-                        storyTxtAnim,
-                        storyImgAnim,
-                        700
-                    )
+                    activityIntro()
 
                 }, 2500
             )
 
         }
-        Logger.d("donateLink", donateLink)
-        if (donateLink.isNullOrBlank()) {
-            loadAd()
-        }
+
         super.onResume()
+
+    }
+
+    private fun activityIntro() {
+        main_loading.visibility = View.GONE
+        main_parent_frame.visibility = View.VISIBLE
+
+        initMainActivityAnimation(
+            learn_main_backgroundImg,
+            learn_main_txt,
+            learn_main_img,
+            learnLinearLayoutAnim,
+            learnTxtAnim,
+            learnImgAnim,
+            500
+        )
+
+        initMainActivityAnimation(
+            story_main_backgroundImg,
+            story_main_txt,
+            story_main_img,
+            storyLinearLayoutAnim,
+            storyTxtAnim,
+            storyImgAnim,
+            700
+        )
 
     }
 
@@ -385,7 +370,6 @@ class MainActivity : AppCompatActivity() {
         Constants.clickSound(this)
         ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
             .setOnFinishListener {
-                MobileAds.initialize(this)
                 showSettingDialog()
 
 
@@ -988,6 +972,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private  fun loadAd() {
+        MobileAds.initialize(this@MainActivity)
+
 
         val mRewardID = if (TextUtils.isEmpty(Constants.addRewardAds))
             AD_REWARDEDAD_ID
@@ -1004,31 +990,42 @@ class MainActivity : AppCompatActivity() {
                 this, mRewardID, adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.d("loadAd", adError.message)
+                        Logger.d("loadAd", adError.message)
                         mRewardedAd = null
                         mAdIsLoading = false
                         val error = "domain: ${adError.domain}, code: ${adError.code}, " +
                                 "message: ${adError.message}"
                         Toast.makeText(
                             this@MainActivity,
-                            "onAdFailedToLoad() with error $error",
+                            "FailedToLoad  error  = $error",
                             Toast.LENGTH_SHORT
                         ).show()
+                        if(!repeatLoadAD) {
+                            activityIntro()
+                            repeatLoadAD = true // it decide will show loading animation again
+
+                        } //start activity intro
+
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
 
-                        Log.d("loadAd", "Ad was loaded.")
+                        Logger.d("loadAd", "Ad was loaded.")
                         mRewardedAd = rewardedAd
                         mAdIsLoading = false
 
+                        if(!repeatLoadAD) {
+                            activityIntro()
+                            repeatLoadAD = true // it decide will show loading animation again
+
+                        } //start activity intro
 
                     }
                 }
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("showAds", " : catch " + e)
+            Logger.d("showAds", " : catch " + e)
         }
 
 
