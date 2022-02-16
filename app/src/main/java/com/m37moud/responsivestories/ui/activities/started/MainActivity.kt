@@ -29,14 +29,14 @@ import com.m37moud.responsivestories.util.Constants
 import com.m37moud.responsivestories.util.Constants.Companion.activateSetting
 import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.Logger
+import com.m37moud.responsivestories.util.NetworkListener
 import com.m37moud.responsivestories.util.media.AudioManager
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_settings_app.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 private const val TAG = "MainActivity"
@@ -57,7 +57,10 @@ class MainActivity : AppCompatActivity() {
     //ad video reward
     private var mRewardedAd: RewardedAd? = null
     private var mAdIsLoading: Boolean = false
-    private lateinit var donateLink: String
+    private var donateLink: String? = null
+
+    //
+    private lateinit var networkListener: NetworkListener
 
 
     @Inject
@@ -192,14 +195,48 @@ class MainActivity : AppCompatActivity() {
         main_loading.visibility = View.VISIBLE
         main_parent_frame.visibility = View.GONE
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            donateLink = RemoteConfigUtils.getDonateLink()
-            Logger.d("donateLink", donateLink)
-        }
+
 
 
 
         animInvoked = 0
+
+        lifecycleScope.launchWhenStarted {
+            networkListener = NetworkListener()
+            networkListener.checkNetworkAvailability(this@MainActivity)
+                .collect { status ->
+                    Logger.d(TAG, "NetworkListener is $status")
+//                    videosViewModel.networkStatus = status
+//                    videosViewModel.showNetworkStatus()
+                    if (status) {//if there is connection fetch donate link from firebase
+
+
+                        lifecycleScope.launch(Dispatchers.IO) {
+
+
+                            val result: Deferred<String> = async {
+                                RemoteConfigUtils.getDonateLink()
+//                                Logger.d("donateLink", donateLink)
+                            }
+                            donateLink = result.await()
+
+                        }
+                        if (!donateLink.isNullOrEmpty()) {
+                            loadAd()
+                        }
+
+
+                    } else {
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            {
+                                activityIntro()
+
+                            }, 2500
+                        )
+                    }
+                }
+        }
+
 
 //        supportActionBar?.hide()
 
@@ -258,9 +295,7 @@ class MainActivity : AppCompatActivity() {
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
-        if (donateLink.isNullOrBlank()) {
-            loadAd()
-        }
+
 
 
 
@@ -371,8 +406,6 @@ class MainActivity : AppCompatActivity() {
         ElasticAnimation(view).setScaleX(0.85f).setScaleY(0.85f).setDuration(200)
             .setOnFinishListener {
                 showSettingDialog()
-
-
 
 
             }.doAction()
@@ -971,7 +1004,7 @@ class MainActivity : AppCompatActivity() {
 //            .startChooser();
     }
 
-    private  fun loadAd() {
+    private fun loadAd() {
         MobileAds.initialize(this@MainActivity)
 
 
@@ -1000,7 +1033,7 @@ class MainActivity : AppCompatActivity() {
                             "FailedToLoad  error  = $error",
                             Toast.LENGTH_SHORT
                         ).show()
-                        if(!repeatLoadAD) {
+                        if (!repeatLoadAD) {
                             activityIntro()
                             repeatLoadAD = true // it decide will show loading animation again
 
@@ -1014,7 +1047,7 @@ class MainActivity : AppCompatActivity() {
                         mRewardedAd = rewardedAd
                         mAdIsLoading = false
 
-                        if(!repeatLoadAD) {
+                        if (!repeatLoadAD) {
                             activityIntro()
                             repeatLoadAD = true // it decide will show loading animation again
 

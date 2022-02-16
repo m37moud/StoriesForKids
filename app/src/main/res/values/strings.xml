@@ -73,7 +73,7 @@
     <string name="CATEGORY_FETCH">Try to fetch Categories</string>
     <string name="VIDEOS_CHECK">Check for New Videos</string>
     <string name="ERROR_MSG">something goes wrong</string>
-    <string name="NO_CONNECTION">No internet Connection Please Connect Internet</string>
+    <string name="NO_CONNECTION">No internet Connection</string>
     <string name="OK">okay</string>
 
 </resources>
