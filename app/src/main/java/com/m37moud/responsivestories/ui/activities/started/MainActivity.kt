@@ -13,6 +13,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +32,7 @@ import com.m37moud.responsivestories.util.Constants.Companion.showLoading
 import com.m37moud.responsivestories.util.Logger
 import com.m37moud.responsivestories.util.NetworkListener
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -54,13 +56,16 @@ class MainActivity : AppCompatActivity() {
     private var shouldPlay = false
     private var shouldAllowBack = false
 
+
     //ad video reward
     private var mRewardedAd: RewardedAd? = null
     private var mAdIsLoading: Boolean = false
     private var donateLink: String? = null
+//    private var result: Deferred<String>? = null
 
     //
     private lateinit var networkListener: NetworkListener
+    private val videosViewModel: VideosViewModel by viewModels()
 
 
     @Inject
@@ -205,34 +210,50 @@ class MainActivity : AppCompatActivity() {
             networkListener = NetworkListener()
             networkListener.checkNetworkAvailability(this@MainActivity)
                 .collect { status ->
-                    Logger.d(TAG, "NetworkListener is $status")
-//                    videosViewModel.networkStatus = status
+                    Logger.d(TAG, "NetworkListener status is :  $status")
+                    videosViewModel.networkStatus = status
 //                    videosViewModel.showNetworkStatus()
                     if (status) {//if there is connection fetch donate link from firebase
-
-
-                        lifecycleScope.launch(Dispatchers.IO) {
-
+                        Logger.d(TAG, "there is connection")
+                        lifecycleScope.launch{
+                            Logger.d(TAG, "try get donate link in progress")
 
                             val result: Deferred<String> = async {
                                 RemoteConfigUtils.getDonateLink()
 //                                Logger.d("donateLink", donateLink)
                             }
                             donateLink = result.await()
+                            result.invokeOnCompletion {
+                                Logger.d(TAG, " get donate link is sucsessfully")
+                                Logger.d(TAG, " check donate link is empty or not")
 
-                        }
-                        if (!donateLink.isNullOrEmpty()) {
-                            loadAd()
+                                if (donateLink.isNullOrBlank()) {
+                                    Logger.d(TAG, " check donate link is empty = true")
+                                    Logger.d("donateLink is = ", donateLink)
+
+                                    loadAd()
+
+                                } else {
+                                    Logger.d(TAG, " check donate link is ( not )empty = false")
+
+                                }
+                            }
                         }
 
 
                     } else {
-                        Handler(Looper.getMainLooper()).postDelayed(
-                            {
-                                activityIntro()
+                        Logger.d(TAG, "there is no connection ( offline )")
+                        if (!repeatLoadAD) {
+                            Handler(Looper.getMainLooper()).postDelayed(
+                                {
+                                    activityIntro()
 
-                            }, 2500
-                        )
+                                }, 2500
+                            )
+                            repeatLoadAD = true // it decide will show loading animation again
+
+                        } //start activity intro
+
                     }
                 }
         }
@@ -847,10 +868,16 @@ class MainActivity : AppCompatActivity() {
             itemView.pause_sound_setting.visibility = View.VISIBLE
         }
 
-        Logger.d("donateLink", donateLink)
-        if (donateLink.isNullOrBlank()) {
-            val txt = this.getString(R.string.donate_by_watch_vid)
-            itemView.donate_txt.text = txt
+        if (videosViewModel.networkStatus) { // if is there connection show donate container
+            itemView.donate_container.visibility = View.VISIBLE
+            Logger.d("donateLink", donateLink)
+            if (donateLink.isNullOrBlank()) {
+                val txt = this.getString(R.string.donate_by_watch_vid)
+                itemView.donate_txt.text = txt
+            }
+        } else {
+            itemView.donate_container.visibility = View.GONE
+
         }
 
 
@@ -1059,6 +1086,11 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
             Logger.d("showAds", " : catch " + e)
+            if (!repeatLoadAD) {
+                activityIntro()
+                repeatLoadAD = true // it decide will show loading animation again
+
+            } //start activity intro
         }
 
 
