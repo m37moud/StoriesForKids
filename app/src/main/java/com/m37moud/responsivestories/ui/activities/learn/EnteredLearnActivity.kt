@@ -13,8 +13,10 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.ads.*
@@ -37,15 +39,24 @@ import com.m37moud.responsivestories.util.Constants.Companion.showAdsFromRemoteC
 import com.m37moud.responsivestories.firebase.RemoteConfigUtils
 import com.m37moud.responsivestories.util.Constants.Companion.addRewardAds
 import com.m37moud.responsivestories.util.Constants.Companion.bannerAds
+import com.m37moud.responsivestories.util.Logger
+import com.m37moud.responsivestories.util.NetworkListener
 import com.m37moud.responsivestories.util.media.AudioManager
+import com.m37moud.responsivestories.viewmodel.VideosViewModel
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 const val AD_REWARDEDAD_ID = "ca-app-pub-3940256099942544/5224354917"
 const val AD_BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class EnteredLearnActivity : AppCompatActivity() {
 
@@ -57,6 +68,12 @@ class EnteredLearnActivity : AppCompatActivity() {
     private var counter: Int = 0
     private lateinit var list: ArrayList<String>
     private lateinit var adView: AdView
+
+    private lateinit var networkListener: NetworkListener
+    private val videosViewModel: VideosViewModel by viewModels()
+    private var repeatLoadAD = false
+
+
 
 
     @Inject
@@ -103,35 +120,70 @@ class EnteredLearnActivity : AppCompatActivity() {
 
         entered_learn_container_loading.visibility = View.VISIBLE
         entered_learn_loading.visibility = View.VISIBLE
-        entered_learn_parent_frame.visibility = View.INVISIBLE
+//        entered_learn_parent_frame.visibility = View.INVISIBLE
 
-        MobileAds.initialize(this)
-        MobileAds.setRequestConfiguration(
-            RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
-                .build()
-        )
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                shouldAllowBack = true
-                entered_learn_container_loading.visibility = View.GONE
-                entered_learn_loading.visibility = View.GONE
-                entered_learn_parent_frame.visibility = View.VISIBLE
-                entered_learn_Layout.visibility = View.VISIBLE
-                if (showAdsFromRemoteConfig) {
-                    loadAd()
-                    showAds()
-                    bannerAdShowed = true
 
+
+        //******************************************
+        lifecycleScope.launchWhenStarted {
+            networkListener = NetworkListener()
+            networkListener.checkNetworkAvailability(this@EnteredLearnActivity)
+                .collect { status ->
+                    Logger.d(TAG, "NetworkListener status is :  $status")
+                    videosViewModel.networkStatus = status
+                    if (status) {//if there is connection fetch donate link from firebase
+                        MobileAds.initialize(this@EnteredLearnActivity)
+                        MobileAds.setRequestConfiguration(
+                            RequestConfiguration.Builder()
+                                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
+                                .build()
+                        )
+
+                        Logger.d(TAG, "there is connection")
+                        if (showAdsFromRemoteConfig) {
+                            loadAd()
+                            showAds()
+                            bannerAdShowed = true
+
+                        }
+
+                    } else {
+                        Logger.d(TAG, "there is no connection ( offline )")
+                        if (!repeatLoadAD) {
+
+                            Handler(Looper.getMainLooper()).postDelayed(
+                                {
+                                    activityIntro()
+
+                                }, 2500
+                            )
+                            repeatLoadAD = true // it decide will show loading animation again
+
+                        } //start activity intro
+
+                    }
                 }
+        }
+        //******************************************
 
-                getAssetsFolder()
 
-
-                //set animation
-
-            }, 2500
-        )
+//        Handler(Looper.getMainLooper()).postDelayed(
+//            {
+//                activityIntro()
+//
+//                if (showAdsFromRemoteConfig) {
+//                    loadAd()
+//                    showAds()
+//                    bannerAdShowed = true
+//
+//                }
+//
+//
+//
+//                //set animation
+//
+//            }, 2500
+//        )
 
 
 //        img_replay.setOnTouchListener(Constants.Listeners.onTouch)
@@ -373,6 +425,15 @@ class EnteredLearnActivity : AppCompatActivity() {
 
 //        entered_learn_scroll.visibility = View.VISIBLE
 
+    }
+
+    private fun activityIntro() {
+        shouldAllowBack = true
+        entered_learn_container_loading.visibility = View.GONE
+        entered_learn_loading.visibility = View.GONE
+        entered_learn_parent_frame.visibility = View.VISIBLE
+        entered_learn_Layout.visibility = View.VISIBLE
+        getAssetsFolder()
     }
 
 
@@ -890,6 +951,12 @@ class EnteredLearnActivity : AppCompatActivity() {
                             "onAdFailedToLoad() with error $error",
                             Toast.LENGTH_SHORT
                         ).show()
+
+                        if (!repeatLoadAD) {
+                            activityIntro()
+                            repeatLoadAD = true // it decide will show loading animation again
+
+                        } //start activity intro
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -897,14 +964,23 @@ class EnteredLearnActivity : AppCompatActivity() {
                         Log.d("loadAd", "Ad was loaded.")
                         mRewardedAd = rewardedAd
                         mAdIsLoading = false
+                        if (!repeatLoadAD) {
+                            activityIntro()
+                            repeatLoadAD = true // it decide will show loading animation again
 
+                        } //start activity intro
 
                     }
                 }
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("showAds", " : catch " + e)
+            Log.d(TAG, "showAds : catch $e")
+            if (!repeatLoadAD) {
+                activityIntro()
+                repeatLoadAD = true // it decide will show loading animation again
+
+            } //start activity intro
         }
 
 

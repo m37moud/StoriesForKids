@@ -43,4 +43,5 @@ class NetworkListener : ConnectivityManager.NetworkCallback() {
     override fun onLost(network: Network) {
         isNetworkAvailable.value = false
     }
+
 }

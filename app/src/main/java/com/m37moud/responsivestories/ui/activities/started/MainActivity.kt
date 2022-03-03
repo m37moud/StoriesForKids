@@ -1033,7 +1033,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadAd() {
         MobileAds.initialize(this@MainActivity)
-
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf("D6785690C53C6434F5A0BBAA4D808BA6"))
+                .build()
+        )
 
         val mRewardID = if (TextUtils.isEmpty(Constants.addRewardAds))
             AD_REWARDEDAD_ID

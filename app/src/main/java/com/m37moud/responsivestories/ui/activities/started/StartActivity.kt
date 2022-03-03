@@ -11,7 +11,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -58,7 +57,7 @@ private const val TAG = "StartActivity"
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class StartActivity : AppCompatActivity()  {
+class StartActivity : AppCompatActivity() {
 
 
     @Inject
@@ -70,6 +69,7 @@ class StartActivity : AppCompatActivity()  {
     private lateinit var videosViewModel: VideosViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var networkListener: NetworkListener
+    private var repeatLoadAD = false
 
 
     //bird animation
@@ -96,61 +96,62 @@ class StartActivity : AppCompatActivity()  {
 
 
         videosViewModel.readBackOnline.observe(this@StartActivity, Observer {
-            Log.d("Fetching", "sendRegistrationToServer :  $it ")
+            Logger.d(TAG, "OBSERVE readBackOnline :  $it ")
 
             videosViewModel.backOnline = it
         })
-        //check for internet connection
-        //
+
 
         // Obtain the FirebaseAnalytics instance.
 
-        Log.d("StartActivity", "onCreate: $shouldPlay ")
+        Logger.d(TAG, "onCreate: $shouldPlay ")
 
-        main_loading.visibility = View.VISIBLE
-        start_parent_frame.visibility = View.INVISIBLE
-
+//        start_parent_frame.visibility = View.INVISIBLE
         initImgScroll()
 
-        //fetch ads model
-        getAdsFolderFromFirebase()
+        lifecycleScope.launchWhenStarted {//check for internet connection
+            //
+            networkListener = NetworkListener()
+            networkListener.checkNetworkAvailability(this@StartActivity)
+                .collect { status ->
+                    Logger.d(TAG, "NetworkListener ${status.toString()}")
+                    videosViewModel.networkStatus = status
+                    videosViewModel.showNetworkStatus()
+                    //read database
+                    if (status) {
+                        RemoteConfigUtils.init()
+                        //check to update the app
+                        if (!Constants.doOnce) {
+                            //fetch ads model
+                            getAdsFolderFromFirebase()
 
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                shouldAllowBack = true
-                main_loading.visibility = View.GONE
-                start_parent_frame.visibility = View.VISIBLE
-                start_frameLayout_scroll.visibility = View.VISIBLE
-                start_scroll.visibility = View.VISIBLE
-
-                showLoading = false
-
-                lifecycleScope.launchWhenStarted {
-                    networkListener = NetworkListener()
-                    networkListener.checkNetworkAvailability(this@StartActivity)
-                        .collect { status ->
-                            Log.d("NetworkListener", status.toString())
-                            videosViewModel.networkStatus = status
-                            videosViewModel.showNetworkStatus()
-                            //read database
-                            if (status) {
-                                RemoteConfigUtils.init()
-                                //check to update the app
-                                if (!Constants.doOnce) {
-                                    checkForUpdate()
-                                    subscribeFCM()
-                                }
-
-
-                            } else {
-                                showSnackBar(getString(R.string.NO_CONNECTION))
-                            }
                         }
+
+
+                    } else {
+
+                        Logger.d(TAG, "there is no connection ( offline )")
+                        if (!repeatLoadAD) {
+                            main_loading.visibility = View.VISIBLE
+
+                            Handler(Looper.getMainLooper()).postDelayed(
+                                {
+                                    activityIntro()
+                                    showSnackBar(getString(R.string.NO_CONNECTION))
+
+
+                                }, 2500
+                            )
+                            repeatLoadAD = true // it decide will show loading animation again
+
+                        } //start activity intro
+
+                    }
                 }
+        }
 
 
-            }, 1500
-        )
+
 
 
 
@@ -173,6 +174,7 @@ class StartActivity : AppCompatActivity()  {
 //            start_loading.visibility = View.VISIBLE
 //            start_parent_frame.visibility = View.GONE
                     showLoading = true
+                    repeatLoadAD = false
                     startActivity(intent)
                     overridePendingTransition(0, 0)
 //                    finish()
@@ -217,6 +219,14 @@ class StartActivity : AppCompatActivity()  {
 
     }
 
+    private fun activityIntro() {
+        shouldAllowBack = true
+        main_loading.visibility = View.GONE
+        start_parent_frame.visibility = View.VISIBLE
+        start_frameLayout_scroll.visibility = View.VISIBLE
+        start_scroll.visibility = View.VISIBLE
+    }
+
     private fun subscribeFCM() {
         FirebaseService.sharedPref = getSharedPreferences("sharedPref", MODE_PRIVATE)
 
@@ -225,9 +235,31 @@ class StartActivity : AppCompatActivity()  {
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
             .addOnCompleteListener { task ->
-                Log.d("subscribet", "succ ")
+                Logger.d(TAG, "(subscribe) SUCSESS ")
+                if (!repeatLoadAD) {
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        {
+                            activityIntro()
+
+                        }, 2500
+                    )
+                    repeatLoadAD = true // it decide will show loading animation again
+
+                } //start activity intro
+
                 if (!task.isSuccessful) {
-                    Log.d("subscribe", "faild ")
+                    Logger.d(TAG, "(subscribe) faild ")
+                    if (!repeatLoadAD) {
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            {
+                                activityIntro()
+
+                            }, 2500
+                        )
+                        repeatLoadAD = true // it decide will show loading animation again
+
+                    } //start activity intro
+
                 }
 
                 //
@@ -242,26 +274,34 @@ class StartActivity : AppCompatActivity()  {
                 // Get new FCM registration token
                 val token = task.result
                 FirebaseService.token = token
-                Log.d("StartActivity", "token: ${token.toString()}")
+                Logger.d(TAG, "(uploadFCMTokenToDatabase)  token: ${token.toString()}")
                 val referenceVideos = FirebaseDatabase.getInstance().getReference("RG_token")
                 referenceVideos.child("client").setValue(token)
                     .addOnSuccessListener {
-                        Log.d("Fetching", "sendRegistrationToServer :  successful ")
+                        Logger.d(
+                            TAG,
+                            "(uploadFCMTokenToDatabase)  sendRegistrationToServer :  successful "
+                        )
                     }
                     .addOnFailureListener { e ->
-                        Log.d(
-                            "Fetching",
-                            " sendRegistrationToServer :  err " + e.message.toString()
+                        Logger.d(
+                            TAG,
+                            "(uploadFCMTokenToDatabase) sendRegistrationToServer :  FAIL " + e.message.toString()
                         )
 
                         //failed to add info to database
                     }
-                // Log and toast
+                // Logger and toast
                 val msg = getString(R.string.msg_token_fmt, token)
-                Log.d("StartActivity", msg)
+                Logger.d(TAG, "(uploadFCMTokenToDatabase) msg $msg")
+
+
                 //                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             } else {
-                Log.w("StartActivity", "Fetching FCM registration token failed", task.exception)
+                Logger.w(
+                    TAG,
+                    "(uploadFCMTokenToDatabase) Fetching FCM registration token failed exception is =  ${task.exception}"
+                )
             }
 
         }
@@ -284,7 +324,7 @@ class StartActivity : AppCompatActivity()  {
         startAllAnim()
 
         start.isClickable = true
-        //Log.d("StartActivity", "onStart: $shouldPlay ")
+        //Logger.d("StartActivity", "onStart: $shouldPlay ")
         if (!activateSetting)
             this.audioManager.getAudioService()?.playMusic()
 
@@ -303,28 +343,30 @@ class StartActivity : AppCompatActivity()  {
             this.audioManager.getAudioService()?.resumeMusic()
 
 
-        Log.d("StartActivity", "onResume: $shouldPlay ")
+        Logger.d(TAG, "(onResume): $shouldPlay ")
 
         if (showLoading) {
+            Logger.d(TAG, "(onResume): showLoading $showLoading ")
+
             main_loading.visibility = View.VISIBLE
             start_parent_frame.visibility = View.INVISIBLE
+            Logger.d(TAG, "(onResume): repeatLoadAD $repeatLoadAD ")
 
-            Handler(Looper.getMainLooper()).postDelayed(
-                {
-                    shouldAllowBack = true
-                    main_loading.visibility = View.INVISIBLE
-                    start_parent_frame.visibility = View.VISIBLE
+            if (!repeatLoadAD) {
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        activityIntro()
 
-                    startAllAnim()
+                    }, 2500
+                )
+                repeatLoadAD = true // it decide will show loading animation again
 
-                    showLoading = false
-
-                }, 2000
-            )
+            } //start activity intro
 
         }
+
         super.onResume()
-        Log.d("onResume", "onResume: $showLoading")
+        Logger.d(TAG, "(onResume): $showLoading")
         start.isClickable = true
 
 //        start_loading.visibility = View.VISIBLE
@@ -337,8 +379,8 @@ class StartActivity : AppCompatActivity()  {
 //    override fun onPause() {
 //        super.onPause()
 //
-//        Log.d("StartActivity", "onPause: $shouldPlay ")
-//        Log.d("StartActivity", "onPause: $showLoading")
+//        Logger.d("StartActivity", "onPause: $shouldPlay ")
+//        Logger.d("StartActivity", "onPause: $showLoading")
 //
 ////        if (!this.shouldPlay) {
 ////            this.audioManager.getAudioService()?.pauseMusic()
@@ -351,7 +393,7 @@ class StartActivity : AppCompatActivity()  {
         //stop all animation
         stopAllAnim()
 
-        Log.d("StartActivity", "onStop: $shouldPlay ")
+        Logger.d(TAG, "onStop: $shouldPlay ")
 
         if (!this.shouldPlay) {
             this.audioManager.getAudioService()?.pauseMusic()
@@ -390,9 +432,9 @@ class StartActivity : AppCompatActivity()  {
         exitDialog.setCancelable(false)
         exitDialog.setCanceledOnTouchOutside(false)
 
-        if(!isUploadToGooglePlay()){
+        if (!isUploadToGooglePlay()) {
             itemView.rate.visibility = View.GONE
-           ( itemView.exit_app.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.CENTER
+            (itemView.exit_app.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.CENTER
         }
 
         itemView.exit_app.setOnClickListener {
@@ -437,7 +479,7 @@ class StartActivity : AppCompatActivity()  {
                 .setOnFinishListener {
                     shouldPlay = false
                     //check for upload to google play
-                    if (isUploadToGooglePlay()){
+                    if (isUploadToGooglePlay()) {
                         rate(this)
                     }
 
@@ -445,7 +487,7 @@ class StartActivity : AppCompatActivity()  {
                     startAllAnim()
 
                     exitDialog.dismiss()
-                    Logger.d("Rate APP")
+                    Logger.d(TAG, "Rate APP")
 //                    Toast.makeText(this, "Rate APP", Toast.LENGTH_SHORT).show()
                 }.doAction()
 
@@ -471,39 +513,50 @@ class StartActivity : AppCompatActivity()  {
 
     private fun getAdsFolderFromFirebase() {
 
-        Log.d("AdsFolderFromFirebase", "getCategories called!")
+        Logger.d(TAG, "(AdsFolderFromFirebase) getCategories called!")
         mainViewModel.getAdsFolder()
 
         mainViewModel.adsFolderResponse.observe(this@StartActivity, Observer { response ->
             when (response) {
                 is NetworkResult.Success -> {
-                    Log.d("AdsFolderFromFirebase", "getCategories sucsess!")
+                    Logger.d(TAG, "(AdsFolderFromFirebase) getCategories sucsess!")
                     response.data?.let {
                         showAdsFromRemoteConfig = it.activateAds as Boolean
-                        Log.d(
-                            "AdsFolderFromFirebase",
-                            "showAdsFromRemoteConfig sucsess! ${it.activateAds}"
+                        Logger.d(
+                            TAG,
+                            "(showAdsFromRemoteConfig) sucsess! ${it.activateAds}"
                         )
 
                         addRewardAds = it.addRewardAds?.toString()!!
-                        Log.d(
-                            "AdsFolderFromFirebase",
-                            "showAdsFromRemoteConfig sucsess! ${it.addRewardAds}"
+                        Logger.d(
+                            TAG,
+                            "(showAdsFromRemoteConfig) sucsess! ${it.addRewardAds}"
                         )
 
                         bannerAds = it.bannerAds?.toString()!!
-                        Log.d(
-                            "AdsFolderFromFirebase",
-                            "showAdsFromRemoteConfig sucsess! ${bannerAds}"
+                        Logger.d(
+                            TAG,
+                            "(showAdsFromRemoteConfig) sucsess! ${bannerAds}"
                         )
                         interstitialAds = it.interstitialAds.toString()
                     }
+                    checkForUpdate()
                 }
 
                 is NetworkResult.Error -> {
-                    Log.d(
-                        "AdsFolderFromFirebase",
-                        "mah AdsFolderFromFirebase error! \n" + response.toString()
+                    if (!repeatLoadAD) {
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            {
+                                activityIntro()
+
+                            }, 2500
+                        )
+                        repeatLoadAD = true // it decide will show loading animation again
+
+                    } //start activity intro
+                    Logger.d(
+                        TAG,
+                        " (AdsFolderFromFirebase) error! \n" + response.toString()
                     )
 
                     Logger.e(response.message.toString())
@@ -514,8 +567,11 @@ class StartActivity : AppCompatActivity()  {
 //                    ).show()
                 }
                 is NetworkResult.Loading -> {
+                    //show loading animation
+                    main_loading.visibility = View.VISIBLE
 
-                    Log.d("AdsFolderFromFirebase", "AdsFolderFromFirebase Loading!")
+
+                    Logger.d(TAG, "( AdsFolderFromFirebase ) Loading!")
                 }
             }
         })
@@ -525,8 +581,9 @@ class StartActivity : AppCompatActivity()  {
     //check app to update
 
     private fun checkForUpdate() {
-        Log.d(TAG, " called!  ")
+        Logger.d(TAG, "( checkForUpdate ) called!  ")
         if (!checkUpdate) {
+
             val appVersion: String = getAppVersion(this)
 //            val remoteConfig = FirebaseRemoteConfig.getInstance()
 
@@ -535,15 +592,15 @@ class StartActivity : AppCompatActivity()  {
             val minVersion = RemoteConfigUtils.getLatestVersionOfApp()
 //                remoteConfig.getString("latest_version_of_app")
 
-            Log.d("checkForUpdate", "currentVersion: $currentVersion ")
-            Log.d("checkForUpdate", "minVersion: $minVersion ")
-            Log.d("checkForUpdate", "appVersion: $appVersion ")
+            Logger.d(TAG, "( checkForUpdate ) currentVersion: $currentVersion ")
+            Logger.d(TAG, "( checkForUpdate ) minVersion: $minVersion ")
+            Logger.d(TAG, "( checkForUpdate ) appVersion: $appVersion ")
             if (!TextUtils.isEmpty(minVersion) && !TextUtils.isEmpty(appVersion) && checkMandateVersionApplicable(
                     getAppVersionWithoutAlphaNumeric(minVersion),
                     getAppVersionWithoutAlphaNumeric(appVersion)
                 )
             ) {
-                Log.d("checkForUpdate", "appVersion:force ")
+                Logger.d(TAG, "( checkForUpdate ) appVersion:force ")
 //force update
                 onUpdateNeeded(true)
             } else if (!TextUtils.isEmpty(currentVersion) && !TextUtils.isEmpty(appVersion) && !TextUtils.equals(
@@ -551,11 +608,13 @@ class StartActivity : AppCompatActivity()  {
                     appVersion
                 )
             ) {
-                Log.d("checkForUpdate", "appVersion:flex ")
+                Logger.d(TAG, "( checkForUpdate )appVersion:flex ")
                 //update available can continue
                 onUpdateNeeded(false)
                 checkUpdate = true
-            } else {
+            } else { // app is new
+                subscribeFCM()
+
                 checkUpdate = true
                 moveForward()
             }
@@ -585,7 +644,7 @@ class StartActivity : AppCompatActivity()  {
             result = context.packageManager
                 .getPackageInfo(context.packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
-            Log.e("TAG", e.message.toString())
+            Logger.e(TAG, e.message.toString())
         }
         return result ?: ""
     }
@@ -617,6 +676,8 @@ class StartActivity : AppCompatActivity()  {
                 dialog?.dismiss()
                 // resume All animation
                 startAllAnim()
+                subscribeFCM()
+
 
             }.create()
         }
@@ -625,7 +686,7 @@ class StartActivity : AppCompatActivity()  {
     }
 
     private fun moveForward() {
-        Logger.d("Next Page Intent")
+        Logger.d(TAG, "Next Page Intent")
 //        Toast.makeText(this, "Next Page Intent", Toast.LENGTH_SHORT).show()
     }
 
@@ -714,7 +775,7 @@ class StartActivity : AppCompatActivity()  {
     override fun onDestroy() {
         super.onDestroy()
 
-        Log.d(TAG, "onDestroy: $shouldPlay ")
+        Logger.d(TAG, "onDestroy: $shouldPlay ")
 
         if (!shouldPlay) {
             this.audioManager.doUnbindService()

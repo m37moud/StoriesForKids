@@ -145,16 +145,18 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                             if (status) {
 
                                 //check if is there new videos **
-                                videosViewModel.readShouldDownload.observe(this@StoryActivity, Observer {
-                                    Logger.d(TAG, "readShouldDownload called! + it = $it ")
-                                    if (!it) {
+                                videosViewModel.readShouldDownload.observe(
+                                    this@StoryActivity,
+                                    Observer {
+                                        Logger.d(TAG, "readShouldDownload called! + it = $it ")
+                                        if (!it) {
 
-                                        firstCheck()
+                                            firstCheck()
 //                getCategoriesFromFirebase()
 
-                                    }
+                                        }
 
-                                })
+                                    })
 
 
                             }
@@ -167,7 +169,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         initRecyclerView()
 
 
-        videosViewModel.readCategoriesType.asLiveData().observe(this , Observer { category ->
+        videosViewModel.readCategoriesType.asLiveData().observe(this, Observer { category ->
             val c = category.selectedCategoryType
             Logger.d(TAG, "readCategoriesType category: $c")
             if (TextUtils.isEmpty(c)) {
@@ -290,6 +292,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         binding.noNetConnectionImg.visibility = View.VISIBLE
         binding.noNetConnectionTxt.visibility = View.VISIBLE
         binding.noNetConnectionTxt.text = getString(R.string.NoInternet)
+        binding.fabProgressCircle.visibility = View.GONE
     }
 
     private fun showLoading() {
@@ -345,7 +348,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         if (!downloadList.isNullOrEmpty()) {
             compareDownloadListSize = downloadList.size
             downloadList.forEach { model ->
-                Logger.d(TAG, "startDownload finish $downloadList" )
+                Logger.d(TAG, "startDownload finish $downloadList")
                 val myDownloadRequest = DownloadRequest(
                     model.id!!,
                     DownloadRequest.TYPE_PROGRESSIVE,
@@ -360,20 +363,20 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             //after download all videos in the list but download status = true
         } else {
-            Logger.d(TAG, "startDownload finish list $listVid" )
+            Logger.d(TAG, "startDownload finish list $listVid")
         }
 
     }
 
     private fun removeDownload(removeList: ArrayList<VideoModel>) {
-        Logger.d(TAG, "removeDownload called! + list = ${removeList.toString()} " )
+        Logger.d(TAG, "removeDownload called! + list = ${removeList.toString()} ")
         startService()
 //        downloadTracker!!.addListener(this)
-        Logger.d(TAG ,"removeDownload CHECK IF REMOVING LIST IS EMPTY ? " )
+        Logger.d(TAG, "removeDownload CHECK IF REMOVING LIST IS EMPTY ? ")
         if (!removeList.isNullOrEmpty()) {
-            compareRemovedListSize =removeList.size
+            compareRemovedListSize = removeList.size
             removeList.forEach { model ->
-                Logger.d(TAG ,"CHECK IF REMOVING LIST IS EMPTY ? IS TRUE " )
+                Logger.d(TAG, "CHECK IF REMOVING LIST IS EMPTY ? IS TRUE ")
 
                 //  downloadManager.addDownload(myDownloadRequest)
 
@@ -382,7 +385,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             //after download all videos in the list but download status = true
         } else {
-            Logger.d(TAG, "CHECK IF REMOVING LIST IS EMPTY ? IS FALSE :(" )
+            Logger.d(TAG, "CHECK IF REMOVING LIST IS EMPTY ? IS FALSE :(")
         }
 
     }
@@ -399,13 +402,21 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
                 Logger.d(TAG, " onDownloadsChanged in progress : $precent")
 
-                Toast.makeText(this@StoryActivity, getString(R.string.START_DOWNLOAD), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this@StoryActivity,
+                    getString(R.string.START_DOWNLOAD),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
 
             STATE_REMOVING -> {
 
-                Toast.makeText(this@StoryActivity, getString(R.string.VIDEO_REMOVED), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this@StoryActivity,
+                    getString(R.string.VIDEO_REMOVED),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
                 //download id
                 val id = download.request.id
@@ -425,7 +436,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 }
 
                 if (counter == compareRemovedListSize) {
-                    Logger.d(TAG , "onDownloadsChanged Download remove check is true : ")
+                    Logger.d(TAG, "onDownloadsChanged Download remove check is true : ")
 
                     readDatabase()
                 }
@@ -436,9 +447,16 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             }
             //job work 4/8
             STATE_COMPLETED -> {
-                Logger.d(TAG, "nDownloadsChanged STATE_COMPLETED finish list ${download.request.id.toString()}")
+                Logger.d(
+                    TAG,
+                    "nDownloadsChanged STATE_COMPLETED finish list ${download.request.id.toString()}"
+                )
 
-                Toast.makeText(this@StoryActivity, getString(R.string.DOWNLOAD_FINISH), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this@StoryActivity,
+                    getString(R.string.DOWNLOAD_FINISH),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
                 //download id
                 val id = download.request.id
@@ -480,7 +498,11 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
             }
             STATE_FAILED -> {
-                Toast.makeText(this@StoryActivity, getString(R.string.DOWNLOAD_FAILED), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this@StoryActivity,
+                    getString(R.string.DOWNLOAD_FAILED),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
                 Logger.d(
                     TAG,
@@ -524,7 +546,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         hideLoading()
 
         mainViewModel.readVideosWithCategory(videosViewModel.applyQuery())
-            .observe(this@StoryActivity, Observer{ database ->
+            .observe(this@StoryActivity, Observer { database ->
                 if (database.isNotEmpty()) {
                     Logger.d(
                         TAG,
@@ -563,7 +585,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         lifecycleScope.launch {
 
             mainViewModel.readVideos
-                .observe(this@StoryActivity,Observer { database ->
+                .observe(this@StoryActivity, Observer { database ->
 
                     if (database.isNotEmpty()) {
 
@@ -597,27 +619,27 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         Logger.d(TAG, "readDatabase called!")
         hideLoading()
 //        lifecycleScope.launch {
-            mainViewModel.readVideos.observe(this, Observer { database ->
-                if (database.isNotEmpty()) {
+        mainViewModel.readVideos.observe(this, Observer { database ->
+            if (database.isNotEmpty()) {
 
-                    Logger.d(TAG, "readDatabase if statement true")
+                Logger.d(TAG, "readDatabase if statement true")
 
-                    listReadDatabase = database as ArrayList
-                    //room change
-                    val adapterReadDatabase = DownloadedVideoAdapter(
-                        this@StoryActivity
-                    )
-                    adapterReadDatabase.setData(listReadDatabase)
-                    binding.rcStory.adapter = adapterReadDatabase
-                    Logger.d(TAG, "readDatabase list is ${listReadDatabase.toString()}" )
+                listReadDatabase = database as ArrayList
+                //room change
+                val adapterReadDatabase = DownloadedVideoAdapter(
+                    this@StoryActivity
+                )
+                adapterReadDatabase.setData(listReadDatabase)
+                binding.rcStory.adapter = adapterReadDatabase
+                Logger.d(TAG, "readDatabase list is ${listReadDatabase.toString()}")
 //                    mainViewModel.readVideos.removeObservers(this)
 
-                } else {
-                    Logger.d(TAG, "readDatabase if statement is false == (mean database is empty)")
-                    mainViewModel.readVideos.removeObservers(this)
-                    firstRequestApiData()
-                }
-            })
+            } else {
+                Logger.d(TAG, "readDatabase if statement is false == (mean database is empty)")
+                mainViewModel.readVideos.removeObservers(this)
+                firstRequestApiData()
+            }
+        })
 //        } // life scope end
     }
 
@@ -625,30 +647,31 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         Logger.d(TAG, "loadDBOnce called!")
         hideLoading()
 //        lifecycleScope.launch {// start life cycle scope
-            mainViewModel.readVideos.observe(this, Observer { database ->
-                if (database.isNotEmpty()) {
+        mainViewModel.readVideos.observe(this, Observer { database ->
+            if (database.isNotEmpty()) {
 
-                    Logger.d(TAG, "loadDBOnce if statement true")
+                Logger.d(TAG, "loadDBOnce if statement true")
 
-                    (database as ArrayList).let {
-                        val adapterReadDatabase = DownloadedVideoAdapter(
-                            this@StoryActivity
-                        )
-                        adapterReadDatabase.setData(it)
-                        binding.rcStory.adapter = adapterReadDatabase
-                        it.joinToString { vid ->
-                            Logger.d(TAG, "loadDBOnce list is ${vid.title}").toString()
-                        }
+                (database as ArrayList).let {
+                    val adapterReadDatabase = DownloadedVideoAdapter(
+                        this@StoryActivity
+                    )
+                    adapterReadDatabase.setData(it)
+                    binding.rcStory.adapter = adapterReadDatabase
+                    it.joinToString { vid ->
+                        Logger.d(TAG, "loadDBOnce list is ${vid.title}").toString()
                     }
-                    mainViewModel.readVideos.removeObservers(this)
-
-
-                } else {
-
-                    Logger.d(TAG, "loadDBOnce if statement is false ...")
-//
                 }
-            })
+                mainViewModel.readVideos.removeObservers(this)
+
+
+            } else {
+                offline()
+
+                Logger.d(TAG, "loadDBOnce if statement is false ...")
+//
+            }
+        })
 //        } // life scope end
     }
 
@@ -896,7 +919,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
                     Toast.makeText(
                         this@StoryActivity,
-                       getString(R.string.ERROR_MSG),
+                        getString(R.string.ERROR_MSG),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -939,7 +962,10 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                     Logger.d(TAG, " ( saveVideoData ) chickedListCategory size is ${it.size}")
 
                     it.forEach { category: CategoriesModel ->
-                        Logger.d(TAG, "( saveVideoData ) chickedListCategory is ${category.categoryName}")
+                        Logger.d(
+                            TAG,
+                            "( saveVideoData ) chickedListCategory is ${category.categoryName}"
+                        )
 
                         if (category.categoryName == vidCategory) {
                             Logger.d(
@@ -1016,15 +1042,15 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             model.update
         )
 
-        Logger.d(TAG, "( updateVideo ) entity! ${videoData.toString()}"  )
-        Logger.d(TAG, "( updateVideo ) model! ${model.title.toString()}" )
+        Logger.d(TAG, "( updateVideo ) entity! ${videoData.toString()}")
+        Logger.d(TAG, "( updateVideo ) model! ${model.title.toString()}")
 
         //update all fields in room database
         mainViewModel.updateVideo(videoData).invokeOnCompletion {
 
 
             //when update is complete and properties (videoUpdate) back to false in fire base should update either in database
-            Logger.d(TAG, "( updateVideo ) is complete sucsessfull" )
+            Logger.d(TAG, "( updateVideo ) is complete sucsessfull")
 
             mainViewModel.updateVideoComplete(model)
             readDatabase()
@@ -1036,7 +1062,7 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
 
     private fun firstCheck() {
         videosViewModel.readShouldDownload.observe(this@StoryActivity, Observer {
-            Logger.d(TAG, "(firstCheck) method called is ${it.toString()}" )
+            Logger.d(TAG, "(firstCheck) method called is ${it.toString()}")
             //check for daily check
             if (!it) {
                 Toast.makeText(
@@ -1141,11 +1167,17 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         )
         mainViewModel.insertCategories(categoryData).invokeOnCompletion {
 
-            Logger.d(TAG, "( saveCategoriesData )  category ( ${model.categoryName} ) is inserted !")
+            Logger.d(
+                TAG,
+                "( saveCategoriesData )  category ( ${model.categoryName} ) is inserted !"
+            )
             counter++
             Logger.d(TAG, "( saveCategoriesData ) counter is increased by one ")
 
-            Logger.d(TAG, "( saveCategoriesData )  number of videos should download is = $compareDownloadListSize !")
+            Logger.d(
+                TAG,
+                "( saveCategoriesData )  number of videos should download is = $compareDownloadListSize !"
+            )
             Logger.d(TAG, "( saveCategoriesData )  number of  videos ! counter =  $counter")
 
             Logger.d(TAG, "( saveCategoriesData ) check if all video is completed")
@@ -1153,7 +1185,10 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
             //refresh the list again
             if (counter == compareDownloadListSize) {
                 lifecycleScope.launch {
-                    Logger.d(TAG, "( saveCategoriesData ) check if all video is completed result is true")
+                    Logger.d(
+                        TAG,
+                        "( saveCategoriesData ) check if all video is completed result is true"
+                    )
                     readDatabase()
                     readCategoriesFromDatabase()
 //                    videosViewModel.saveLoadingStatus(true)
@@ -1161,10 +1196,12 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
                 }
 
             } else {
-                Logger.d(TAG, "( saveCategoriesData )  check if all video is completed result is false")
+                Logger.d(
+                    TAG,
+                    "( saveCategoriesData )  check if all video is completed result is false"
+                )
 
             }
-
 
 
         }
@@ -1215,34 +1252,34 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
         listCategory.clear()
         Logger.d(TAG, "( readCategoriesFromDatabase )  called!")
 //        lifecycleScope.launch {
-            mainViewModel.readCategories.observe(this, Observer { database ->
-                if (database.isNotEmpty()) {
-                    videosViewModel.saveFabCategoryStatus(true)// observe in btn catalog menu
+        mainViewModel.readCategories.observe(this, Observer { database ->
+            if (database.isNotEmpty()) {
+                videosViewModel.saveFabCategoryStatus(true)// observe in btn catalog menu
 
-                    Logger.d(TAG, "( readCategoriesFromDatabase ) if statement true")
+                Logger.d(TAG, "( readCategoriesFromDatabase ) if statement true")
 
 //                    listCategory = database as ArrayList<CategoriesModel>
-                    listCategoriesReadDatabase = database as ArrayList
-                    listCategoriesReadDatabase.forEach {
-                        val categoryModel =
-                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
-                        listCategory.add(categoryModel)
+                listCategoriesReadDatabase = database as ArrayList
+                listCategoriesReadDatabase.forEach {
+                    val categoryModel =
+                        CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+                    listCategory.add(categoryModel)
 
-                    }
+                }
 
 
 //                    Log.d("readCategoriesDatabase", "list is " + listCategory)
 
-                    mainViewModel.readCategories.removeObservers(this)
+                mainViewModel.readCategories.removeObservers(this)
 
-                } else {
-                    videosViewModel.saveFabCategoryStatus(false)
+            } else {
+                videosViewModel.saveFabCategoryStatus(false)
 
-                    Logger.d(TAG, "( readCategoriesFromDatabase ) if statement is false ...")
+                Logger.d(TAG, "( readCategoriesFromDatabase ) if statement is false ...")
 
 //                    mainViewModel.readCategories.removeObservers(this)
-                }
-            })
+            }
+        })
 //        }//end scope
     }
 
@@ -1250,27 +1287,27 @@ class StoryActivity : AppCompatActivity(), DownloadTracker.Listener {
     private fun readCategoriesDBOnceAgain() {
         Logger.d(TAG, "( readCategoriesDBOnceAgain ) readCategoriesDBOnceAgain called!")
 //        lifecycleScope.launch {// life cycle scope
-            mainViewModel.readCategories.observe(this, Observer { database ->
-                if (database.isNotEmpty()) {
+        mainViewModel.readCategories.observe(this, Observer { database ->
+            if (database.isNotEmpty()) {
 
-                    Logger.d(TAG, "( readCategoriesDBOnceAgain ) if statement true")
+                Logger.d(TAG, "( readCategoriesDBOnceAgain ) if statement true")
 
 //                    listCategory = database as ArrayList<CategoriesModel>
-                    (database as ArrayList).let {
-                        it.forEach {
-                            val categoryModel =
-                                CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
-                            listCategory.add(categoryModel)
+                (database as ArrayList).let {
+                    it.forEach {
+                        val categoryModel =
+                            CategoriesModel(it.categoryId, it.categoryName, it.categoryImage)
+                        listCategory.add(categoryModel)
 
-                        }
                     }
-
-
-                }else{
-                    Logger.d(TAG, "( readCategoriesDBOnceAgain ) if statement is false ...")
-
                 }
-            })
+
+
+            } else {
+                Logger.d(TAG, "( readCategoriesDBOnceAgain ) if statement is false ...")
+
+            }
+        })
 //        }//end of scope
     }
 

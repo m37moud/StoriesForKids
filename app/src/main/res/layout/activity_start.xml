@@ -26,7 +26,7 @@
         android:id="@+id/start_parent_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.7"
@@ -73,12 +73,12 @@
             android:layout_marginStart="@dimen/_80sdp"
             android:layout_marginBottom="@dimen/_50sdp"
             android:background="@drawable/button_rounded"
-            app:backgroundTint="@color/darkorange"
-            app:backgroundTintMode="screen"
             android:foreground="@drawable/btn_foreground"
             android:padding="@dimen/_10sdp"
             android:rotation="@integer/locale_mirror_flip"
             android:scaleType="centerCrop"
+            app:backgroundTint="@color/darkorange"
+            app:backgroundTintMode="screen"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@android:drawable/ic_media_play"
@@ -110,6 +110,7 @@
 
         <TextView
             android:id="@+id/start_txt"
+            style="@style/text_views"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -119,7 +120,6 @@
             android:elevation="10dp"
             android:text="@string/responsive_stories"
             android:textSize="@dimen/_20ssp"
-            style="@style/text_views"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
