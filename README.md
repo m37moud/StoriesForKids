@@ -2,8 +2,11 @@
 learning app for kids
 
 Features
+
 Animation Splash Screen
+
 Beautiful Background
+
 Material Design
 
 Push Notifications
